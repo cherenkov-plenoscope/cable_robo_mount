@@ -2,7 +2,7 @@
 a gigantic mount for the Atmospheric Cherenkov Plenoscope (ACP) that can actually be build
 
 ### Working together
-The [ETH Institute for Particle Physics](http://www.ipp.phys.ethz.ch/) explores together with the [ETH Department for Civil Engineering](https://www.baug.ethz.ch/en/) the possibilites to build nothing less but the biggest Atmospheric Cherenkov Instrument ever planned.
+The [ETH Institute for Particle Physics](http://www.ipp.phys.ethz.ch/) explores together with the [ETH Department for Civil Engineering](https://www.baug.ethz.ch/en/) the possibilites to build nothing less but the most powerfull cosmic gamma ray observatory ever planned.
 
 From the first drafts
 ![img](readme/sebastians_acp_draft_33deg_zd.jpg)
