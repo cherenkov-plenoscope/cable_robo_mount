@@ -1,0 +1,20 @@
+{
+    "space_frame": {
+        "mirror_facet_weight": {
+            "actuator_weight": 5.0,
+            "surface_weight": 25.0
+        },
+        "bar": {
+            "thickness": 0.001,
+            "outer_radius": 0.05
+        },
+        "material": {
+            "yielding_point": 1337.0
+        }
+    },
+    "optics": {
+        "davies_cotton_over_parabola_ratio": 0.0,
+        "max_outer_radius": 25.0,
+        "focal_length": 75.0
+    }
+}
