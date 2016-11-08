@@ -2,7 +2,8 @@ import numpy as np
 from .space_frame_geometry import dish_space_frame_addresses_to_cartesian
 
 def make_rectangular_reflector(geometry):
-    node_radius_x_and_y = np.ceil(geometry.max_outer_radius/geometry.facet_spacing)
+    node_radius_x_and_y = int(
+        np.ceil(geometry.max_outer_radius/geometry.facet_spacing))
     
     i_radius = node_radius_x_and_y
     j_radius = node_radius_x_and_y
