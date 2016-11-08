@@ -7,6 +7,9 @@ class Geometry(object):
         self.min_inner_radius = config_dict['optics']['min_inner_radius']
         self.gap_between_facets = config_dict['optics']['gap_between_facets']
         self.facet_inner_hex_radius = config_dict['optics']['facet_inner_hex_radius']
+        
+        self.number_of_layers = config_dict['space_frame']['number_of_layers']
+        self.x_over_z_ratio = config_dict['space_frame']['x_over_z_ratio']
         self._set_up_geometry()
 
     def _set_up_geometry(self):

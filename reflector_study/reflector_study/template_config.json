@@ -10,7 +10,9 @@
         },
         "material": {
             "yielding_point": 1337.0
-        }
+        },
+        "number_of_layers": 3,
+        "x_over_z_ratio": 1.0
     },
     "optics": {
         "davies_cotton_over_parabola_ratio": 0.0,
