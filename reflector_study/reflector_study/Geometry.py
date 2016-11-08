@@ -4,9 +4,9 @@ class Geometry(object):
     def __init__(self, config_dict):
         self.focal_length = config_dict['optics']['focal_length']
         self.max_outer_radius = config_dict['optics']['max_outer_radius']
+        self.min_inner_radius = config_dict['optics']['min_inner_radius']
         self.gap_between_facets = config_dict['optics']['gap_between_facets']
         self.facet_inner_hex_radius = config_dict['optics']['facet_inner_hex_radius']
-
         self._set_up_geometry()
 
     def _set_up_geometry(self):
