@@ -11,15 +11,15 @@
         "material": {
             "yielding_point": 1337.0
         },
-        "number_of_layers": 1,
+        "number_of_layers": 2,
         "x_over_z_ratio": 1.0
     },
     "optics": {
-        "davies_cotton_over_parabola_ratio": 0.5,
-        "max_outer_radius": 2.5,
-        "min_inner_radius": 1.0,
-        "focal_length": 4.889,
-        "gap_between_facets": 0.02,
-        "facet_inner_hex_radius": 0.6
+        "davies_cotton_over_parabola_ratio": 0.0,
+        "max_outer_radius": 10.0,
+        "min_inner_radius": 3.0,
+        "focal_length": 75.0,
+        "gap_between_facets": 0.0,
+        "facet_inner_hex_radius": 0.5
     }
 }
