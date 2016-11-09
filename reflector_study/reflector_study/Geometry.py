@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Geometry(object):
     def __init__(self, config_dict):
         self.focal_length = config_dict['optics']['focal_length']
@@ -12,6 +13,7 @@ class Geometry(object):
         self.number_of_layers = config_dict['space_frame']['number_of_layers']
         self.x_over_z_ratio = config_dict['space_frame']['x_over_z_ratio']
         self._set_up_geometry()
+
 
     def _set_up_geometry(self):
         self.approximate_mirror_surface_area = np.pi*self.max_outer_radius**2.0
@@ -28,6 +30,7 @@ class Geometry(object):
         self.lattice_range_i = 2*self.lattice_radius_i+1
         self.lattice_range_j = 2*self.lattice_radius_j+1
         self.lattice_range_k = self.number_of_layers
+
 
     def __repr__(self):
         info = 'Geometry'
