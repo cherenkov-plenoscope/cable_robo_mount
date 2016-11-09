@@ -4,7 +4,7 @@ from .tools import node_position
 from .tools import node_in_range
 from .tools import bar_in_range
 from .tools import bar_start_and_end_position
-
+from .tools import mirror_tripod_center
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
     if not bar_in_range(nodes, bar):
@@ -22,10 +22,7 @@ def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
     C_in_range = node_in_range(nodes, mirror_tripod[2])
 
     if A_in_range and B_in_range and C_in_range:
-        A = node_position(nodes, mirror_tripod[0])
-        B = node_position(nodes, mirror_tripod[1])
-        C = node_position(nodes, mirror_tripod[2])
-        center = (A + B + C)/3.0
+        center = mirror_tripod_center(nodes, mirror_tripod)
         radius = np.hypot(center[0], center[1])
         inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius 
         outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius 
