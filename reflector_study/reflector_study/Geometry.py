@@ -16,6 +16,13 @@ class Geometry(object):
     def _set_up_geometry(self):
         self.approximate_mirror_surface_area = np.pi*self.max_outer_radius**2.0
         self.facet_spacing = self.facet_inner_hex_radius*2.0 + self.gap_between_facets
+        self.facet_outer_hex_radius = self.facet_inner_hex_radius*2.0/np.sqrt(3.0)
+
+        self.facet_spacing_x = self.facet_spacing
+        self.facet_spacing_y = self.facet_spacing*(np.sqrt(3.0))
+
+        self.nodes_in_x = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_x))
+        self.nodes_in_y = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_y))
 
     def __repr__(self):
         info = 'Geometry'
