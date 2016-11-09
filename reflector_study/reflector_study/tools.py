@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def node_position(nodes, ijk):
     return nodes[ijk[0], ijk[1], ijk[2]]
 
