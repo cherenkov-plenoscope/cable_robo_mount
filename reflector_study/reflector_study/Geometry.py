@@ -21,8 +21,13 @@ class Geometry(object):
         self.facet_spacing_x = self.facet_spacing
         self.facet_spacing_y = self.facet_spacing*(np.sqrt(3.0))
 
-        self.nodes_in_x = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_x))
-        self.nodes_in_y = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_y))
+
+        self.lattice_radius_i = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_x))
+        self.lattice_radius_j = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_y))
+
+        self.lattice_range_i = 2*self.lattice_radius_i+1
+        self.lattice_range_j = 2*self.lattice_radius_j+1
+        self.lattice_range_k = self.number_of_layers
 
     def __repr__(self):
         info = 'Geometry'
