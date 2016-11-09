@@ -1,131 +1,139 @@
 import numpy as np
 from .space_frame_geometry import dish_space_frame_addresses_to_cartesian
+from .tools import node_position
+from .tools import node_in_range
+from .tools import bar_in_range
+from .tools import bar_start_and_end_position
 
-def position_of_node(nodes, ijk):
-    return nodes[ijk[0], ijk[1], ijk[2]]
 
-def in_range(nodes, ijk):
-    i_valid = ijk[0] >= 0 and ijk[0] < nodes.shape[0]
-    j_valid = ijk[1] >= 0 and ijk[1] < nodes.shape[1]
-    k_valid = ijk[2] >= 0 and ijk[2] < nodes.shape[2]
-    return i_valid and j_valid and k_valid
+def bar_is_part_of_reflector_dish(bar, nodes, geometry):
+    if not bar_in_range(nodes, bar):
+        return False
+    start, end = bar_start_and_end_position(nodes, bar)
+    r_start = np.hypot(start[0], start[1])
+    r_end = np.hypot(end[0], end[1])
+    radii = np.array([r_start, r_end])
+    return radii.max() <= geometry.max_outer_radius + geometry.facet_outer_hex_radius
 
-def make_rectangular_reflector(geometry):
 
-    def is_valid(facet, nodes, geometry):
-        if in_range(nodes, facet[0]) and in_range(nodes, facet[1]) and in_range(nodes, facet[2]):
-            A = position_of_node(nodes, facet[0])
-            B = position_of_node(nodes, facet[1])
-            C = position_of_node(nodes, facet[2])
+def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
+    A_in_range = node_in_range(nodes, mirror_tripod[0])
+    B_in_range = node_in_range(nodes, mirror_tripod[1])
+    C_in_range = node_in_range(nodes, mirror_tripod[2])
 
-            center = (A + B + C)/3.0
-            radius = np.hypot(center[0], center[1])
-            inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius 
-            outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius 
-            return inside_outer_limit and outside_inner_limit
-        else:
-            return False
+    if A_in_range and B_in_range and C_in_range:
+        A = node_position(nodes, mirror_tripod[0])
+        B = node_position(nodes, mirror_tripod[1])
+        C = node_position(nodes, mirror_tripod[2])
+        center = (A + B + C)/3.0
+        radius = np.hypot(center[0], center[1])
+        inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius 
+        outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius 
+        return inside_outer_limit and outside_inner_limit
+    else:
+        return False
 
-    def is_ok(bar, nodes, geometry):
 
-        if not in_range(nodes, bar[0]):
-            return False
-        if not in_range(nodes, bar[1]):
-            return False
+def node_is_connected_to_tension_ring(node, geometry):
+    radius = np.hypot(node[0], node[1])
+    is_inside_outer_limit = radius <= geometry.max_outer_radius
+    is_most_outer_node = radius > geometry.max_outer_radius - geometry.facet_spacing
+    return is_most_outer_node and is_inside_outer_limit
 
-        c0 = position_of_node(nodes, bar[0])
-        c1 = position_of_node(nodes, bar[1])
-        r0 = np.hypot(c0[0], c0[1])
-        r1 = np.hypot(c1[0], c1[1])
-        radii = np.array([r0, r1])
-        return radii.max() <= geometry.max_outer_radius + geometry.facet_outer_hex_radius
 
-    def is_fixture(node, geometry):
-        radius = np.hypot(node[0], node[1])
-        is_inside_outer_limit = radius <= geometry.max_outer_radius
-        is_most_outer_node = radius > geometry.max_outer_radius - geometry.facet_spacing
-        return is_most_outer_node and is_inside_outer_limit
+def generate_nodes(geometry):
+    nodes = np.zeros(
+        shape=(
+            geometry.lattice_range_i, 
+            geometry.lattice_range_j, 
+            geometry.lattice_range_k, 
+            3))
 
-    i_radius = geometry.nodes_in_x
-    j_radius = geometry.nodes_in_y
-    k_radius = geometry.number_of_layers
-
-    nodes = np.zeros(shape=(2*i_radius+1, 2*j_radius+1, k_radius, 3))
-
-    for i in range(2*i_radius+1):
-        for j in range(2*j_radius+1):
-            for k in range(k_radius):
+    for i in range(geometry.lattice_range_i):
+        for j in range(geometry.lattice_range_j):
+            for k in range(geometry.lattice_range_k):
                 nodes[i,j,k] = dish_space_frame_addresses_to_cartesian(
-                    i=i-i_radius,
-                    j=j-j_radius,
+                    i=i-geometry.lattice_radius_i,
+                    j=j-geometry.lattice_radius_j,
                     k=-k,
                     focal_length=geometry.focal_length,
                     davies_cotton_over_parabola_ratio=geometry.davies_cotton_over_parabola_ratio,
                     scale=geometry.facet_spacing,
                     x_over_z_ratio=geometry.x_over_z_ratio)
+    return nodes
 
+
+def generate_bars(nodes, geometry):
     bars = []
-    for i in range(2*i_radius+1):
-        for j in range(2*j_radius+1):
-            for k in range(k_radius):
+    for i in range(geometry.lattice_range_i):
+        for j in range(geometry.lattice_range_j):
+            for k in range(geometry.lattice_range_k):
 
                 bar_o0 = np.array([[i, j, k],[i,  j+1,k]])
-                if is_ok(bar_o0, nodes, geometry):
+                if bar_is_part_of_reflector_dish(bar_o0, nodes, geometry):
                         bars.append(bar_o0)
 
                 bar_o1 = np.array([[i, j, k],[i+1,j,  k]])
-                if is_ok(bar_o1, nodes, geometry):
+                if bar_is_part_of_reflector_dish(bar_o1, nodes, geometry):
                         bars.append(bar_o1)
 
-                if k+1 != k_radius:
+                if k+1 != geometry.lattice_range_k:
                     bar_i0 = np.array([[i, j, k], [i,  j,  k+1]])
-                    if is_ok(bar_i0, nodes, geometry):
+                    if bar_is_part_of_reflector_dish(bar_i0, nodes, geometry):
                         bars.append(bar_i0)
 
                     bar_i1 = np.array([[i, j, k], [i,  j+1,k+1]])
-                    if is_ok(bar_i1, nodes, geometry):
+                    if bar_is_part_of_reflector_dish(bar_i1, nodes, geometry):
                         bars.append(bar_i1)
 
                     bar_i2 = np.array([[i, j, k], [i+1,j,  k+1]])
-                    if is_ok(bar_i2, nodes, geometry):
+                    if bar_is_part_of_reflector_dish(bar_i2, nodes, geometry):
                         bars.append(bar_i2)
 
                     bar_i3 = np.array([[i, j, k], [i+1,j+1,k+1]])
-                    if is_ok(bar_i3, nodes, geometry):
+                    if bar_is_part_of_reflector_dish(bar_i3, nodes, geometry):
                         bars.append(bar_i3)
+    return np.array(bars)
 
 
+def generate_mirrir_tripods(nodes, geometry):
     mirror_tripods = []
-    for i in range(2*i_radius+1):
-        for j in range(2*j_radius+1):
-            for k in range(k_radius):
+    for i in range(geometry.lattice_range_i):
+        for j in range(geometry.lattice_range_j):
+            for k in range(geometry.lattice_range_k):
  
                 if k == 0: # only on top layer
                     if np.mod(i,2) == 0: # Each 2nd in i
                         if np.mod(j+1,2) == 0: #Each 2nd in j
-                            facet = np.array([
+                            mirror_tripod = np.array([
                                     [i,    j,   k],
                                     [i+1,  j+1, k],
                                     [i-1,  j+1, k]])
-                            if is_valid(facet, nodes, geometry):
-                                mirror_tripods.append(facet)
+                            if mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
+                                mirror_tripods.append(mirror_tripod)
                         else: #Each other 2nd in j
-                            facet = np.array([
+                            mirror_tripod = np.array([
                                     [i+1,   j,   k],
                                     [i+1+1, j+1, k],
                                     [i-1+1, j+1, k]])
-                            if is_valid(facet, nodes, geometry):
-                                mirror_tripods.append(facet)
+                            if mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
+                                mirror_tripods.append(mirror_tripod)
+    return np.array(mirror_tripods)
 
+
+def generate_connections_to_tension_ring(nodes, geometry):
     fixtures = []
-    for i in range(2*i_radius+1):
-        for j in range(2*j_radius+1):
-            for k in range(k_radius):
-                if is_fixture(nodes[i,j,k], geometry):
+    for i in range(geometry.lattice_range_i):
+        for j in range(geometry.lattice_range_j):
+            for k in range(geometry.lattice_range_k):
+                if node_is_connected_to_tension_ring(nodes[i,j,k], geometry):
                     fixtures.append(np.array([i,j,k]))
+    return np.array(fixtures)
 
-                  
-    bars = np.array(bars)
-    mirror_tripods = np.array(mirror_tripods)
-    fixtures = np.array(fixtures)
+
+def generate_all(geometry):
+    nodes = generate_nodes(geometry)
+    bars = generate_bars(nodes, geometry)
+    mirror_tripods = generate_mirrir_tripods(nodes, geometry)
+    fixtures = generate_connections_to_tension_ring(nodes, geometry)
     return nodes, bars, mirror_tripods, fixtures
