@@ -3,10 +3,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 
-def bars(bars, nodes, mirror_tripods=None):
+def bars(bars, nodes, mirror_tripods=None, fixtures=None):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
+    plt.xlabel('x/m')
+    plt.ylabel('y/m')
     for bar in bars:
         try:
             start_position = nodes[bar[0,0], bar[0,1], bar[0,2]]
@@ -55,4 +57,15 @@ def bars(bars, nodes, mirror_tripods=None):
                     [n3[2], n1[2]],'r',linewidth=3.0)            
             except IndexError:
                 pass
+
+    if fixtures is not None:
+        for fixture in fixtures:   
+            fix_pos = nodes[fixture[0], fixture[1], fixture[2]]
+            ax.scatter(
+                [fix_pos[0]],
+                [fix_pos[1]],
+                [fix_pos[2]],
+                c='g',
+                marker='o') 
+
     plt.show()
