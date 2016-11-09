@@ -28,3 +28,37 @@ def bar_length(nodes, bar):
     start = node_position(nodes, bar[0])
     end = node_position(nodes, bar[1])
     return np.linalg.norm(end - start)
+
+
+def mirror_tripod_center(nodes, mirror_tripod):
+    A = node_position(nodes, mirror_tripod[0])
+    B = node_position(nodes, mirror_tripod[1])
+    C = node_position(nodes, mirror_tripod[2])
+    return (A + B + C)/3.0
+
+
+def mirror_tripod_surface_normal(nodes, mirror_tripod):
+    A = node_position(nodes, mirror_tripod[0])
+    B = node_position(nodes, mirror_tripod[1])
+    C = node_position(nodes, mirror_tripod[2])
+    AB = B - A
+    AC = C - A
+    return np.cross(AB, AC)
+
+
+def mirror_tripod_x(nodes, mirror_tripod):
+    A = node_position(nodes, mirror_tripod[0])
+    B = node_position(nodes, mirror_tripod[1])
+    AB = B - A
+    return AB/np.linalg.norm(AB)
+
+
+def mirror_tripod_z(nodes, mirror_tripod):
+    surface_normal = mirror_tripod_surface_normal(nodes, mirror_tripod)
+    return surface_normal/np.linalg.norm(surface_normal)
+
+
+def mirror_tripod_y(nodes, mirror_tripod):
+    z_axis = mirror_tripod_z(nodes, mirror_tripod)
+    x_axis = mirror_tripod_x(nodes, mirror_tripod)
+    return np.cross(x_axis, z_axis)
