@@ -19,3 +19,9 @@ def bar_in_range(nodes, bar):
     start_is_in_range = node_in_range(nodes, bar[0])
     end_is_in_range = node_in_range(nodes, bar[1])
     return start_is_in_range and end_is_in_range
+
+
+def bar_length(nodes, bar):
+    start = node_position(nodes, bar[0])
+    end = node_position(nodes, bar[1])
+    return np.linalg.norm(end - start)
