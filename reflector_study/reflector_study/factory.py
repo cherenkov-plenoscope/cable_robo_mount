@@ -5,6 +5,7 @@ from .tools import node_in_range
 from .tools import bar_in_range
 from .tools import bar_start_and_end_position
 from .tools import mirror_tripod_center
+from .flatten import flatten
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
     if not bar_in_range(nodes, bar):
@@ -60,37 +61,47 @@ def generate_nodes(geometry):
     return nodes
 
 
-def generate_bars(nodes, geometry):
+def generate_empty_joints(geometry):
+    joints = [[[]]]
+    for i in range(geometry.lattice_range_i):
+        joints.append([])
+        for j in range(geometry.lattice_range_j):
+            joints[i].append([])
+            for k in range(geometry.lattice_range_k):
+                joints[i][j].append([])
+                joints[i][j][k] = []
+    return joints
+
+
+def generate_bars_and_joints(nodes, geometry):
+
+    joints = generate_empty_joints(geometry)
     bars = []
+
+    def bar_index(bars):
+        return len(bars)-1
+
+    def add_bar(iS, jS, kS, iE, jE, kE):
+        bar = np.array([[iS, jS, kS],[iE, jE, kE]])
+        if bar_is_part_of_reflector_dish(bar, nodes, geometry):
+            bars.append(bar)
+            joints[iS][jS][kS].append(bar_index(bars))
+            joints[iE][jE][kE].append(bar_index(bars))
+
     for i in range(geometry.lattice_range_i):
         for j in range(geometry.lattice_range_j):
             for k in range(geometry.lattice_range_k):
 
-                bar_o0 = np.array([[i, j, k],[i,  j+1,k]])
-                if bar_is_part_of_reflector_dish(bar_o0, nodes, geometry):
-                        bars.append(bar_o0)
-
-                bar_o1 = np.array([[i, j, k],[i+1,j,  k]])
-                if bar_is_part_of_reflector_dish(bar_o1, nodes, geometry):
-                        bars.append(bar_o1)
+                add_bar(i, j, k, i,   j+1, k)
+                add_bar(i, j, k, i+1, j,   k)
 
                 if k+1 != geometry.lattice_range_k:
-                    bar_i0 = np.array([[i, j, k], [i,  j,  k+1]])
-                    if bar_is_part_of_reflector_dish(bar_i0, nodes, geometry):
-                        bars.append(bar_i0)
+                    add_bar(i, j, k, i,   j,   k+1)
+                    add_bar(i, j, k, i,   j+1, k+1)
+                    add_bar(i, j, k, i+1, j,   k+1)
+                    add_bar(i, j, k, i+1, j+1, k+1)
 
-                    bar_i1 = np.array([[i, j, k], [i,  j+1,k+1]])
-                    if bar_is_part_of_reflector_dish(bar_i1, nodes, geometry):
-                        bars.append(bar_i1)
-
-                    bar_i2 = np.array([[i, j, k], [i+1,j,  k+1]])
-                    if bar_is_part_of_reflector_dish(bar_i2, nodes, geometry):
-                        bars.append(bar_i2)
-
-                    bar_i3 = np.array([[i, j, k], [i+1,j+1,k+1]])
-                    if bar_is_part_of_reflector_dish(bar_i3, nodes, geometry):
-                        bars.append(bar_i3)
-    return np.array(bars)
+    return {'bars': np.array(bars), 'joints': joints}
 
 
 def generate_mirrir_tripods(nodes, geometry):
@@ -128,9 +139,19 @@ def generate_connections_to_tension_ring(nodes, geometry):
     return np.array(fixtures)
 
 
-def generate_all(geometry):
+def generate_non_flat_reflector(geometry):
     nodes = generate_nodes(geometry)
-    bars = generate_bars(nodes, geometry)
+    bars_and_joints = generate_bars_and_joints(nodes, geometry)
     mirror_tripods = generate_mirrir_tripods(nodes, geometry)
     fixtures = generate_connections_to_tension_ring(nodes, geometry)
-    return nodes, bars, mirror_tripods, fixtures
+    return {
+        'nodes': nodes,
+        'joints': bars_and_joints['joints'],
+        'bars': bars_and_joints['bars'],
+        'mirror_tripods': mirror_tripods,
+        'fixtures': fixtures,
+        'geometry': geometry}
+
+
+def generate_reflector(geometry):
+    return flatten(generate_non_flat_reflector(geometry))
