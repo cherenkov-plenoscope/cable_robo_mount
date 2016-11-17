@@ -1,10 +1,10 @@
 import numpy as np
 from .space_frame_geometry import dish_space_frame_addresses_to_cartesian
-from .tools import node_position
-from .tools import node_in_range
-from .tools import bar_in_range
-from .tools import bar_start_and_end_position
-from .tools import mirror_tripod_center
+from .non_flat_tools import node_position
+from .non_flat_tools import node_in_range
+from .non_flat_tools import bar_in_range
+from .non_flat_tools import bar_start_and_end_position
+from .non_flat_tools import mirror_tripod_center
 from .flatten import flatten
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
@@ -25,8 +25,8 @@ def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
     if A_in_range and B_in_range and C_in_range:
         center = mirror_tripod_center(nodes, mirror_tripod)
         radius = np.hypot(center[0], center[1])
-        inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius 
-        outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius 
+        inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius
+        outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius
         return inside_outer_limit and outside_inner_limit
     else:
         return False
@@ -42,9 +42,9 @@ def node_is_connected_to_tension_ring(node, geometry):
 def generate_nodes(geometry):
     nodes = np.zeros(
         shape=(
-            geometry.lattice_range_i, 
-            geometry.lattice_range_j, 
-            geometry.lattice_range_k, 
+            geometry.lattice_range_i,
+            geometry.lattice_range_j,
+            geometry.lattice_range_k,
             3))
 
     for i in range(geometry.lattice_range_i):
@@ -109,7 +109,7 @@ def generate_mirrir_tripods(nodes, geometry):
     for i in range(geometry.lattice_range_i):
         for j in range(geometry.lattice_range_j):
             for k in range(geometry.lattice_range_k):
- 
+
                 if k == 0: # only on top layer
                     if np.mod(i,2) == 0: # Each 2nd in i
                         if np.mod(j+1,2) == 0: #Each 2nd in j

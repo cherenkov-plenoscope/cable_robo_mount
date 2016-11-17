@@ -6,7 +6,7 @@ import os
 def test_default_config():
 
     initial_config = {
-        'optics': { 
+        'optics': {
             'focal_length': 75.0,
             'davies_cotton_over_parabola_ratio': 0.0,
             'max_outer_radius': 25.0},
