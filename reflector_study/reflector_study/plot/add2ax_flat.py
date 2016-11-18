@@ -23,3 +23,12 @@ def add2ax_mirror_tripods(ax, nodes, mirror_tripods):
         ax.plot([n3[0], n1[0]],
                 [n3[1], n1[1]],
                 [n3[2], n1[2]],'r',linewidth=3.0)
+
+
+def add2ax_fixtures(ax, nodes, fixtures):
+    for fixture in fixtures:
+        ax.scatter( nodes[[fixture],0],
+                    nodes[[fixture],1],
+                    nodes[[fixture],2],
+                    c='g',
+                    marker='o')

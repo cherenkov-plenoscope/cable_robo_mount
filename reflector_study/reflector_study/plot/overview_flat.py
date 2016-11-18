@@ -14,5 +14,8 @@ def overview(bars, nodes, mirror_tripods=None, fixtures=None):
 
     if mirror_tripods is not None:
         add2ax_flat.add2ax_mirror_tripods(ax, nodes, mirror_tripods)
-        
+
+    if fixtures is not None:
+        add2ax_flat.add2ax_fixtures(ax, nodes, fixtures)
+
     plt.show()
