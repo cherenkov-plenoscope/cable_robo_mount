@@ -7,7 +7,7 @@ structural_dict = {
             "ultimate_point": 360000.0}, #in kPa
         "bar_properties": {
             'outter_radius': 0.05,
-            'thickness': 0.001},
+            'thickness': 0.003},
         'mirror_facet_weight': {
             'surface_weight': 25.0,
             'actuator_weight': 5.0,
