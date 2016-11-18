@@ -1,4 +1,4 @@
-from ..tools import node_position
+from ..non_flat_tools import node_position
 
 def add2ax_mirror_tripods(ax, nodes, mirror_tripods):
     for mirror_tripod in mirror_tripods:
@@ -7,10 +7,10 @@ def add2ax_mirror_tripods(ax, nodes, mirror_tripods):
         n3 = node_position(nodes, mirror_tripod[2])
         ax.plot([n1[0], n2[0]],
                 [n1[1], n2[1]],
-                [n1[2], n2[2]],'r',linewidth=3.0) 
+                [n1[2], n2[2]],'r',linewidth=3.0)
         ax.plot([n2[0], n3[0]],
                 [n2[1], n3[1]],
-                [n2[2], n3[2]],'r',linewidth=3.0) 
+                [n2[2], n3[2]],'r',linewidth=3.0)
         ax.plot([n3[0], n1[0]],
                 [n3[1], n1[1]],
                 [n3[2], n1[2]],'r',linewidth=3.0)
@@ -26,10 +26,10 @@ def add2ax_bars(ax, nodes, bars):
 
 
 def add2ax_fixtures(ax, nodes, fixtures):
-    for fixture in fixtures:   
+    for fixture in fixtures:
         fix_pos = node_position(nodes, fixture)
         ax.scatter( [fix_pos[0]],
                     [fix_pos[1]],
                     [fix_pos[2]],
                     c='g',
-                    marker='o')     
+                    marker='o')
