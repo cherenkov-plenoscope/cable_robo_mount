@@ -5,6 +5,7 @@ from .. import config
 class Structural(object):
 
     def __init__(self, config_loading_dict):
+        self.SAP_2000_directory = config_loading_dict["SAP_2000_directory"]
         self.yielding_point = config_loading_dict['material']['yielding_point']
         self.ultimate_point = config_loading_dict['material']['ultimate_point']
         self.bar_outter_radius = config_loading_dict['bar_properties']['outter_radius']
@@ -15,7 +16,7 @@ class Structural(object):
 
     def _set_up_loading(self):
         self.total_facet_surface_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 #in kN/m**2
-        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * Geometry(config.example).exact_mirror_surface_area #in kN
+        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * Geometry(config.example).approximate_mirror_surface_area #in kN
         self.tripod_nodes_weight = self.total_facet_weight/3
 
     def __repr__(self):
