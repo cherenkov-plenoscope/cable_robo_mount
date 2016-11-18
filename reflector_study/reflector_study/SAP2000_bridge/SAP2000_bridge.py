@@ -26,12 +26,13 @@ Comments
 
 """
 
-class_geometry = Geometry(config.example)
-
-geometry = factory.generate_non_flat_reflector(class_geometry)
+geometry = Geometry(config.example)
 structural = Structural(config_loading.structural_dict)
 
-def SAP_2000_bridge(geometry, structural):
+reflector = factory.generate_reflector(geometry)
+
+
+def SAP_2000_bridge(reflector, structural):
 
     #absolutely necessary functions for program initialization
     #program starts from the beginning = cannot attach to instance
@@ -60,7 +61,6 @@ def SAP_2000_bridge(geometry, structural):
         MatType= MATERIAL_STEEL,
         Color= automatic_material_color,
         Notes= "custom-made")
-
     SapModel.PropMaterial.SetOSteel_1(
         Name= "Steel_S"+str(structural.yielding_point/1000), #Divided by 1000 cause we give it in kPa. Notation is in MPa.
         FY= structural.yielding_point,
@@ -74,7 +74,6 @@ def SAP_2000_bridge(geometry, structural):
         StrainAtRupture= 0.2, #Applies only for parametric Stress-Strain curves, value of SSType 0.
         FinalSlope= -0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
         Temp= 25) #If temperature is assigned in Material properties add a new variable,
-
     SapModel.PropFrame.SetPipe(
         Name= "ROR_"+str(1000 * structural.bar_outter_radius)+"x"+str(1000 * structural.bar_thickness),
         MatProp= "Steel_S"+str(structural.yielding_point/1000),
@@ -85,75 +84,53 @@ def SAP_2000_bridge(geometry, structural):
 
     PointObj = []
 
-    for i in range ((geometry_all["bars"].shape[0])):
+    for i in range ((reflector["nodes"].shape[0])):
 
-        start, end = non_flat_tools.bar_start_and_end_position(geometry_all["nodes"], geometry_all["bars"][i])
-
-        PointObj.append(SapModel.PointObj.AddCartesian(
-                            X=start[0],
-                            Y=start[1],
-                            Z=start[2],
-                            Name= 'whatever', #it does not matter if a UserName is defined. CHECK return value.
-                            UserName="start_node_of_bar "+str(i),
-                            CSys='Global',
-                            MergeOff=True))
+        nodes = reflector["nodes"]
 
         PointObj.append(SapModel.PointObj.AddCartesian(
-                            X=end[0],
-                            Y=end[1],
-                            Z=end[2],
+                            X=nodes[i,0],
+                            Y=nodes[i,1],
+                            Z=nodes[i,2],
                             Name= 'whatever', #it does not matter if a UserName is defined. CHECK return value.
-                            UserName="end_node_of_bar "+str(i),
+                            UserName="node_"+str(i),
                             CSys='Global',
                             MergeOff=True))
 
 
     FrameObj = []
 
-    for i in range ((geometry_all["bars"].shape[0])):
+    for i in range ((reflector["bars"].shape[0])):
+
+        bars = reflector["bars"]
+
         FrameObj.append(SapModel.FrameObj.AddByPoint(
-                            Point1="start_node_of_bar "+str(i), #Point name
-                            Point2="end_node_of_bar "+str(i), #Point name
+                            Point1="node_"+str(bars[i,0]), #Point name
+                            Point2="node_"+str(bars[i,1]), #Point name
                             PropName="ROR_42.4x2.6",
                             Name='whatever',
-                            UserName='Bar '+str(i)))
+                            UserName='bar_'+str(i)))
 
     SapModel.GroupDef.SetGroup("Restraints")
     deegres_of_freedom = [True, True, True, True, True, True] #True is restrained, False is free
 
     Restraint = []
 
-    for i in range ((geometry_all["bars"].shape[0])):
-        for j in range ((geometry_all["fixtures"].shape[0])):
-            if np.all(np.equal(geometry_all["bars"][i][0], geometry_all["fixtures"][j])):
-                Restraint.append(SapModel.PointObj.SetRestraint(
-                    Name= "start_node_of_bar "+str(i), #Point UserName
-                    Value= deegres_of_freedom,
-                    ItemType= 0)) # 0, 1, 2 for object, group, selected objects in Name
-                SapModel.PointObj.SetGroupAssign(
-                    Name= "start_node_of_bar "+str(i), #PointObj name
-                    GroupName=  "Restraints", #Name of the group that the PointObj will be assigned
-                    Remove= False) #False to assign, True to remove
-                    #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
-            elif np.all(np.equal(geometry_all["bars"][i][1], geometry_all["fixtures"][j])):
-                Restraint.append(SapModel.PointObj.SetRestraint(
-                    Name= "end_node_of_bar "+str(i), #Point UserName
-                    Value= deegres_of_freedom,
-                    ItemType= 0)) # 0, 1, 2 for object, group, selected objects in Name
-                SapModel.PointObj.SetGroupAssign(
-                    Name= "end_node_of_bar "+str(i), #PointObj name
-                    GroupName=  "Restraints", #Name of the group that the PointObj will be assigned
-                    Remove= False) #False to assign, True to remove
-                    #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
+    for i in range ((reflector["fixtures"].shape[0])):
 
-    """
-    SapModel.CoordSys.SetCoordSys(
-        Name= "position_30", #+str(Geometry(config.example).angle_from_zenith),
-        X= 0,Y= 0,Z= 0.0,
-        RZ= 0,RY= 0,RX= 30.0) #str(Geometry(config.example).angle_from_zenith))
-    """
+        fixtures = reflector["fixtures"]
+        SapModel.PointObj.SetRestraint(
+            Name= "node_"+str(fixtures[i]), #Point UserName
+            Value= deegres_of_freedom,
+            ItemType= 0) # 0, 1, 2 for object, group, selected objects in Name
+        SapModel.PointObj.SetGroupAssign(
+            Name= "node_"+str(fixtures[i]), #PointObj name
+            GroupName=  "Restraints", #Name of the group that the PointObj will be assigned
+            Remove= False) #False to assign, True to remove
+            #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
 
-    load_pattern_1_name = 'mirror_tripod_nodal_forces'
+
+    load_pattern_1_name = "mirror_tripod_nodal_forces"
     SapModel.LoadPatterns.Add(
         Name= load_pattern_1_name,
         MyType= 3, #for live loads. For other loads check documentation
@@ -162,40 +139,25 @@ def SAP_2000_bridge(geometry, structural):
 
     SapModel.GroupDef.SetGroup("Tripod_nodes")
 
-    for i in range ((geometry_all["bars"].shape[0])):
-        for j in range((geometry_all["mirror_tripods"].shape[0])):
-            for k in range (geometry_all["mirror_tripods"].shape[1]):
-                if np.all(np.equal(geometry_all["bars"][i][0], geometry_all["mirror_tripods"][j][k])):
-                    SapModel.PointObj.SetLoadForce(
-                        Name= "start_node_of_bar "+str(i),
-                        LoadPat= load_pattern_1_name,
-                        Value = [0, 0, -0.6, 0, 0, 0], #in each DOF
-                        Replace= True, #Replaces existing loads
-                        CSys= "Global",
-                        ItemType= 0) # 0, 1, 2 for object, group, selected objects in Name
-                    SapModel.PointObj.SetGroupAssign(
-                        Name= "start_node_of_bar "+str(i), #PointObj name
-                        GroupName=  "Tripod_nodes", #Name of the group that the PointObj will be assigned
-                        Remove= False) #False to assign, True to remove
-                        #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
-                elif np.all(np.equal(geometry_all["bars"][i][1], geometry_all["mirror_tripods"][j][k])):
-                    SapModel.PointObj.SetLoadForce(
-                        Name= "end_node_of_bar "+str(i),
-                        LoadPat= load_pattern_1_name,
-                        Value = [0, 0, -0.6, 0, 0, 0], #in each DOF
-                        Replace= True, #Replaces existing loads
-                        CSys= "Global",
-                        ItemType= 0) # 0, 1, 2 for object, group, selected objects in Name
-                    SapModel.PointObj.SetGroupAssign(
-                        Name= "end_node_of_bar "+str(i), #PointObj name
-                        GroupName=  "Tripod_nodes", #Name of the group that the PointObj will be assigned
-                        Remove= False) #False to assign, True to remove
-                        #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
+    for i in range((reflector["mirror_tripods"].shape[0])):
+        for j in range((reflector["mirror_tripods"].shape[1])):
 
-    """
-    SapModel.SetPresentCoordSystem(
-        CSys= "position_30") #+str(Geometry(config.example).angle_from_zenith))
-    """
+            mirror_tripods = reflector["mirror_tripods"]
+
+            SapModel.PointObj.SetLoadForce(
+                Name= "node_"+str(mirror_tripods[i,j]),
+                LoadPat= load_pattern_1_name,
+                Value = [0, 0, -0.6, 0, 0, 0], #in each DOF
+                Replace= True, #Replaces existing loads
+                CSys= "Global",
+                ItemType= 0) # 0, 1, 2 for object, group, selected objects in Name
+            SapModel.PointObj.SetGroupAssign(
+                Name= "node_"+str(mirror_tripods[i,j]), #PointObj name
+                GroupName=  "Tripod_nodes", #Name of the group that the PointObj will be assigned
+                Remove= False) #False to assign, True to remove
+                #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
+
+
 
     SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
     SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_1_name)
