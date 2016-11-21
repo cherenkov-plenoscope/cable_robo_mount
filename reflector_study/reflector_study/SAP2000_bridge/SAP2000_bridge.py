@@ -109,12 +109,17 @@ def SAP_2000_bridge(reflector, structural):
             GroupName=  "Restraints", #Name of the group that the PointObj will be assigned
             Remove= False) #False to assign, True to remove
             #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
+    load_pattern_0_name = "self_weight"
     load_pattern_1_name = "facets_weight_on_mirror_tripod_nodes"
+    SapModel.LoadPatterns.Add(
+        Name= load_pattern_0_name,
+        MyType= 1, #for live loads. For other loads check documentation
+        SelfWTMultiplier= 1)
+        #AddLoadCase= True) #If true adds also a load case with the same name
     SapModel.LoadPatterns.Add(
         Name= load_pattern_1_name,
         MyType= 3, #for live loads. For other loads check documentation
         SelfWTMultiplier= 0)
-        #AddLoadCase= True) #If true adds also a load case with the same name
     SapModel.GroupDef.SetGroup("Tripod_nodes")
     for i in range((mirror_tripods.shape[0])):
         for j in range((mirror_tripods.shape[1])):
@@ -132,7 +137,7 @@ def SAP_2000_bridge(reflector, structural):
                 #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
 
     SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
-    SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_1_name)
+    SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_0_name)
     SapModel.Analyze.RunAnalysis()
     NumberResults = 0
     Name = "Tripod_nodes"
