@@ -4,7 +4,7 @@ import comtypes.client
 import numpy as np
 
 #maybe put in the __init__
-from . import config_loading
+from . import config as structural_config
 from .Structural import Structural
 from ..Geometry import Geometry
 from .. import config
@@ -23,7 +23,7 @@ Comments
 """
 
 geometry = Geometry(config.example)
-structural = Structural(config_loading.structural_dict)
+structural = Structural(structural_config.example)
 
 reflector = factory.generate_reflector(geometry)
 
