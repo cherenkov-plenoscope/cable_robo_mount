@@ -4,12 +4,11 @@ import comtypes.client
 import numpy as np
 
 #maybe put in the __init__
-from . import config as structural_config
+from . import config_loading
 from .Structural import Structural
 from ..Geometry import Geometry
 from .. import config
 from .. import factory
-from .. import non_flat_tools
 from . import SAP2000_bridge_tools
 
 """
@@ -23,7 +22,7 @@ Comments
 """
 
 geometry = Geometry(config.example)
-structural = Structural(structural_config.example)
+structural = Structural(config_loading.example)
 
 reflector = factory.generate_reflector(geometry)
 
@@ -110,12 +109,17 @@ for i in range ((fixtures.shape[0])):
         GroupName=  "Restraints", #Name of the group that the PointObj will be assigned
         Remove= False) #False to assign, True to remove
         #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
+load_pattern_0_name = "self_weight"
 load_pattern_1_name = "facets_weight_on_mirror_tripod_nodes"
+SapModel.LoadPatterns.Add(
+    Name= load_pattern_0_name,
+    MyType= 1, #for live loads. For other loads check documentation
+    SelfWTMultiplier= 1)
+    #AddLoadCase= True) #If true adds also a load case with the same name
 SapModel.LoadPatterns.Add(
     Name= load_pattern_1_name,
     MyType= 3, #for live loads. For other loads check documentation
     SelfWTMultiplier= 0)
-    #AddLoadCase= True) #If true adds also a load case with the same name
 SapModel.GroupDef.SetGroup("Tripod_nodes")
 for i in range((mirror_tripods.shape[0])):
     for j in range((mirror_tripods.shape[1])):
@@ -135,70 +139,6 @@ for i in range((mirror_tripods.shape[0])):
 SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
 SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_1_name)
 SapModel.Analyze.RunAnalysis()
-    load_pattern_0_name = "self_weight"
-    load_pattern_1_name = "facets_weight_on_mirror_tripod_nodes"
-    SapModel.LoadPatterns.Add(
-        Name= load_pattern_0_name,
-        MyType= 1, #for live loads. For other loads check documentation
-        SelfWTMultiplier= 1)
-        #AddLoadCase= True) #If true adds also a load case with the same name
-    SapModel.LoadPatterns.Add(
-        Name= load_pattern_1_name,
-        MyType= 3, #for live loads. For other loads check documentation
-        SelfWTMultiplier= 0)
-    SapModel.GroupDef.SetGroup("Tripod_nodes")
-    for i in range((mirror_tripods.shape[0])):
-        for j in range((mirror_tripods.shape[1])):
-            SapModel.PointObj.SetLoadForce(
-                Name= "node_"+str(mirror_tripods[i,j]),
-                LoadPat= load_pattern_1_name,
-                Value = [0, 0, -structural.tripod_nodes_weight, 0, 0, 0], #in each DOF
-                Replace= True, #Replaces existing loads
-                CSys= "Global",
-                ItemType= 0) # 0, 1, 2 for object, group, selected objects in Name
-            SapModel.PointObj.SetGroupAssign(
-                Name= "node_"+str(mirror_tripods[i,j]), #PointObj name
-                GroupName=  "Tripod_nodes", #Name of the group that the PointObj will be assigned
-                Remove= False) #False to assign, True to remove
-                #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
-
-    SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
-    SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_0_name)
-    SapModel.Analyze.RunAnalysis()
-    NumberResults = 0
-    Name = "Tripod_nodes"
-    mtypeElm = 2
-    Obj = []
-    Elm = []
-    LoadCase = []
-    StepType = []
-    StepNum = []
-    U1 = []
-    U2 = []
-    U3 = []
-    R1 = []
-    R2 = []
-    R3 = []
-    [NumberResults,
-    Obj,
-    Elm,
-    LoadCase,
-    StepType,
-    StepNum,
-    U1, U2, U3,
-    R1, R2, R3,
-    ret] = SapModel.Results.JointDispl(
-                Name,
-                mtypeElm, # 0, 1, 2, 3 for object, element, group, selected objects in Name
-                NumberResults,
-                Obj, #Creates an array with the object names
-                Elm, #Creates an array with the element names
-                LoadCase , #Creates an array with the load case names
-                StepType , #Creates an array with the step type, if any
-                StepNum, #Creates an array with the step number, if any
-                U1, U2, U3, #translational deformation
-                R1, R2, R3) #roatational deformation
-    Displacements_of_mirror_tripod_nodes = [Obj] + [U1] + [U2] + [U3] + [R1] + [R2] + [R3]
 
 NumberResults = 0
 Name = "Tripod_nodes"
