@@ -1,5 +1,3 @@
 *.egg-info
 __pycache__
-*.csv
-SAP2000_output
 .cache
