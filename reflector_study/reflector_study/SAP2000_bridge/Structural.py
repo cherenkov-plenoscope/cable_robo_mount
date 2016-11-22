@@ -19,7 +19,7 @@ class Structural(object):
 
     def _set_up_loading(self):
         self.total_facet_surface_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 #in kN/m**2
-        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * geometry.approximate_mirror_surface_area #in kN
+        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * geometry.facet_surface_area #in kN
         self.tripod_nodes_weight = self.total_facet_weight/3
 
     def __repr__(self):
