@@ -1,7 +1,6 @@
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-from ..non_flat_tools import node_position
 from . import add2ax
 
 def overview(bars, nodes, mirror_tripods=None, fixtures=None):
