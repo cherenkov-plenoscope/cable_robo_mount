@@ -131,12 +131,10 @@ for i in range((mirror_tripods.shape[0])):
             GroupName=  "Tripod_nodes", #Name of the group that the PointObj will be assigned
             Remove= False) #False to assign, True to remove
             #Itemtype= 0) # 0, 1, 2 for object, group, selected objects in Name
-<<<<<<< HEAD
 
 SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
 SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_1_name)
 SapModel.Analyze.RunAnalysis()
-=======
     load_pattern_0_name = "self_weight"
     load_pattern_1_name = "facets_weight_on_mirror_tripod_nodes"
     SapModel.LoadPatterns.Add(
@@ -201,7 +199,6 @@ SapModel.Analyze.RunAnalysis()
                 U1, U2, U3, #translational deformation
                 R1, R2, R3) #roatational deformation
     Displacements_of_mirror_tripod_nodes = [Obj] + [U1] + [U2] + [U3] + [R1] + [R2] + [R3]
->>>>>>> cdf3485d0f52d1c0e64aa7b463a676dfe94574d3
 
 NumberResults = 0
 Name = "Tripod_nodes"
