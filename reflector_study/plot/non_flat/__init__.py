@@ -1,4 +1,3 @@
-from . import non_flat
 from .overview import overview
 from .statistics import histogram_bar_length
 from .add2ax import add2ax_bars
