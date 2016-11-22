@@ -1,6 +1,6 @@
 import numpy as np
 from .xml import cylinder
-from ..non_flat_tools import bar_start_and_end_position
+from ..tools.non_flat.tools import bar_start_and_end_position
 
 
 def space_frame2mctracer(nodes, bars, radius, color):

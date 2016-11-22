@@ -1,4 +1,4 @@
-from ...non_flat_tools import node_position
+from ...tools.non_flat.tools import node_position
 
 def add2ax_mirror_tripods(ax, nodes, mirror_tripods):
     for mirror_tripod in mirror_tripods:

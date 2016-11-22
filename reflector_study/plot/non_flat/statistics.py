@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ...non_flat_tools import bar_length
+from ...tools.non_flat.tools import bar_length
 
 
 def histogram_bar_length(nodes, bars):

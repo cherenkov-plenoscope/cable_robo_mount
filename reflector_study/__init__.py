@@ -3,7 +3,6 @@ from . import space_frame_geometry
 from .Geometry import Geometry
 from . import factory
 from . import config
-from . import non_flat_tools
 from . import plot
 from . import mctracer_bridge
 from . import flatten

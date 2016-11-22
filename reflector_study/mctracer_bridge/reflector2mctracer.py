@@ -1,8 +1,8 @@
 import numpy as np
-from ..non_flat_tools import mirror_tripod_x
-from ..non_flat_tools import mirror_tripod_y
-from ..non_flat_tools import mirror_tripod_z
-from ..non_flat_tools import mirror_tripod_center
+from ..tools.non_flat.tools import mirror_tripod_x
+from ..tools.non_flat.tools import mirror_tripod_y
+from ..tools.non_flat.tools import mirror_tripod_z
+from ..tools.non_flat.tools import mirror_tripod_center
 
 
 class HomogenousTransformation(object):

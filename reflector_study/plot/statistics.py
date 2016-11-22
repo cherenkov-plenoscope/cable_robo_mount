@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ..flat_tools import bar_length
-from ..flat_tools import list_of_angles_between_neighbouring_bars
+from ..tools.tools import bar_length
+from ..tools.tools import list_of_angles_between_neighbouring_bars
 
 
 def histogram_bar_length(nodes, bars):

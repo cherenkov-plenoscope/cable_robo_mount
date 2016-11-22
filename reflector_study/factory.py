@@ -1,10 +1,10 @@
 import numpy as np
 from .space_frame_geometry import dish_space_frame_addresses_to_cartesian
-from .non_flat_tools import node_position
-from .non_flat_tools import node_in_range
-from .non_flat_tools import bar_in_range
-from .non_flat_tools import bar_start_and_end_position
-from .non_flat_tools import mirror_tripod_center
+from .tools.non_flat.tools import node_position
+from .tools.non_flat.tools import node_in_range
+from .tools.non_flat.tools import bar_in_range
+from .tools.non_flat.tools import bar_start_and_end_position
+from .tools.non_flat.tools import mirror_tripod_center
 from .flatten import flatten
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
