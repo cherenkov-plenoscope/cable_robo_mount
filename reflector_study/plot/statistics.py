@@ -29,6 +29,6 @@ def histogram_angles(joints, bars, nodes):
     plt.ylabel("#/1")
     plt.title('Angle between bars distribution')
     number_of_bins = int(np.sqrt(angles_array.shape[0]))
-    plt.hist(angles_array, bins=number_of_bins)
+    plt.hist(np.rad2deg(angles_array), bins=number_of_bins)
     plt.grid(True)
     plt.show()
