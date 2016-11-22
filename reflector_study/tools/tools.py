@@ -5,12 +5,6 @@ def bar_length(nodes, bar):
     end = nodes[bar[1]]
     return np.linalg.norm(end - start)
 
-def bars_length(nodes, bars):
-    bars_length = []
-    for i in range((bars.shape[0])):
-        bars_length.append(bar_length(nodes, bars[i]))
-    return bars_length
-
 def find_angle_between_two_bars(bar1, bar2, nodes):
     Vec1 = nodes[bar1[1]] - nodes[bar1[0]]
     Vec2 = nodes[bar2[1]] - nodes[bar2[0]]
