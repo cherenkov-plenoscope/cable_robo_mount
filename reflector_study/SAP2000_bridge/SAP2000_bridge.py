@@ -6,6 +6,7 @@ import numpy as np
 #maybe put in the __init__
 from . import config_loading
 from .Structural import Structural
+from .Rotation import Rotation
 from ..Geometry import Geometry
 from .. import config
 from .. import factory
@@ -23,12 +24,12 @@ Comments
 
 geometry = Geometry(config.example)
 structural = Structural(config_loading.example)
-
+rotation = Rotation(config_loading.example)
 reflector = factory.generate_reflector(geometry)
 
 
 #def SAP_2000_bridge(reflector, structural):
-nodes = reflector["nodes"]
+nodes = SAP2000_bridge_tools.generate_nodes_final_position(geometry, rotation)
 joints = reflector["joints"]
 bars = reflector["bars"]
 mirror_tripods = reflector["mirror_tripods"]

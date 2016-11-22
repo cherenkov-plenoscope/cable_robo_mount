@@ -1,8 +1,6 @@
 import numpy as np
-from ..factory import generate_nodes
 from . import Rotation
-from ..factory import generate_non_flat_reflector
-from ..flatten import generate_flat_nodes
+from ..factory import generate_reflector
 
 def from_zenith_to_new_position(
     xyz,
@@ -16,13 +14,8 @@ def from_zenith_to_new_position(
     return xyz
 
 def generate_nodes_final_position(geometry, rotation):
-    nodes_final = generate_nodes(geometry).copy()
-
-    for i in range(geometry.lattice_range_i):
-        for j in range(geometry.lattice_range_j):
-            for k in range(geometry.lattice_range_k):
-                nodes_final[i,j,k] = from_zenith_to_new_position(
-                    xyz= nodes_final[i,j,k],
-                    rotational_matrix= rotation.rotational_matrix)
-    nodes_final_flat = generate_flat_nodes(generate_non_flat_reflector(geometry))["nodes"]
-    return nodes_final_flat
+    nodes = generate_reflector(geometry)["nodes"]
+    rotated_nodes = np.zeros((nodes.shape[0], 3))
+    for i in range(nodes.shape[0]):
+        rotated_nodes[i] = from_zenith_to_new_position(nodes[i], rotation.rotational_matrix)
+    return rotated_nodes
