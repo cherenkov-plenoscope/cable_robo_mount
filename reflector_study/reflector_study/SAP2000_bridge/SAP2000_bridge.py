@@ -10,6 +10,7 @@ from ..Geometry import Geometry
 from .. import config
 from .. import factory
 from .. import non_flat_tools
+from . import SAP2000_bridge_tools
 
 """
 Comments
