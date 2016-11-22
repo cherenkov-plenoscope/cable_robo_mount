@@ -2,6 +2,7 @@ import json
 
 structural_dict = {
         "SAP_2000_directory": 'C:\Program Files\Computers and Structures\SAP2000 18\sap2000.exe',
+        "angle_from_zenith": 120, #in °, +90°
         'material': {
             'yielding_point': 235000.0, #in kPa
             "ultimate_point": 360000.0}, #in kPa
