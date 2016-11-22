@@ -2,6 +2,8 @@ import numpy as np
 from ..Geometry import Geometry
 from .. import config
 
+geometry =  Geometry(config.example)
+
 class Structural(object):
 
     def __init__(self, config_loading_dict):
@@ -16,7 +18,7 @@ class Structural(object):
 
     def _set_up_loading(self):
         self.total_facet_surface_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 #in kN/m**2
-        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * Geometry(config.example).approximate_mirror_surface_area #in kN
+        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * geometry.approximate_mirror_surface_area #in kN
         self.tripod_nodes_weight = self.total_facet_weight/3
 
     def __repr__(self):

@@ -134,6 +134,7 @@ for i in range((mirror_tripods.shape[0])):
 SapModel.File.Save("C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example")
 SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_1_name)
 SapModel.Analyze.RunAnalysis()
+
 NumberResults = 0
 Name = "Tripod_nodes"
 mtypeElm = 2
@@ -169,7 +170,6 @@ ret] = SapModel.Results.JointDispl(
             R1, R2, R3) #roatational deformation
 Displacements_of_mirror_tripod_nodes = [Obj] + [U1] + [U2] + [U3] + [R1] + [R2] + [R3]
 
-
 Name = "ALL"
 ItemTypeElm = 2
 NumberResults = 0
@@ -185,7 +185,6 @@ V3= []
 T= []
 M2= []
 M3= []
-
 [NumberResults,
 Obj,
 Elm,
@@ -207,9 +206,7 @@ ret] = SapModel.Results.FrameJointForce(
             StepNum ,
             P, V2, V3,
             T, M2, M3)
-
 Nodal_forces_of_all_bars = [Obj] + [PointElm] + [P] + [V2] + [V3] + [T] + [M2] + [M3]
-
 
 Name = "Restraints"
 ItemTypeElm = 2
@@ -225,7 +222,6 @@ F3= []
 M1= []
 M2= []
 M3= []
-
 [NumberResults,
 Obj,
 Elm,
@@ -245,7 +241,6 @@ ret] = SapModel.Results.JointReact(
             StepNum ,
             P, V2, V3,
             T, M2, M3)
-
 Reactions_of_fixtures_on_tension_ring = [Obj] + [F1] + [F2] + [F3] + [M1] + [M2] + [M3]
 
 #    return Displacements_of_mirror_tripod_nodes, Nodal_Forces , Reactions_of_fixtures_on_tension_ring
