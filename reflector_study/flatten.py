@@ -48,7 +48,7 @@ def flatten(reflector_ijk):
     for i, tripod in enumerate(reflector_ijk['mirror_tripods']):
         flat_mirror_tripods[i,0] = flat_nodes_indices[tripod[0][0],tripod[0][1],tripod[0][2]]
         flat_mirror_tripods[i,1] = flat_nodes_indices[tripod[1][0],tripod[1][1],tripod[1][2]]
-        flat_mirror_tripods[i,1] = flat_nodes_indices[tripod[2][0],tripod[2][1],tripod[2][2]]
+        flat_mirror_tripods[i,2] = flat_nodes_indices[tripod[2][0],tripod[2][1],tripod[2][2]]
 
     number_of_fixtures = reflector_ijk['fixtures'].shape[0]
     flat_fixtures = np.zeros(number_of_fixtures, dtype=np.int)
