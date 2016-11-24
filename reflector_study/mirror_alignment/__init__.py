@@ -2,3 +2,4 @@ from .mirror_alignment import PAP_offset_in_z
 from .mirror_alignment import HomTra
 from .mirror_alignment import ideal_mirror_facet_HomTra_in_Rframe
 from .mirror_alignment import ideal_mirror_facet_HomTras_in_Rframe
+from .mirror_alignment import ideal_tripod2facet_alignments
