@@ -90,16 +90,26 @@ def mmirror_tripod_HomTras_in_Rframe(reflector):
     return mirror_tripod_HomTras_Rframe
 
 
-def ideal_tripod2facet_alignments(reflector):
+def ideal_alignments_tripod2facet(reflector):
     facet_HomTras = ideal_mirror_facet_HomTras_in_Rframe(reflector)
     tripod_HomTras = mmirror_tripod_HomTras_in_Rframe(reflector)
 
-    mirror_alignemnt = []
+    tripod2facet = []
     for i in range(len(facet_HomTras)):
-        T_facet = facet_HomTras[i]
-        T_tripod = tripod_HomTras[i]
+        T_reflector2facet = facet_HomTras[i]
+        T_reflector2tripod = tripod_HomTras[i]
+        T_tripod2facet = T_reflector2tripod.inverse().multiply(T_reflector2facet)
+        tripod2facet.append(T_tripod2facet)
+    return tripod2facet
 
-        T_tripod2mirror = T_tripod.inverse().multiply(T_facet)
-        mirror_alignemnt.append(T_tripod2mirror)
 
-    return mirror_alignemnt
+def reflector2facets(reflector, alignment_tripod2facet):
+    tripod_HomTras = mmirror_tripod_HomTras_in_Rframe(reflector)
+
+    reflector2facet = []
+    for i in range(len(tripod_HomTras)):
+        T_tripod2facet = alignment_tripod2facet[i]
+        T_reflector2tripod = tripod_HomTras[i]
+        T_reflector2facet = T_reflector2tripod.multiply(T_tripod2facet)
+        reflector2facet.append(T_reflector2facet)
+    return reflector2facet
