@@ -1,4 +1,5 @@
 import numpy as np
+from .. import mirror_alignment
 
 def float2str(numeric_value):
     return "{:.9f}".format(numeric_value)
@@ -34,15 +35,16 @@ def hexagonal_imaging_mirror_facet(
     rotation,
     outer_radius,
     curvature_radius,
-    reflection_vs_wavelength):
+    reflection_vs_wavelength,
+    color):
     xml = '<sphere_cap_hexagonal>\n'
     xml+= '    <set_frame '
     xml+=           'name="'+name+'" '
     xml+=           'pos="'+tuple3(position)+'" '
-    xml+=           'rot="'+tuple3(rotation)+'">\n'
+    xml+=           'rot="'+tuple3(rotation)+'"/>\n'
     xml+= '    <set_surface '
     xml+=           'reflection_vs_wavelength="'+reflection_vs_wavelength+'" '
-    xml+=           'color="[75,75,75]"/>\n'
+    xml+=           'color="'+color+'"/>\n'
     xml+= '    <set_sphere_cap_hexagonal '
     xml+=           'curvature_radius="'+float2str(curvature_radius)+'" '
     xml+=           'outer_radius="'+float2str(outer_radius)+'"/>\n'
@@ -67,8 +69,10 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
     xml+= '</sphere>\n'
     return xml
 
-
-def bars2mctracer(nodes, bars, bar_radius, bar_color):
+def bars2mctracer(reflector):
+    nodes = reflector['nodes']
+    bars = reflector['bars']
+    bar_radius = reflector['geometry'].bar_outer_radius
     xml = ''
     for i, bar in enumerate(bars):
         start_pos = nodes[bar[0]]
@@ -78,11 +82,15 @@ def bars2mctracer(nodes, bars, bar_radius, bar_color):
             start_pos=start_pos,
             end_pos=end_pos,
             radius=bar_radius,
-            color=bar_color)
+            color='bar_color')
     return xml
 
 
-def facets2mctracer(HomTras_reflector2facet, reflector):
+def facets2mctracer(reflector, alignment):
+    HomTras_reflector2facet = mirror_alignment.reflector2facets(
+        reflector, 
+        alignment)
+
     xml = ''
     for i, HomTra_reflector2facet in enumerate(HomTras_reflector2facet):
 
@@ -92,6 +100,26 @@ def facets2mctracer(HomTras_reflector2facet, reflector):
             rotation=np.array([0,0,0]),
             outer_radius=reflector['geometry'].facet_outer_hex_radius,
             curvature_radius=reflector['geometry'].focal_length*2.0,
-            reflection_vs_wavelength='reflection_vs_wavelength'
+            reflection_vs_wavelength='reflection_vs_wavelength',
+            color='facet_color'
         )
     return xml
+
+
+def benchmark_scenery(reflector, alignment):
+    xml = ''
+    xml+= scenery_header()
+    xml+= constant_function(name='reflection_vs_wavelength', value=0.9)
+    xml+= constant_function(name='zero', value=0.0)
+    xml+= color(name='facet_color', rgb=np.array([75,75,75]))
+    xml+= color(name='bar_color', rgb=np.array([255,91,49]))
+    xml+= facets2mctracer(reflector=reflector, alignment=alignment)
+    xml+= bars2mctracer(reflector=reflector)
+    xml+= scenery_end()
+    return xml
+
+
+def write_xml(xml, path):
+    f = open(path, 'w')
+    f.write(xml)
+    f.close()
