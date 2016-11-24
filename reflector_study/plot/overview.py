@@ -19,3 +19,13 @@ def overview(bars, nodes, mirror_tripods=None, fixtures=None):
         add2ax.add2ax_fixtures(ax, nodes, fixtures)
 
     plt.show()
+
+
+def mirror_tripods(nodes, mirror_tripods):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlabel('x/m')
+    ax.set_ylabel('y/m')
+    ax.set_zlabel('z/m')
+    add2ax.add2ax_mirror_tripods(ax, nodes, mirror_tripods)
+    plt.show()
