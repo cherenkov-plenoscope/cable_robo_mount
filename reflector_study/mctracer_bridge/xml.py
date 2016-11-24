@@ -24,7 +24,7 @@ def color(name, rgb):
 
 def constant_function(name, value):
     xml = '<function name="'+name+'">'
-    xml+= '    <constant value="'+str(value)+'" lower_limit="200e-9" upper_limit="1200e-9"/>'
+    xml+= '    <constant value="'+float2str(value)+'" lower_limit="200e-9" upper_limit="1200e-9"/>'
     xml+= '</function>'
     return xml
 
@@ -58,6 +58,15 @@ def cylinder(name, start_pos, end_pos, radius, color):
     xml+= '    <set_surface reflection_vs_wavelength="zero" color="'+color+'"/>\n'
     xml+= '    <set_cylinder radius="'+float2str(radius)+'" start_pos="'+tuple3(start_pos)+'" end_pos="'+tuple3(end_pos)+'"/>\n'
     xml+= '</cylinder>\n'
+    return xml
+
+
+def disc(name, pos, rot, radius, color, refl):
+    xml = '<disc>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(pos)+'"/>\n'
+    xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
+    xml+= '    <set_disc radius="'+float2str(radius)+'"/>\n'
+    xml+= '</disc>\n'
     return xml
 
 
