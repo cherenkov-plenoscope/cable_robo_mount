@@ -1,12 +1,31 @@
 import numpy as np
 
-
 def float2str(numeric_value):
     return "{:.9f}".format(numeric_value)
 
 
 def tuple3(vec):
     return '['+float2str(vec[0])+','+float2str(vec[1])+','+float2str(vec[2])+']'
+
+
+def scenery_header():
+    xml = '<scenery author="Spiros Daglas. Sebastian Achim Mueller" comment="">\n'
+    return xml
+
+def scenery_end():
+    xml = '</scenery>\n'
+    return xml
+
+def color(name, rgb):
+    xml = '<color name="'+name+'" rgb="'+tuple3(rgb)+'"/>\n'
+    return xml
+
+
+def constant_function(name, value):
+    xml = '<function name="'+name+'">'
+    xml+= '    <constant value="'+str(value)+'" lower_limit="200e-9" upper_limit="1200e-9"/>'
+    xml+= '</function>'
+    return xml
 
 
 def hexagonal_imaging_mirror_facet(
@@ -60,4 +79,19 @@ def bars2mctracer(nodes, bars, bar_radius, bar_color):
             end_pos=end_pos,
             radius=bar_radius,
             color=bar_color)
+    return xml
+
+
+def facets2mctracer(HomTras_reflector2facet, reflector):
+    xml = ''
+    for i, HomTra_reflector2facet in enumerate(HomTras_reflector2facet):
+
+        xml+= hexagonal_imaging_mirror_facet(
+            name='facet_'+str(i),
+            position=HomTra_reflector2facet.translation(),
+            rotation=np.array([0,0,0]),
+            outer_radius=reflector['geometry'].facet_outer_hex_radius,
+            curvature_radius=reflector['geometry'].focal_length*2.0,
+            reflection_vs_wavelength='reflection_vs_wavelength'
+        )
     return xml
