@@ -19,3 +19,33 @@ def list_of_angles_between_neighbouring_bars(joints, bars, nodes):
             bar2 = bars[joints[i][j+1]]
             end_list.append([angle_between_bars(bar1=bar1, bar2=bar2, nodes=nodes)])
     return end_list
+
+
+def mirror_tripod_center(nodes, mirror_tripod):
+    A = nodes[mirror_tripod[0]]
+    B = nodes[mirror_tripod[1]]
+    C = nodes[mirror_tripod[2]]
+    return (A + B + C)/3.0
+
+
+def mirror_tripod_x(nodes, mirror_tripod):
+    A = nodes[mirror_tripod[0]]
+    B = nodes[mirror_tripod[1]]
+    AB = B - A
+    return AB/np.linalg.norm(AB)
+
+
+def mirror_tripod_z(nodes, mirror_tripod):
+    A = nodes[mirror_tripod[0]]
+    B = nodes[mirror_tripod[1]]
+    C = nodes[mirror_tripod[2]]
+    AB = B - A
+    AC = C - A
+    Z = np.cross(AB, AC)
+    return Z/np.linalg.norm(Z)
+
+
+def mirror_tripod_y(nodes, mirror_tripod):
+    z_axis = mirror_tripod_z(nodes, mirror_tripod)
+    x_axis = mirror_tripod_x(nodes, mirror_tripod)
+    return np.cross(x_axis, z_axis)
