@@ -47,3 +47,17 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
     xml+= '    <set_sphere radius="'+float2str(radius)+'"/>\n'
     xml+= '</sphere>\n'
     return xml
+
+
+def bars2mctracer(nodes, bars, bar_radius, bar_color):
+    xml = ''
+    for i, bar in enumerate(bars):
+        start_pos = nodes[bar[0]]
+        end_pos = nodes[bar[1]]
+        xml += cylinder(
+            name='bar_'+str(i),
+            start_pos=start_pos,
+            end_pos=end_pos,
+            radius=bar_radius,
+            color=bar_color)
+    return xml
