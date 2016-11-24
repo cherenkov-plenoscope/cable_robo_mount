@@ -56,7 +56,7 @@ def generate_nodes(geometry):
                     k=-k,
                     focal_length=geometry.focal_length,
                     davies_cotton_over_parabola_ratio=geometry.davies_cotton_over_parabola_ratio,
-                    scale=geometry.facet_spacing,
+                    scale=geometry.facet_spacing/2.0,
                     x_over_z_ratio=geometry.x_over_z_ratio)
     return nodes
 

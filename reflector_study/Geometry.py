@@ -25,9 +25,11 @@ class Geometry(object):
         self.facet_spacing_x = self.facet_spacing
         self.facet_spacing_y = self.facet_spacing*(np.sqrt(3.0))
 
+        self.lattice_spacing_i = self.facet_spacing_x/2.0
+        self.lattice_spacing_j = self.facet_spacing_y/2.0
 
-        self.lattice_radius_i = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_x))
-        self.lattice_radius_j = 1+int(np.ceil(self.max_outer_radius/self.facet_spacing_y))
+        self.lattice_radius_i = 1+int(np.ceil(self.max_outer_radius/self.lattice_spacing_i))
+        self.lattice_radius_j = 1+int(np.ceil(self.max_outer_radius/self.lattice_spacing_j))
 
         self.lattice_range_i = 2*self.lattice_radius_i+1
         self.lattice_range_j = 2*self.lattice_radius_j+1
