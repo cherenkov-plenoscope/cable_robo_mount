@@ -9,8 +9,8 @@ example = {
         "outter_radius": 0.05,
         "thickness": 0.003},
     "mirror_facet_weight": {
-        "surface_weight": 25.0,
-        "actuator_weight": 5.0,
+        "surface_weight": 20.0, #in kg/m2
+        "actuator_weight": 2.0, #in kg
         "wind_speed": 0.0,
         "seismic_acceleration": 3.6},
     }

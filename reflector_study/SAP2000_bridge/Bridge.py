@@ -3,15 +3,19 @@ import sys
 import comtypes.client
 import numpy as np
 
+from .Structural import Structural
+from . import config_loading
+structural = Structural(config_loading.example)
 
 class Bridge(object):
 
-    def __init__(self, config_dict):
-        self._SAP2000_directory = config_dict["SAP_2000_directory"]
-        self._yielding_point = config_dict["material"]["yielding_point"]
-        self._ultimate_point = config_dict["material"]["ultimate_point"]
-        self._outter_radius = config_dict["bar_properties"]["outter_radius"]
-        self._thickness = config_dict["bar_properties"]["thickness"]
+    def __init__(self, config_loading_dict):
+        self._SAP2000_directory = config_loading_dict["SAP_2000_directory"]
+        self._yielding_point = config_loading_dict["material"]["yielding_point"]
+        self._ultimate_point = config_loading_dict["material"]["ultimate_point"]
+        self._outter_radius = config_loading_dict["bar_properties"]["outter_radius"]
+        self._thickness = config_loading_dict["bar_properties"]["thickness"]
+
         self._execute_SAP2000()
 
     def _execute_SAP2000(self):
@@ -87,6 +91,36 @@ class Bridge(object):
         deegres_of_freedom = [True, True, True, True, True, True]
         for i in range ((fixtures.shape[0])):
             self._SapModel.PointObj.SetRestraint(
-                Name= "node_"+str(fixtures[i]), 
+                Name= "node_"+str(fixtures[i]),
                 Value= deegres_of_freedom,
                 ItemType= 0)
+
+    def group_of_nodes_definition(self, group_name, flat_part_of_reflector):
+        self._SapModel.GroupDef.SetGroup(group_name)
+        for i in range ((flat_part_of_reflector.shape[0])):
+            self._SapModel.PointObj.SetGroupAssign(
+                Name= "node_"+str(flat_part_of_reflector[i]), #PointObj name
+                GroupName=  group_name, #Name of the group that the PointObj will be assigned
+                Remove= False)
+
+    def load_scenario_dead(self, load_pattern_name= "dead_load"):
+        self._SapModel.LoadPatterns.Add(
+            Name= load_pattern_name,
+            MyType= 1,
+            SelfWTMultiplier= 1)
+
+    def load_scenario_facet_weight(self, reflector, load_pattern_name= "facets_live_load"):
+        mirror_tripods = reflector["mirror_tripods"]
+        self._SapModel.LoadPatterns.Add(
+            Name= load_pattern_name,
+            MyType= 3,
+            SelfWTMultiplier= 0)
+        for i in range((mirror_tripods.shape[0])):
+            for j in range((mirror_tripods.shape[1])):
+                self._SapModel.PointObj.SetLoadForce(
+                    Name= "node_"+str(mirror_tripods[i,j]),
+                    LoadPat= load_pattern_name,
+                    Value = [0, 0, -structural.tripod_nodes_weight, 0, 0, 0], #in each DOF
+                    Replace= True, #Replaces existing loads
+                    CSys= "Global",
+                    ItemType= 0) # 0, 1, 2
