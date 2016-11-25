@@ -169,7 +169,7 @@ class Bridge(object):
         return forces
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(group_name= "ALL", load_pattern_name)
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern("ALL", load_pattern_name)
         nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
         for i in range(len(relative_displacements)):
             nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
