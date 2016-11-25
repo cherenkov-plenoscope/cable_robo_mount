@@ -11,7 +11,7 @@ The procedure of running the necessary functions from the terminal in order to c
 - Clone robo_mount repository also in a directory in your computer
 - Insert the necessary data in the two config files in:
   - ./robo_mount/reflector_study/config.py
-  ![img](readme/config.geometry.jpg)
+  ![img](readme/config_geometry.jpg)
   - ./robo_mount/reflector_study/config_loading.py
   ![img](readme/config_loading.jpg)
 - Run the terminal and ipython
