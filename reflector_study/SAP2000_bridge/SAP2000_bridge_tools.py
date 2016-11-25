@@ -1,6 +1,4 @@
 import numpy as np
-from . import Rotation
-from ..factory import generate_reflector
 
 def from_zenith_to_new_position(
     xyz,
@@ -13,9 +11,10 @@ def from_zenith_to_new_position(
     xyz = np.array(xyz)
     return xyz
 
-def generate_nodes_final_position(geometry, rotation):
-    nodes = generate_reflector(geometry)["nodes"]
-    rotated_nodes = np.zeros((nodes.shape[0], 3))
-    for i in range(nodes.shape[0]):
-        rotated_nodes[i] = from_zenith_to_new_position(nodes[i], rotation.rotational_matrix)
-    return rotated_nodes
+def generate_reflector_roatated_position(reflector, rotation):
+    rotated_nodes = np.zeros((reflector["nodes"].shape[0], 3))
+    for i in range(reflector["nodes"].shape[0]):
+        rotated_nodes[i] = from_zenith_to_new_position(reflector["nodes"][i], rotation.rotational_matrix)
+    reflector_rotated = reflector.copy()
+    reflector_rotated["nodes"] = rotated_nodes
+    return reflector_rotated
