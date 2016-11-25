@@ -59,3 +59,34 @@ class Bridge(object):
             Tw= self._thickness,
             Color= -1,
             Notes= "pipe according to SIA263")
+
+    def nodes_definition(self, reflector):
+        nodes = reflector["nodes"]
+        for i in range ((nodes.shape[0])):
+            self._SapModel.PointObj.AddCartesian(
+                X=nodes[i,0],
+                Y=nodes[i,1],
+                Z=nodes[i,2],
+                Name= 'whatever',
+                UserName="node_"+str(i),
+                CSys='Global',
+                MergeOff=True)
+
+    def frames_definition(self, reflector):
+        bars = reflector["bars"]
+        for i in range ((bars.shape[0])):
+            self._SapModel.FrameObj.AddByPoint(
+                Point1="node_"+str(bars[i,0]), #Point name
+                Point2="node_"+str(bars[i,1]), #Point name
+                PropName="ROR_"+str(1000 * self._outter_radius)+"x"+str(1000 * self._thickness),
+                Name='whatever',
+                UserName='bar_'+str(i))
+
+    def restraints_definition(self, reflector):
+        fixtures = reflector["fixtures"]
+        deegres_of_freedom = [True, True, True, True, True, True]
+        for i in range ((fixtures.shape[0])):
+            self._SapModel.PointObj.SetRestraint(
+                Name= "node_"+str(fixtures[i]), 
+                Value= deegres_of_freedom,
+                ItemType= 0)
