@@ -140,7 +140,10 @@ class Bridge(object):
                     Obj, Elm,
                     LoadCase, StepType, StepNum,
                     U1, U2, U3, R1, R2, R3)
-        return [Obj]+[U1]+[U2]+[U3]+[R1]+[R2]+[R3]
+        relative_displacements = []
+        for i in range(len(Obj)):
+            relative_displacements.append([Obj[i], U1[i], U2[i], U3[i], R1[i], R2[i], R3[i]])
+        return relative_displacements
 
     def get_forces_for_group_of_bars_for_selected_load_pattern(self, load_pattern_name, group_name= "ALL"):
         self._SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_name)
@@ -160,4 +163,18 @@ class Bridge(object):
                     Obj, Elm, PointElm,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
-        return [Obj]+[PointElm]+[P]+[V2]+[V3]+[T]+[M2]+[M3]
+        forces = []
+        for i in range(len(Obj)):
+            forces.append([Obj[i], PointElm[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        return forces
+
+    def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(group_name= "ALL", load_pattern_name)
+        nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
+        for i in range(len(relative_displacements)):
+            nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
+            nodes_deformed[i][1] = reflector["nodes"][i][1] + relative_displacements[i][2]
+            nodes_deformed[i][2] = reflector["nodes"][i][2] + relative_displacements[i][3]
+        reflector_deformed = reflector.copy()
+        reflector_deformed["nodes"] = nodes_deformed
+        return reflector, reflector_deformed
