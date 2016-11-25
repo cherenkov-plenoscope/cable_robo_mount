@@ -42,9 +42,12 @@ bridge.run_analysis()
 ~~~~
 Load scenarios are inserted and the analysis is run.
 ~~~~
-reflector, reflector_deformed = bridge.get_deformed_reflector_for_group_of_nodes_for_selected_load_pattern(reflector, load_pattern_name="dead_load", group_name= "ALL")
+reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load
+_pattern(reflector, "dead_load")
 ~~~~
 The final results are obtained.
+
+*By using the function generate_reflector_roatated_position(reflector, rotation) in ./robo_mount/reflector_study/SAP2000_bridge/SAP2000_bridge_tools one can find the rotated reflector geometry. By simply replacing it with the original reflector, the final deformations for the rotated reflector can be obtained.*
 
 ---
 **One can explore many more functions built in the Bridge class.**
