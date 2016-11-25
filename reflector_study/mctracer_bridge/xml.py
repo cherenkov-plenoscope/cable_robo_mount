@@ -61,11 +61,13 @@ def cylinder(name, start_pos, end_pos, radius, color):
     return xml
 
 
-def disc(name, pos, rot, radius, color, refl):
+def disc(name, pos, rot, radius, color, refl, sensor_id=None):
     xml = '<disc>\n'
     xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(pos)+'"/>\n'
     xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
     xml+= '    <set_disc radius="'+float2str(radius)+'"/>\n'
+    if sensor_id is not None:
+        xml+= '    <sensitive/ id="'+str(sensor_id)+'">\n'
     xml+= '</disc>\n'
     return xml
 
@@ -115,6 +117,20 @@ def facets2mctracer(reflector, alignment):
     return xml
 
 
+def image_sensor(focal_point, field_of_view):
+    sensor_pos = focal_point
+    sensor_radius = np.tan(field_of_view/2.0)*focal_length
+
+    housing_pos = focal_point + np.array([0, 0, 0.001])
+    housing_radius = sensor_radius*1.1
+
+    rot = np.array([0., 0., 0.])
+    xml = ''
+    xml+= disc(name='sensor_screen', pos=sensor_pos, rot=rot, radius=sensor_radius, color='green', refl='zero', sensor_id=0)
+    xml+= disc(name='sensor_housing', pos=housing_pos, rot=rot, radius=housing_radius, color='grey', refl='zero')
+    return xml
+
+
 def benchmark_scenery(reflector, alignment):
     xml = ''
     xml+= scenery_header()
@@ -124,6 +140,7 @@ def benchmark_scenery(reflector, alignment):
     xml+= color(name='bar_color', rgb=np.array([255,91,49]))
     xml+= facets2mctracer(reflector=reflector, alignment=alignment)
     xml+= bars2mctracer(reflector=reflector)
+    xml+= image_sensor(focal_length=reflector['geometry'].focal_length, field_of_view=np.deg2rad(6.5))
     xml+= scenery_end()
     return xml
 
