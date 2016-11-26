@@ -42,8 +42,7 @@ bridge.run_analysis()
 ~~~~
 Load scenarios are inserted and the analysis is run.
 ~~~~
-reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load
-_pattern(reflector, "dead_load")
+reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load_pattern(reflector, "dead_load")
 ~~~~
 The final results are obtained.
 
