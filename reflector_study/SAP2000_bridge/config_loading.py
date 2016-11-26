@@ -1,6 +1,6 @@
 
 example = {
-    "SAP_2000_directory": "C:\Program Files\Computers and Structures\SAP2000 18\sap2000.exe",
+    "SAP_2000_directory": "C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe",
     "angle_from_zenith": 30, #in °
     "material": {
         "yielding_point": 235000.0, #in kPa
