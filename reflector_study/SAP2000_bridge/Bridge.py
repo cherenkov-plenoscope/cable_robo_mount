@@ -122,7 +122,8 @@ class Bridge(object):
         self.save_model()
         self._SapModel.Analyze.RunAnalysis()
 
-    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, group_name, load_pattern_name):
+    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name= "ALL"):
+        self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_name)
 
         NumberResults = 0
@@ -146,6 +147,7 @@ class Bridge(object):
         return relative_displacements
 
     def get_forces_for_group_of_bars_for_selected_load_pattern(self, load_pattern_name, group_name= "ALL"):
+        self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_name)
 
         Name = group_name
@@ -169,7 +171,7 @@ class Bridge(object):
         return forces
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern("ALL", load_pattern_name)
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(load_pattern_name)
         nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
         for i in range(len(relative_displacements)):
             nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
@@ -178,3 +180,10 @@ class Bridge(object):
         reflector_deformed = reflector.copy()
         reflector_deformed["nodes"] = nodes_deformed
         return reflector, reflector_deformed
+
+    def __repr__(self):
+        out = "SAP2000_OAPI"
+        return out
+
+    def exit_application(self, file_save= "True"):
+        self._SapObject.ApplicationExit(file_save)

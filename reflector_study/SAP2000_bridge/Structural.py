@@ -24,5 +24,5 @@ class Structural(object):
 
     def __repr__(self):
         info = 'Structural and loading assumptions'
-        info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kN/m2)"
+        info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kg/m2)"
         return info
