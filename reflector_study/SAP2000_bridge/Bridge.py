@@ -78,7 +78,7 @@ class Bridge(object):
 
     def restraints_definition(self, reflector):
         fixtures = reflector["fixtures"]
-        deegres_of_freedom = [True, True, True, True, True, True]
+        deegres_of_freedom = [True, True, True, False, False, False]
         for i in range ((fixtures.shape[0])):
             self._SapModel.PointObj.SetRestraint(
                 Name= "node_"+str(fixtures[i]),

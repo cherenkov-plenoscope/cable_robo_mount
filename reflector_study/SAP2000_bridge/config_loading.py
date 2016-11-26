@@ -6,8 +6,8 @@ example = {
         "yielding_point": 235000.0, #in kPa
         "ultimate_point": 360000.0}, #in kPa
     "bar_properties": {
-        "outter_radius": 0.05,
-        "thickness": 0.003},
+        "outter_radius": 0.0424,
+        "thickness": 0.0026},
     "mirror_facet_weight": {
         "surface_weight": 20.0, #in kg/m2
         "actuator_weight": 2.0, #in kg

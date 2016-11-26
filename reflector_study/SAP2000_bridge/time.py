@@ -1,4 +1,4 @@
-Dish 50m
+Dish 50m 2Layers
 
 import time
 start = time.time()
@@ -12,8 +12,9 @@ bridge.frames_definition(reflector)
 bridge.restraints_definition(reflector)
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(reflector)
+bridge.load_combination_2LP_definition()
 bridge.run_analysis()
-reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load_pattern(reflector, "facets_live_load")
+reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load_combination(reflector, "dead+live")
 end = time.time()
 print(end - start)
 22.7 sec
@@ -27,6 +28,7 @@ bridge.frames_definition(reflector)
 bridge.restraints_definition(reflector)
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(reflector)
+bridge.load_combination_2LP_definition()
 bridge.run_analysis()
 reflector, reflector_deformed= bridge.get_deformed_reflector_for_all_nodes_for_selected_load_pattern(reflector, "dead_load")
 end = time.time()

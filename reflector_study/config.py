@@ -1,7 +1,7 @@
 import json
 
 example = {
-    'optics': { 
+    'optics': {
         'focal_length': 75.0,
         'davies_cotton_over_parabola_ratio': 0.0,
         'max_outer_radius': 25.0,
@@ -20,7 +20,7 @@ example = {
             'surface_weight': 25.0,
             'actuator_weight': 5.0
         },
-        'number_of_layers': 2,
+        'number_of_layers': 3,
         'x_over_z_ratio': 1.2
     }
 }
@@ -30,7 +30,7 @@ def write(config, path):
         json.dump(config, outfile, indent=4)
 
 def read(path):
-    config = {} 
+    config = {}
     with open(path, 'r') as input_file:
         config = json.load(input_file)
     return config
