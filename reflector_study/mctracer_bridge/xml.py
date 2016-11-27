@@ -67,7 +67,7 @@ def disc(name, pos, rot, radius, color, refl, sensor_id=None):
     xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
     xml+= '    <set_disc radius="'+float2str(radius)+'"/>\n'
     if sensor_id is not None:
-        xml+= '    <sensitive/ id="'+str(sensor_id)+'">\n'
+        xml+= '    <sensitive id="'+str(sensor_id)+'"/>\n'
     xml+= '</disc>\n'
     return xml
 
@@ -117,11 +117,11 @@ def facets2mctracer(reflector, alignment):
     return xml
 
 
-def image_sensor(focal_point, field_of_view):
-    sensor_pos = focal_point
+def image_sensor(focal_length, field_of_view):
+    sensor_pos = np.array([0, 0, focal_length])
     sensor_radius = np.tan(field_of_view/2.0)*focal_length
 
-    housing_pos = focal_point + np.array([0, 0, 0.001])
+    housing_pos = sensor_pos + np.array([0, 0, 0.001])
     housing_radius = sensor_radius*1.1
 
     rot = np.array([0., 0., 0.])
@@ -138,6 +138,8 @@ def benchmark_scenery(reflector, alignment):
     xml+= constant_function(name='zero', value=0.0)
     xml+= color(name='facet_color', rgb=np.array([75,75,75]))
     xml+= color(name='bar_color', rgb=np.array([255,91,49]))
+    xml+= color(name='green', rgb=np.array([25,255,57]))
+    xml+= color(name='grey', rgb=np.array([64,64,64]))
     xml+= facets2mctracer(reflector=reflector, alignment=alignment)
     xml+= bars2mctracer(reflector=reflector)
     xml+= image_sensor(focal_length=reflector['geometry'].focal_length, field_of_view=np.deg2rad(6.5))
@@ -149,3 +151,9 @@ def write_xml(xml, path):
     f = open(path, 'w')
     f.write(xml)
     f.close()
+
+
+def reflector2scenery(reflector, alignment, path):
+    write_xml(
+        benchmark_scenery(reflector, alignment),
+        path)
