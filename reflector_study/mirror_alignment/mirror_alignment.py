@@ -56,7 +56,7 @@ def ideal_mirror_facet_HomTras_in_Rframe(reflector):
 
     tripod_centers = tools.mirror_tripod_centers(nodes, tripods)
     facet_centers = tripod_centers.copy()
-    facet_centers[:,2] += reflector['geometry'].facet_inner_hex_radius/10.0
+    facet_centers[:,2] += 2.0*reflector['geometry'].bar_outer_radius
 
     PAP_offset = PAP_offset_in_z(focal_length, facet_centers)
 
