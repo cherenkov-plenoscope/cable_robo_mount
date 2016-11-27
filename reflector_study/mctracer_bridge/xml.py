@@ -63,7 +63,7 @@ def cylinder(name, start_pos, end_pos, radius, color):
 
 def disc(name, pos, rot, radius, color, refl, sensor_id=None):
     xml = '<disc>\n'
-    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(pos)+'"/>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
     xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
     xml+= '    <set_disc radius="'+float2str(radius)+'"/>\n'
     if sensor_id is not None:
@@ -115,6 +115,14 @@ def facets2mctracer(reflector, alignment):
             color='facet_color'
         )
     return xml
+
+
+def facet_rot_axis_and_angle(HomTra_reflector2facet):
+    unit_z = np.array([0.0, 0.0, 1.0])
+    unit_z_in_Rframe = HomTra_reflector2facet.transformed_orientation(unit_z)
+    rot_axis = np.cross(unit_z, unit_z_in_Rframe)
+    angle_to_unit_z = np.arccos(np.dot(unit_z, unit_z_in_Rframe))
+    return rot_axis, angle_to_unit_z
 
 
 def image_sensor(focal_length, field_of_view):
