@@ -96,5 +96,23 @@ def test_HomTra_all():
     assert np.isclose(t.transformed_position_inverse(B), t.inverse().transformed_position(B), 1e-9).all()
     assert np.isclose(t.transformed_position_inverse(C), t.inverse().transformed_position(C), 1e-9).all()
 
+def test_tait_bryan_eye():
+    Rx = 0.0
+    Ry = 0.0
+    Rz = 0.0
 
+    t = rs.HomTra()
+    t.set_rotation_tait_bryan_angles(Rx, Ry, Rz)
 
+    # rotation shall be eye3
+    assert t.T[0,0] == 1.0
+    assert t.T[0,1] == 0.0
+    assert t.T[0,2] == 0.0
+
+    assert t.T[1,0] == 0.0
+    assert t.T[1,1] == 1.0
+    assert t.T[1,2] == 0.0
+
+    assert t.T[2,0] == 0.0
+    assert t.T[2,1] == 0.0
+    assert t.T[2,2] == 1.0

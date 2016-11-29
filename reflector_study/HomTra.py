@@ -55,6 +55,26 @@ class HomTra(object):
         self.T[2,1] = rz*ry*(1.0-cosR)+rx*sinR;
         self.T[2,2] = cosR +  rz*rz*(1.0-cosR);
 
+    def set_rotation_tait_bryan_angles(self, Rx, Ry, Rz):
+        cosRx = np.cos(Rx)
+        cosRy = np.cos(Ry)
+        cosRz = np.cos(Rz)
+        sinRx = np.sin(Rx)
+        sinRy = np.sin(Ry)
+        sinRz = np.sin(Rz)
+        # first row
+        self.T[0,0] = cosRy*cosRz
+        self.T[0,1] = cosRx*sinRz + sinRx*sinRy*cosRz
+        self.T[0,2] = sinRx*sinRz - cosRx*sinRy*cosRz
+        # second row
+        self.T[1,0] =-cosRy*sinRz
+        self.T[1,1] = cosRx*cosRz - sinRx*sinRy*sinRz
+        self.T[1,2] = sinRx*cosRz + cosRx*sinRy*sinRz
+        # third row
+        self.T[2,0] = sinRy
+        self.T[2,1] =-sinRx*cosRy
+        self.T[2,2] = cosRx*cosRy
+
     def transformed_position(self, pos):
         return np.array([
             #x
@@ -96,34 +116,34 @@ class HomTra(object):
     def transformed_orientation(self, ori):
         return np.array([
             #x
-            pos[0]*self.T[0,0] + 
-            pos[1]*self.T[0,1] + 
-            pos[2]*self.T[0,2],
+            ori[0]*self.T[0,0] + 
+            ori[1]*self.T[0,1] + 
+            ori[2]*self.T[0,2],
             #y
-            pos[0]*self.T[1,0] + 
-            pos[1]*self.T[1,1] + 
-            pos[2]*self.T[1,2],
+            ori[0]*self.T[1,0] + 
+            ori[1]*self.T[1,1] + 
+            ori[2]*self.T[1,2],
             #z
-            pos[0]*self.T[2,0] + 
-            pos[1]*self.T[2,1] + 
-            pos[2]*self.T[2,2]
+            ori[0]*self.T[2,0] + 
+            ori[1]*self.T[2,1] + 
+            ori[2]*self.T[2,2]
         ])
 
 
     def transformed_orientation_inverse(self, ori):
         return np.array([
             #x
-            pos[0]*self.T[0,0] + 
-            pos[1]*self.T[1,0] + 
-            pos[2]*self.T[2,0],
+            ori[0]*self.T[0,0] + 
+            ori[1]*self.T[1,0] + 
+            ori[2]*self.T[2,0],
             #y
-            pos[0]*self.T[0,1] + 
-            pos[1]*self.T[1,1] + 
-            pos[2]*self.T[2,1],
+            ori[0]*self.T[0,1] + 
+            ori[1]*self.T[1,1] + 
+            ori[2]*self.T[2,1],
             #z
-            pos[0]*self.T[0,2] + 
-            pos[1]*self.T[1,2] + 
-            pos[2]*self.T[2,2]
+            ori[0]*self.T[0,2] + 
+            ori[1]*self.T[1,2] + 
+            ori[2]*self.T[2,2]
         ])        
 
     def __repr__(self):
