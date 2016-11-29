@@ -9,7 +9,7 @@ def test_principal_aperture_plane_offset_z_for_Davies_Cotton():
     nodes = reflector['nodes']
     tripods = reflector['mirror_tripods']
     tripod_centers = rs.tools.mirror_tripod_centers(nodes, tripods)
-    offset = rs.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
+    offset = rs.mirror_alignment.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
     # Expext the offset to be zero
     assert np.abs(offset) < 1e-6
 
@@ -22,7 +22,7 @@ def test_principal_aperture_plane_offset_z_for_hybrid():
     nodes = reflector['nodes']
     tripods = reflector['mirror_tripods']
     tripod_centers = rs.tools.mirror_tripod_centers(nodes, tripods)
-    offset = rs.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
+    offset = rs.mirror_alignment.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
     # Expext the offset to be half the pure parabola offset
     assert np.abs(offset + 1.054088511832219/2) < 2e-3
 
@@ -35,6 +35,6 @@ def test_principal_aperture_plane_offset_z_for_pure_parabola():
     nodes = reflector['nodes']
     tripods = reflector['mirror_tripods']
     tripod_centers = rs.tools.mirror_tripod_centers(nodes, tripods)
-    offset = rs.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
+    offset = rs.mirror_alignment.mirror_alignment.PAP_offset_in_z(focal_length, tripod_centers)
     # Expext the offset to be maximal
     assert np.abs(offset + 1.054088511832219) < 1e-3
