@@ -18,11 +18,11 @@ class Structural(object):
         self._set_up_loading()
 
     def _set_up_loading(self):
-        self.total_facet_surface_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 #in kN/m**2
-        self.total_facet_weight = (self.facet_surface_weight + self.facet_actuator_weight) / 100 * geometry.facet_surface_area #in kN
-        self.tripod_nodes_weight = self.total_facet_weight/3
+        self.total_facet_surface_weight = self.facet_surface_weight / 100 #in kN/m**2
+        self.total_facet_weight = self.total_facet_surface_weight * geometry.facet_surface_area #in kN
+        self.tripod_nodes_weight = self.total_facet_weight / 3 + self.facet_actuator_weight / 100 #in kN
 
     def __repr__(self):
         info = 'Structural and loading assumptions'
-        info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kN/m2)"
+        info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kg/m2)"
         return info

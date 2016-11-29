@@ -11,13 +11,10 @@ def from_zenith_to_new_position(
     xyz = np.array(xyz)
     return xyz
 
-def generate_nodes_final_position(geometry):
-    nodes_final = ft.generate_nodes(geometry).copy()
-
-    for i in range(geometry.lattice_range_i):
-        for j in range(geometry.lattice_range_j):
-            for k in range(geometry.lattice_range_k):
-                nodes_final[i,j,k] = from_zenith_to_new_position(
-                    xyz= nodes_final[i,j,k],
-                    rotational_matrix= geometry.rotational_matrix)
-    return nodes_final
+def generate_reflector_roatated_position(reflector, rotation):
+    rotated_nodes = np.zeros((reflector["nodes"].shape[0], 3))
+    for i in range(reflector["nodes"].shape[0]):
+        rotated_nodes[i] = from_zenith_to_new_position(reflector["nodes"][i], rotation.rotational_matrix)
+    reflector_rotated = reflector.copy()
+    reflector_rotated["nodes"] = rotated_nodes
+    return reflector_rotated
