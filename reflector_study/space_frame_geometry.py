@@ -7,8 +7,8 @@ def flat_space_frame_addresses_to_cartesian(
     scale=1.0, 
     x_over_z_ratio=1.0):
 
-    x = i + 0.5*k
-    y = np.sqrt(3)*(j + 0.5*k) - 2.0/np.sqrt(3.0)
+    x = np.sqrt(3)*(j + 0.5*k) - 2.0/np.sqrt(3.0)
+    y = i + 0.5*k
     z = k*x_over_z_ratio
     return scale*np.array([x,y,z])
 

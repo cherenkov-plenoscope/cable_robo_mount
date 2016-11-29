@@ -28,6 +28,13 @@ def mirror_tripod_center(nodes, mirror_tripod):
     return (A + B + C)/3.0
 
 
+def mirror_tripod_centers(nodes, mirror_tripods):
+    tripod_centers = np.zeros(shape=(mirror_tripods.shape[0],3), dtype=np.float64)
+    for i, tripod in enumerate(mirror_tripods):
+        tripod_centers[i,:] = mirror_tripod_center(nodes, tripod)
+    return np.array(tripod_centers)
+
+
 def mirror_tripod_x(nodes, mirror_tripod):
     A = nodes[mirror_tripod[0]]
     B = nodes[mirror_tripod[1]]

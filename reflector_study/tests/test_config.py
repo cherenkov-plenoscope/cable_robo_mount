@@ -1,4 +1,3 @@
-import pytest
 import reflector_study as rs
 import tempfile
 import os

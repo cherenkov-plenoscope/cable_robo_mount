@@ -12,6 +12,7 @@ class Geometry(object):
 
         self.number_of_layers = config_dict['space_frame']['number_of_layers']
         self.x_over_z_ratio = config_dict['space_frame']['x_over_z_ratio']
+        self.bar_outer_radius = config_dict['space_frame']['bar']['outer_radius']
         self._set_up_geometry()
 
 
