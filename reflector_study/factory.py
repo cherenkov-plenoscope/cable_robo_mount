@@ -6,6 +6,7 @@ from .tools.non_flat.tools import bar_in_range
 from .tools.non_flat.tools import bar_start_and_end_position
 from .tools.non_flat.tools import mirror_tripod_center
 from .flatten import flatten
+from .tools.tools import fixtures_according_to_joints
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
     if not bar_in_range(nodes, bar):
@@ -153,5 +154,8 @@ def generate_non_flat_reflector(geometry):
         'geometry': geometry}
 
 
-def generate_reflector(geometry):
+def generate_reflector_old(geometry):
     return flatten(generate_non_flat_reflector(geometry))
+
+def generate_reflector(geometry):
+    return fixtures_according_to_joints(generate_reflector_old(geometry))
