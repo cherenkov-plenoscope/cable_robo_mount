@@ -1,11 +1,13 @@
 import paramiko
+import os
 
 class RayTracingMachine(object):
     """
     Connects to a remote machine via SSH.
     Can execute remote commands and put or get files.
-    The public SSH RSA key of the client must be in the list of authorized_keys.
-    This way, no password is needed.
+    The public SSH RSA key of the client must be in the list of authorized_keys
+    of the remote host. Further, a SSH server must be running on the 
+    remote host.
 
     parameter
     ---------
@@ -19,10 +21,10 @@ class RayTracingMachine(object):
         self._hostname = hostname
         self._username = username
         self._key_path = key_path
-        self._ssh = self._enable_connection_without_password()
+        self._ssh = self._make_ssh_client()
         self._sftp = self._ssh.open_sftp()
 
-    def _enable_connection_without_password(self):
+    def _make_ssh_client(self):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(
@@ -32,14 +34,51 @@ class RayTracingMachine(object):
         return ssh
 
     def put(self, localpath, remotepath):
+        """
+        Copies the localpath of the local host to the remotepath on the 
+        remote host.
+        """
         self._sftp.put(localpath=localpath, remotepath=remotepath)
 
     def get(self, remotepath, localpath):
+        """
+        Copies the remotepath from the remote host to the localpath
+        of the local host.
+        """
         self._sftp.get(remotepath=remotepath, localpath=localpath)
 
-    def call(self, target):
-        stdin, stdout, stderr = self._ssh.exec_command(target)
-        return [stdin, stdout, stderr]
+    def execute(self, command, out_path=None):
+        """
+        Executes the command on the remote host and returns the exit status
+        of the command when the process on the remote host is done (blocking).
+
+        Parameters
+        ----------
+        command         The command string to be executed on the remote host
+
+        [out_path]      A path to store the stdout and stderr streams of the 
+                        command. Two text files will be created:
+                        'out_path.stdout' and 'out_path.stderr'
+                        The suffix 'stdout' and 'stderr' is appended to the 
+                        out_path.
+        """
+        transport = self._ssh.get_transport()
+        channel = transport.open_session()
+        channel.exec_command(command)
+        if out_path is not None:
+            stdout = channel.makefile('r') 
+            stderr = channel.makefile_stderr('r')
+        exit_status = channel.recv_exit_status()
+        if out_path is not None:
+            self._write_out_stream_to_file(stdout, out_path+'.stdout')
+            self._write_out_stream_to_file(stderr, out_path+'.stderr')
+        return exit_status
+
+    def _write_out_stream_to_file(self, stream, path):
+        f = open(path, 'w')
+        for line in stream.readlines():
+            f.write(line)
+        f.close()        
 
     def __repr__(self):
         out = 'RayTracingMachine('
