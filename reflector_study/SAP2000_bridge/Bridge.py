@@ -105,6 +105,12 @@ class Bridge(object):
                 GroupName=  group_name, #Name of the group that the PointObj will be assigned
                 Remove= False)
 
+    def _material_property_modifiers(self, material_name= "densless_shell"):
+        stiffness_mass_weight_modifiers= [0,0,0,0,0,0,0,0,0,0]
+        self._SapModel.PropArea.SetModifiers(
+            Name= material_name,
+            Value= stiffness_mass_weight_modifiers)
+
     def _area_object_with_points_definition(self, reflector, points_number= 3):
         mirror_tripods= reflector["mirror_tripods"].copy().tolist()
         nodes_of_mirror_tripod= []
@@ -142,8 +148,30 @@ class Bridge(object):
                     CSys= "Global",
                     ItemType= 0) # 0, 1, 2
 
-    #def load_scenario_wind(self, reflector, load_pattern_name= "wind"):
-
+    def load_scenario_wind(self, reflector, load_pattern_name= "wind"):
+        self._SapModel.LoadPatterns.Add(
+            Name= load_pattern_name,
+            MyType= 6,
+            SelfWTMultiplier= 0)
+        self._shell_definition()
+        self._material_property_modifiers()
+        self._area_object_with_points_definition(reflector)
+        self._SapModel.LoadPatterns.AutoWind.SetEurocode12005_1(
+            Name= load_pattern_name,
+            ExposureFrom= 2, #area objects
+            DirAngle= 0.0,
+            Cpw= 0.0,
+            Cpl= 0.0,
+            UserZ= False,
+            TopZ= 0.0,
+            BottomZ= 0.0,
+            WindSpeed= 100,
+            Terrain= 2,
+            Orography= 1,
+            K1= 1.0,
+            CsCd= 1.0,
+            Rho= 1.25, #wind density
+            UserExposure= False)
 
     def load_combination_2LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
         self._SapModel.RespCombo.Add(
