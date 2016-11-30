@@ -16,7 +16,7 @@ mctracer_server = rs.mctracer_bridge.RayTracingMachine(
 
 run_path = '/home/spiros/Desktop/run'
 mctracer_propagate_path = '/home/spiros/Desktop/build/mctPropagate'
-mctracer_server.call('mkdir '+run_path)
+mctracer_server.execute('mkdir '+run_path)
 
 geometry = rs.Geometry(rs.config.example)
 reflector = rs.factory.generate_reflector(geometry)
@@ -53,7 +53,7 @@ mctracer_server.execute(
 mctracer_server.get(run_path+'/'+'out1_0', 'out1_0')
 mctracer_server.get(run_path+'/'+'out1_1', 'out1_1')
 
-mctracer_server.call('rm -r '+run_path)
+mctracer_server.execute('rm -r '+run_path)
 
 res = rs.mctracer_bridge.star_light_analysis.read_sensor_response('out1_0')
 image = rs.mctracer_bridge.star_light_analysis.make_image_from_sensor_response(reflector, res, rs.mctracer_bridge.star_light_analysis.config)
