@@ -42,18 +42,13 @@ mctracer_server.put('config.xml', run_path+'/'+'config.xml')
 mctracer_server.put('light.xml', run_path+'/'+'light.xml')
 mctracer_server.put('scenery.xml', run_path+'/'+'scenery.xml')
 
-serr = ''
-while True:
-    stdin, stdout, stderr = mctracer_server.call(
-        mctracer_propagate_path+
+mctracer_server.execute(
+    command=mctracer_propagate_path+
         ' -s '+run_path+'/'+'scenery.xml'+
         ' -c '+run_path+'/'+'config.xml'+
         ' -i '+run_path+'/'+'light.xml'+
-        ' -o '+run_path+'/'+'out')
-    sout = stdout.readlines()
-    serr = stderr.readlines()
-    if len(serr) == 0:
-        break
+        ' -o '+run_path+'/'+'out',
+    out_path='mct_call')
 
 mctracer_server.get(run_path+'/'+'out1_0', 'out1_0')
 mctracer_server.get(run_path+'/'+'out1_1', 'out1_1')
