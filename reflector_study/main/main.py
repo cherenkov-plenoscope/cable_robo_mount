@@ -1,6 +1,13 @@
 import reflector_study as rs
 
 
+def absolute_minimum_loop(config_new):
+geometry = rs.Geometry(rs.config_new.example)
+reflector = rs.factory.generate_reflector(geometry)
+alignment = rs.mirror_alignment.ideal_alignment(reflector)
+structural = rs.SAP2000_bridge.Structural(rs.config_new.example)
+
+
 mctracer_config = {
     'server': {
         'hostname': '192.168.56.101',

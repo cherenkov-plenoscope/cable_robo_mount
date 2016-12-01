@@ -3,16 +3,16 @@ import numpy as np
 
 class Geometry(object):
     def __init__(self, config_dict):
-        self.focal_length = config_dict['optics']['focal_length']
-        self.max_outer_radius = config_dict['optics']['max_outer_radius']
-        self.min_inner_radius = config_dict['optics']['min_inner_radius']
-        self.gap_between_facets = config_dict['optics']['gap_between_facets']
-        self.facet_inner_hex_radius = config_dict['optics']['facet_inner_hex_radius']
-        self.davies_cotton_over_parabola_ratio = config_dict['optics']['davies_cotton_over_parabola_ratio']
+        self.focal_length = config_dict['reflector']['dish_optics']['focal_length']
+        self.max_outer_radius = config_dict['reflector']['main']['max_outer_radius']
+        self.min_inner_radius = config_dict['reflector']['main']['min_inner_radius']
+        self.gap_between_facets = config_dict['reflector']['facet']['gap_in_between']
+        self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
+        self.davies_cotton_over_parabola_ratio = config_dict['reflector']['dish_optics']['davies_cotton_over_parabola_ratio']
 
-        self.number_of_layers = config_dict['space_frame']['number_of_layers']
-        self.x_over_z_ratio = config_dict['space_frame']['x_over_z_ratio']
-        self.bar_outer_radius = config_dict['space_frame']['bar']['outer_radius']
+        self.number_of_layers = config_dict['reflector']['main']['number_of_layers']
+        self.x_over_z_ratio = config_dict['reflector']['main']['x_over_z_ratio']
+        self.bar_outer_radius = config_dict['reflector']['bars']['outer_radius']
         self._set_up_geometry()
 
 

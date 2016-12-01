@@ -25,9 +25,9 @@ example = {
             'focal_length': 75.0,
             'davies_cotton_over_parabola_ratio': 0.0
             },
-        'facets': {
-            'gap_between_facets': 0.02,
-            'facet_inner_hex_radius': 0.6,
+        'facet': {
+            'gap_in_between': 0.02,
+            'inner_hex_radius': 0.6,
             'surface_weight': 25.0,
             'actuator_weight': 5.0
             },
