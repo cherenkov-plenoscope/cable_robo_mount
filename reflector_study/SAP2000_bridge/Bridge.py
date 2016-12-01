@@ -66,6 +66,17 @@ class Bridge(object):
                 CSys='Global',
                 MergeOff=True)
 
+    def _nodes_definition(self, nodes):
+        for i in range ((nodes.shape[0])):
+            self._SapModel.PointObj.AddCartesian(
+                X=nodes[i,0],
+                Y=nodes[i,1],
+                Z=nodes[i,2],
+                Name= 'whatever',
+                UserName="node_"+str(i),
+                CSys='Global',
+                MergeOff=True)
+
     def frames_definition(self, reflector):
         bars = reflector["bars"]
         for i in range ((bars.shape[0])):
@@ -85,6 +96,14 @@ class Bridge(object):
                 Value= deegres_of_freedom,
                 ItemType= 0)
 
+    def _restraints_definition(self, fixtures):
+        deegres_of_freedom = [True, True, True, False, False, False]
+        for i in range ((fixtures.shape[0])):
+            self._SapModel.PointObj.SetRestraint(
+                Name= "node_"+str(fixtures[i]),
+                Value= deegres_of_freedom,
+                ItemType= 0)
+                
     def group_of_nodes_definition(self, group_name, flat_part_of_reflector):
         self._SapModel.GroupDef.SetGroup(group_name)
         for i in range ((flat_part_of_reflector.shape[0])):
