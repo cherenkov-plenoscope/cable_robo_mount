@@ -21,7 +21,7 @@ class RayTracingMachine(object):
         self._hostname = config_dict['system']['ssh_connection']['hostname']
         self._username = config_dict['system']['ssh_connection']['username']
         self._key_path = config_dict['system']['ssh_connection']['key_path']
-        self._ssh = self._enable_connection_without_password()
+        self._ssh = self._make_ssh_client()
         self._sftp = self._ssh.open_sftp()
 
     def _make_ssh_client(self):

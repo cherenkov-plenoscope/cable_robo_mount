@@ -8,8 +8,8 @@ alignment = rs.mirror_alignment.ideal_alignment(reflector)
 structural = rs.SAP2000_bridge.Structural(rs.config_new.example)
 mctracer_server = rs.mctracer_bridge.RayTracingMachine(rs.config_new.example)
 
-run_path = config_new.example['system']['ssh_connection']['run_path_linux']
-mctracer_propagate_path = config_new.example['system']['ssh_connection']['mctracer_propagate_path']
+run_path = rs.config_new.example['system']['ssh_connection']['run_path_linux']
+mctracer_propagate_path = rs.config_new.example['system']['ssh_connection']['ray_tracer_propagation_path_linux']
 mctracer_server.call('mkdir '+run_path)
 
 bridge = rs.SAP2000_bridge.Bridge(structural)
