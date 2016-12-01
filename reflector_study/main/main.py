@@ -6,30 +6,12 @@ geometry = rs.Geometry(rs.config_new.example)
 reflector = rs.factory.generate_reflector(geometry)
 alignment = rs.mirror_alignment.ideal_alignment(reflector)
 structural = rs.SAP2000_bridge.Structural(rs.config_new.example)
+mctracer_server = rs.mctracer_bridge.RayTracingMachine(rs.config_new.example)
 
-
-mctracer_config = {
-    'server': {
-        'hostname': '192.168.56.101',
-        'username': 'spiros',
-        'key_path': 'C:\\Users\\Spiros Daglas\\Desktop\\ssh\\spiros'
-    }
-}
-
-mctracer_server = rs.mctracer_bridge.RayTracingMachine(
-    hostname=mctracer_config['server']['hostname'],
-    username=mctracer_config['server']['username'],
-    key_path=mctracer_config['server']['key_path'])
-
-run_path = '/home/spiros/Desktop/run'
-mctracer_propagate_path = '/home/spiros/Desktop/build/mctPropagate'
+run_path = config_new.example['system']['ssh_connection']['run_path_linux']
+mctracer_propagate_path = config_new.example['system']['ssh_connection']['mctracer_propagate_path']
 mctracer_server.call('mkdir '+run_path)
 
-geometry = rs.Geometry(rs.config.example)
-reflector = rs.factory.generate_reflector(geometry)
-alignment = rs.mirror_alignment.ideal_alignment(reflector)
-
-structural = rs.SAP2000_bridge.Structural(rs.SAP2000_bridge.config_loading.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
 bridge.nodes_definition(reflector)
 bridge.frames_definition(reflector)
@@ -39,7 +21,6 @@ bridge.load_scenario_facet_weight(reflector)
 bridge.load_combination_2LP_definition()
 bridge.run_analysis()
 reflector, reflector_deformed = bridge.get_deformed_reflector_for_all_nodes_for_selected_load_combination(reflector, "dead+live")
-
 
 rs.mctracer_bridge.write_propagation_config_xml('config.xml')
 rs.mctracer_bridge.write_star_light_xml(reflector=reflector_deformed, path='light.xml')

@@ -15,10 +15,10 @@ class RayTracingMachine(object):
 
         key_path    The path to the private SSH RSA key of the client
     """
-    def __init__(self, hostname, username, key_path):
-        self._hostname = hostname
-        self._username = username
-        self._key_path = key_path
+    def __init__(self, config_dict):
+        self._hostname = config_dict['system']['ssh_connection']['hostname']
+        self._username = config_dict['system']['ssh_connection']['username']
+        self._key_path = config_dict['system']['ssh_connection']['key_path']
         self._ssh = self._enable_connection_without_password()
         self._sftp = self._ssh.open_sftp()
 
