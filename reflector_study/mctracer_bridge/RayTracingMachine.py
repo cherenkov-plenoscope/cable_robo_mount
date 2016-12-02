@@ -6,7 +6,7 @@ class RayTracingMachine(object):
     Connects to a remote machine via SSH.
     Can execute remote commands and put or get files.
     The public SSH RSA key of the client must be in the list of authorized_keys
-    of the remote host. Further, a SSH server must be running on the 
+    of the remote host. Further, a SSH server must be running on the
     remote host.
 
     parameter
@@ -17,10 +17,10 @@ class RayTracingMachine(object):
 
         key_path    The path to the private SSH RSA key of the client
     """
-    def __init__(self, hostname, username, key_path):
-        self._hostname = hostname
-        self._username = username
-        self._key_path = key_path
+    def __init__(self, config_dict):
+        self._hostname = config_dict['system']['ssh_connection']['hostname']
+        self._username = config_dict['system']['ssh_connection']['username']
+        self._key_path = config_dict['system']['ssh_connection']['key_path']
         self._ssh = self._make_ssh_client()
         self._sftp = self._ssh.open_sftp()
 
@@ -35,7 +35,7 @@ class RayTracingMachine(object):
 
     def put(self, localpath, remotepath):
         """
-        Copies the localpath of the local host to the remotepath on the 
+        Copies the localpath of the local host to the remotepath on the
         remote host.
         """
         self._sftp.put(localpath=localpath, remotepath=remotepath)
@@ -56,17 +56,17 @@ class RayTracingMachine(object):
         ----------
         command         The command string to be executed on the remote host
 
-        [out_path]      A path to store the stdout and stderr streams of the 
+        [out_path]      A path to store the stdout and stderr streams of the
                         command. Two text files will be created:
                         'out_path.stdout' and 'out_path.stderr'
-                        The suffix 'stdout' and 'stderr' is appended to the 
+                        The suffix 'stdout' and 'stderr' is appended to the
                         out_path.
         """
         transport = self._ssh.get_transport()
         channel = transport.open_session()
         channel.exec_command(command)
         if out_path is not None:
-            stdout = channel.makefile('r') 
+            stdout = channel.makefile('r')
             stderr = channel.makefile_stderr('r')
         exit_status = channel.recv_exit_status()
         if out_path is not None:
@@ -78,7 +78,7 @@ class RayTracingMachine(object):
         f = open(path, 'w')
         for line in stream.readlines():
             f.write(line)
-        f.close()        
+        f.close()
 
     def __repr__(self):
         out = 'RayTracingMachine('

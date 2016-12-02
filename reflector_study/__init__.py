@@ -12,4 +12,4 @@ from sys import platform
 if platform == "win32":
 	from . import SAP2000_bridge
 from .HomTra import HomTra
-
+from . import config_new
