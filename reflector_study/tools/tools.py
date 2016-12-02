@@ -56,12 +56,3 @@ def mirror_tripod_y(nodes, mirror_tripod):
     z_axis = mirror_tripod_z(nodes, mirror_tripod)
     x_axis = mirror_tripod_x(nodes, mirror_tripod)
     return np.cross(x_axis, z_axis)
-
-def fixtures_according_to_joints(reflector):
-    joints = reflector["joints"]
-    fixtures = []
-    for i in range(len(joints)):
-        if len(joints[i]) <= 7:
-            fixtures.append(i)
-    reflector["fixtures"] = np.array(fixtures)
-    return reflector
