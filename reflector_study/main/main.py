@@ -8,8 +8,8 @@ def absolute_minimum_loop():
     structural = rs.SAP2000_bridge.Structural(rs.config.example)
     mctracer_server = rs.mctracer_bridge.RayTracingMachine(rs.config.example)
 
-    run_path = rs.config.example['system']['ssh_connection']['run_path_linux']
-    mctracer_propagate_path = rs.config.example['system']['ssh_connection']['ray_tracer_propagation_path_linux']
+    run_path = rs.config.example['system']['mctracer']['run_path_linux']
+    mctracer_propagate_path = rs.config.example['system']['mctracer']['ray_tracer_propagation_path_linux']
     mctracer_server.execute('mkdir '+run_path)
 
     bridge = rs.SAP2000_bridge.Bridge(structural)

@@ -2,7 +2,7 @@ import json
 
 example = {
     'system': {
-        'ssh_connection': {
+        'mctracer': {
             'hostname': '192.168.56.101',
             'username': 'spiros',
             'key_path': 'C:\\Users\\Spiros Daglas\\Desktop\\ssh\\spiros',
