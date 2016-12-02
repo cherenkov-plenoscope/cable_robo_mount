@@ -54,6 +54,18 @@ class Bridge(object):
             Color= -1,
             Notes= "pipe according to SIA263")
 
+    def _shell_definition(self):
+        self._SapModel.PropArea.SetShell_1(
+            Name= "densless_shell",
+            ShellType= 2,
+            IncludeDrillingDOF= True,
+            MatProp= "Steel_S"+str(self.structural.yielding_point/1000),
+            MatAng= 0.0,
+            Thickness= 0.0,
+            Bending= 0.0,
+            Color= -1,
+            Notes= "surface_included_just_for_wind_load_scenario")
+
     def nodes_definition(self, reflector):
         nodes = reflector["nodes"]
         for i in range ((nodes.shape[0])):
@@ -93,6 +105,27 @@ class Bridge(object):
                 GroupName=  group_name, #Name of the group that the PointObj will be assigned
                 Remove= False)
 
+    def _material_property_modifiers(self, material_name= "densless_shell"):
+        stiffness_mass_weight_modifiers= [0,0,0,0,0,0,0,0,0,0]
+        self._SapModel.PropArea.SetModifiers(
+            Name= material_name,
+            Value= stiffness_mass_weight_modifiers)
+
+    def _area_object_with_points_definition(self, reflector, points_number= 3):
+        mirror_tripods= reflector["mirror_tripods"].copy().tolist()
+        nodes_of_mirror_tripod= []
+        for i in range(len(mirror_tripods)):
+            nodes_of_mirror_tripod.append([])
+            for j in range(len(mirror_tripods[i])):
+                nodes_of_mirror_tripod[i].append("node_"+str(mirror_tripods[i][j]))
+            self._SapModel.AreaObj.AddByPoint(
+                NumberPoints= points_number,
+                Point= nodes_of_mirror_tripod[i],
+                Name= "whatever",
+                PropName= "densless_shell",
+                UserName= "mirror_facet_"+str(i))
+
+
     def load_scenario_dead(self, load_pattern_name= "dead_load"):
         self._SapModel.LoadPatterns.Add(
             Name= load_pattern_name,
@@ -114,6 +147,37 @@ class Bridge(object):
                     Replace= True, #Replaces existing loads
                     CSys= "Global",
                     ItemType= 0) # 0, 1, 2
+
+    def load_scenario_wind(self, reflector, load_pattern_name= "wind"):
+        self._SapModel.LoadPatterns.Add(
+            Name= load_pattern_name,
+            MyType= 6,
+            SelfWTMultiplier= 0)
+        self._shell_definition()
+        self._material_property_modifiers()
+        self._area_object_with_points_definition(reflector)
+        self._SapModel.LoadPatterns.AutoWind.SetEurocode12005_1(
+            Name= load_pattern_name,
+            ExposureFrom= 2, #area objects
+            DirAngle= 0.0,
+            Cpw= 0.0,
+            Cpl= 0.0,
+            UserZ= False,
+            TopZ= 0.0,
+            BottomZ= 0.0,
+            WindSpeed= 100,
+            Terrain= 2,
+            Orography= 1,
+            K1= 1.0,
+            CsCd= 1.0,
+            Rho= 1.25, #wind density
+            UserExposure= False)
+        self._SapModel.AreaObj.SetLoadWindPressure(
+            Name= "ALL",
+            LoadPat= "wind",
+            MyType= 1,
+            cp= 1,
+            ItemType= 1)
 
     def load_combination_2LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
         self._SapModel.RespCombo.Add(

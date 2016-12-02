@@ -32,13 +32,6 @@ def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
         return False
 
 
-def node_is_connected_to_tension_ring(node, geometry):
-    radius = np.hypot(node[0], node[1])
-    is_inside_outer_limit = radius <= geometry.max_outer_radius
-    is_most_outer_node = radius > geometry.max_outer_radius - geometry.facet_spacing
-    return is_most_outer_node and is_inside_outer_limit
-
-
 def generate_nodes(geometry):
     nodes = np.zeros(
         shape=(
@@ -129,12 +122,12 @@ def generate_mirrir_tripods(nodes, geometry):
     return np.array(mirror_tripods)
 
 
-def generate_connections_to_tension_ring(nodes, geometry):
+def generate_connections_to_tension_ring(joints, geometry):
     fixtures = []
     for i in range(geometry.lattice_range_i):
         for j in range(geometry.lattice_range_j):
             for k in range(geometry.lattice_range_k):
-                if node_is_connected_to_tension_ring(nodes[i,j,k], geometry):
+                if len(joints[i][j][k]) <= 7:
                     fixtures.append(np.array([i,j,k]))
     return np.array(fixtures)
 
@@ -142,12 +135,14 @@ def generate_connections_to_tension_ring(nodes, geometry):
 def generate_non_flat_reflector(geometry):
     nodes = generate_nodes(geometry)
     bars_and_joints = generate_bars_and_joints(nodes, geometry)
+    bars = bars_and_joints['bars']
+    joints = bars_and_joints['joints']
     mirror_tripods = generate_mirrir_tripods(nodes, geometry)
-    fixtures = generate_connections_to_tension_ring(nodes, geometry)
+    fixtures = generate_connections_to_tension_ring(joints, geometry)
     return {
         'nodes': nodes,
-        'joints': bars_and_joints['joints'],
-        'bars': bars_and_joints['bars'],
+        'joints': joints,
+        'bars': bars,
         'mirror_tripods': mirror_tripods,
         'fixtures': fixtures,
         'geometry': geometry}
