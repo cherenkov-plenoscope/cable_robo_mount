@@ -173,11 +173,11 @@ class Bridge(object):
             Rho= 1.25, #wind density
             UserExposure= False)
         self._SapModel.AreaObj.SetLoadWindPressure(
-                Name= "ALL",
-                LoadPat= "wind",
-                MyType= 1,
-                cp= 1,
-                ItemType= 1)
+            Name= "ALL",
+            LoadPat= "wind",
+            MyType= 1,
+            cp= 1,
+            ItemType= 1)
 
     def load_combination_2LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
         self._SapModel.RespCombo.Add(
