@@ -11,7 +11,10 @@ class Bridge(object):
 
         self._helper = comtypes.client.CreateObject("Sap2000v18.Helper").QueryInterface(comtypes.gen.SAP2000v18.cHelper)
         self._SapObject = self._helper.CreateObject(self.structural.SAP_2000_directory)
-        self._SapObject.ApplicationStart()
+        self._SapObject.ApplicationStart(
+            Units= 6,
+            Visible= False,
+            FileName= "")
         self._SapModel = self._SapObject.SapModel
 
         self.initialize_new_workspace()
