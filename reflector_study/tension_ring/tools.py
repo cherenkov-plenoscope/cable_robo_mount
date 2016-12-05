@@ -89,12 +89,9 @@ def arrange_fixtures_according_to_radar_categorization(list_angles_fixtures):
         fixtures_arranged[i] = sorted_[i][1]
     return fixtures_arranged
 
-#remember if statement for layers
-ring_width = 3
-
-def nodes_offseted(fixtures, nodes, ring_width):
+def nodes_offseted(geometry, fixtures, nodes, ring_width):
     angle_from_y_clockwise = np.zeros((len(fixtures)))
-    nodes_offseted= np.zeros((fixtures.shape[0], 3))
+    nodes_offseted= np.zeros((fixtures.shape[0], geometry.tension_ring_width))
     fixtures_offseted= np.arange(max(fixtures)+1, max(fixtures) + len(fixtures)+1, dtype=int)
     for i in range(len(fixtures)):
         X = nodes[fixtures[i]][0]
@@ -177,4 +174,29 @@ def bars_inbetween(bars, fixtures):
     for i in range(len(fixtures)//4, len(fixtures)//2-1):
         bars4[i,0], bars4[i,1] = fixtures[i], fixtures[i+len(fixtures)//2]
     bars4[len(fixtures)-1,0], bars4[len(fixtures)-1,1] = fixtures[len(fixtures)//2-1], fixtures[len(fixtures)-1]
-    return np.concatenate((bars, bars1, bars2, bars3, bars4), axis=0)
+
+    bars5 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4-1):
+        bars5[i,0], bars5[i,1] = fixtures[i], fixtures[i+len(fixtures)//2+1]
+    bars5[len(fixtures)//4-1,0], bars5[len(fixtures)//4-1,1] = fixtures[len(fixtures)//4-1], fixtures[len(fixtures)//2]
+    for i in range(len(fixtures)//4, len(fixtures)//2-1):
+        bars5[i,0], bars5[i,1] = fixtures[i], fixtures[i+len(fixtures)//2+1]
+    bars5[len(fixtures)-1,0], bars5[len(fixtures)-1,1] = fixtures[len(fixtures)//2-1], fixtures[3*len(fixtures)//4]
+
+    bars6 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(1, len(fixtures)//4):
+        bars6[i,0], bars6[i,1] = fixtures[i], fixtures[i+len(fixtures)//2-1]
+    bars6[0,0], bars6[0,1] = fixtures[0], fixtures[3*len(fixtures)//4-1]
+    for i in range(len(fixtures)//4+1, len(fixtures)//2):
+        bars6[i,0], bars6[i,1] = fixtures[i], fixtures[i+len(fixtures)//2-1]
+    bars6[len(fixtures)//4,0], bars6[len(fixtures)//4,1] = fixtures[len(fixtures)//4], fixtures[len(fixtures)-1]
+
+    bars7 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4-1):
+        bars7[i,0], bars7[i,1] = fixtures[i], fixtures[i+3*len(fixtures)//4]
+    bars7[len(fixtures)//4-1,0], bars7[len(fixtures)//4-1,1] = fixtures[len(fixtures)//4-1], fixtures[len(fixtures)-1]
+    for i in range(len(fixtures)//4, len(fixtures)//2-1):
+        bars7[i,0], bars7[i,1] = fixtures[i], fixtures[i+len(fixtures)//4]
+    bars7[len(fixtures)-1,0], bars7[len(fixtures)-1,1] = fixtures[3*len(fixtures)//4-1], fixtures[len(fixtures)//2-1]
+
+    return np.concatenate((bars, bars1, bars2, bars3, bars4, bars5, bars6, bars7), axis=0)
