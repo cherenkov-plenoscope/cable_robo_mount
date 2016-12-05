@@ -102,6 +102,15 @@ class Bridge(object):
                 Name='whatever',
                 UserName='bar_'+str(i))
 
+    def _frames_definition(self, bars):
+        for i in range ((bars.shape[0])):
+            self._SapModel.FrameObj.AddByPoint(
+                Point1="node_"+str(bars[i,0]), #Point name
+                Point2="node_"+str(bars[i,1]), #Point name
+                PropName="ROR_"+str(1000 * self.structural.bar_outter_radius)+"x"+str(1000 * self.structural.bar_thickness),
+                Name='whatever',
+                UserName='bar_'+str(i))
+
     def restraints_definition(self, reflector):
         fixtures = reflector["fixtures"]
         deegres_of_freedom = [True, True, True, False, False, False]
@@ -118,7 +127,7 @@ class Bridge(object):
                 Name= "node_"+str(fixtures[i]),
                 Value= deegres_of_freedom,
                 ItemType= 0)
-                
+
     def group_of_nodes_definition(self, group_name, flat_part_of_reflector):
         self._SapModel.GroupDef.SetGroup(group_name)
         for i in range ((flat_part_of_reflector.shape[0])):
