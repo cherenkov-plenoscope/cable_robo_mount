@@ -56,16 +56,25 @@ def bars_from_fixture(fixtures):
 def radar_categorization(fixtures, nodes):
     angle_from_y_clockwise = np.zeros((len(fixtures)))
     for i in range(len(fixtures)):
-        angle_x_top = np.arctan(abs(nodes[fixtures[i]][0]) / abs(nodes[fixtures[i]][1]))
-        angle_y_top = np.arctan(abs(nodes[fixtures[i]][1]) / abs(nodes[fixtures[i]][0]))
-        if (nodes[fixtures[i]][1]>=0) and (nodes[fixtures[i]][0]>0):
-            angle_from_y_clockwise[i]= angle_x_top
-        elif (nodes[fixtures[i]][1]<=0) and (nodes[fixtures[i]][0]>0):
-            angle_from_y_clockwise[i]= angle_y_top + np.pi/2
-        elif (nodes[fixtures[i]][1]<=0) and (nodes[fixtures[i]][0]<0):
-            angle_from_y_clockwise[i]= angle_x_top + np.pi
-        elif (nodes[fixtures[i]][1]>=0) and (nodes[fixtures[i]][0]<0):
-            angle_from_y_clockwise[i]= angle_y_top + 3*np.pi/2
+        hypot = np.hypot(nodes[fixtures[i]][0], nodes[fixtures[i]][1])
+        X_abs = abs(nodes[fixtures[i]][0])
+        Y_abs = abs(nodes[fixtures[i]][1])
+        if (nodes[fixtures[i]][1]>0) and (nodes[fixtures[i]][0]>0):
+            angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot)
+        elif (nodes[fixtures[i]][1]<0) and (nodes[fixtures[i]][0]>0):
+            angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + np.pi/2
+        elif (nodes[fixtures[i]][1]<0) and (nodes[fixtures[i]][0]<0):
+            angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot) + np.pi
+        elif (nodes[fixtures[i]][1]>0) and (nodes[fixtures[i]][0]<0):
+            angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + 3*np.pi/2
+        elif (nodes[fixtures[i]][1]==0) and (nodes[fixtures[i]][0]>0):
+            angle_from_y_clockwise[i]= np.pi/2
+        elif (nodes[fixtures[i]][1]==0) and (nodes[fixtures[i]][0]<0):
+            angle_from_y_clockwise[i]= 3*np.pi/2
+        elif (nodes[fixtures[i]][1]>0) and (nodes[fixtures[i]][0]==0):
+            angle_from_y_clockwise[i]= 0
+        elif (nodes[fixtures[i]][1]<0) and (nodes[fixtures[i]][0]==0):
+            angle_from_y_clockwise[i]= np.pi
     return list(zip(angle_from_y_clockwise, fixtures))
 
 def arrange_fixtures_according_to_radar_categorization(list_angles_fixtures):
