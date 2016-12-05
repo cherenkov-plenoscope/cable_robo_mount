@@ -23,7 +23,10 @@ def geometry_1(geometry):
         'nodes_1': np.concatenate((flat_nodes_upper, flat_nodes_lower), axis=0),
         'fixtures_1': np.concatenate((fixtures_arranged(flat_nodes_upper, flat_joints_upper), [x+flat_nodes_upper.shape[0] for x in fixtures_arranged(flat_nodes_lower, flat_joints_lower)]), axis=0),
         'bars_1': np.concatenate((bars_from_fixture(fixtures_arranged(flat_nodes_upper, flat_joints_upper)), bars_from_fixture(fixtures_arranged(flat_nodes_lower, flat_joints_lower) + flat_nodes_upper.shape[0])))}
+
+    new_fixtures, new_nodes= nodes_offseted(first_bars_assignment['fixtures_1'], first_bars_assignment['nodes_1'], 3)
+    new_bars= bars_from_fixture(new_fixtures)
     return {
-    'nodes': np.concatenate((flat_nodes_upper, flat_nodes_lower), axis=0),
-    'fixtures': np.concatenate((fixtures_arranged(flat_nodes_upper, flat_joints_upper), [x+flat_nodes_upper.shape[0] for x in fixtures_arranged(flat_nodes_lower, flat_joints_lower)]), axis=0),
-    'bars': np.concatenate((bars_from_fixture(fixtures_arranged(flat_nodes_upper, flat_joints_upper)), bars_from_fixture(fixtures_arranged(flat_nodes_lower, flat_joints_lower) + flat_nodes_upper.shape[0])))}
+    'nodes': new_nodes,
+    'fixtures': new_fixtures,
+    'bars': new_bars}

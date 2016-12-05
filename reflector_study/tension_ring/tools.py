@@ -144,10 +144,3 @@ def nodes_offseted(fixtures, nodes, ring_width):
             nodes_offseted[i,1] = Y - ring_width
             nodes_offseted[i,2] = Z
     return np.concatenate((fixtures, fixtures_offseted), axis=0), np.concatenate((nodes, nodes_offseted), axis=0)
-
-def bars_from_fixture_offseted(new_fixtures, bars_original):
-    bars = np.zeros((len(fixtures), 2), dtype=int)
-    for i in range(len(fixtures)-1):
-        bars[i,0], bars[i,1] = fixtures[i], fixtures[i+1]
-    bars[len(fixtures)-1, 0], bars[len(fixtures)-1, 1] = fixtures[len(fixtures)-1], fixtures[0]
-    return bars
