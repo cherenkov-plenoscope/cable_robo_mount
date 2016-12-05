@@ -144,3 +144,37 @@ def nodes_offseted(fixtures, nodes, ring_width):
             nodes_offseted[i,1] = Y - ring_width
             nodes_offseted[i,2] = Z
     return np.concatenate((fixtures, fixtures_offseted), axis=0), np.concatenate((nodes, nodes_offseted), axis=0)
+
+def bars_inbetween(bars, fixtures):
+    bars1 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4-1):
+        bars1[i,0], bars1[i,1] = fixtures[i], fixtures[i+len(fixtures)//4]
+    bars1[len(fixtures)//4,0], bars1[len(fixtures)//4,1] = fixtures[len(fixtures)//4-1], fixtures[len(fixtures)//2-1]
+    for i in range(len(fixtures)//2, 3*len(fixtures)//4-1):
+        bars1[i,0], bars1[i,1] = fixtures[i], fixtures[i+len(fixtures)//4]
+    bars1[len(fixtures)-1,0], bars1[len(fixtures)-1,1] = fixtures[3*len(fixtures)//4-1], fixtures[len(fixtures)-1]
+
+    bars2 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4):
+        bars2[i,0], bars2[i,1] = fixtures[i], fixtures[i+len(fixtures)//4-1]
+    bars2[len(fixtures)//4,0], bars2[len(fixtures)//4,1] = fixtures[0], fixtures[len(fixtures)//2-1]
+    for i in range(len(fixtures)//2, 3*len(fixtures)//4):
+        bars2[i,0], bars2[i,1] = fixtures[i], fixtures[i+len(fixtures)//4-1]
+    bars2[len(fixtures)-1,0], bars2[len(fixtures)-1,1] = fixtures[len(fixtures)//2], fixtures[len(fixtures)-1]
+
+    bars3 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4-1):
+        bars3[i,0], bars3[i,1] = fixtures[i], fixtures[i+len(fixtures)//4+1]
+    bars3[len(fixtures)//4,0], bars3[len(fixtures)//4,1] = fixtures[len(fixtures)//4-1], fixtures[len(fixtures)//4]
+    for i in range(len(fixtures)//2, 3*len(fixtures)//4-1):
+        bars3[i,0], bars3[i,1] = fixtures[i], fixtures[i+len(fixtures)//4+1]
+    bars3[len(fixtures)-1,0], bars3[len(fixtures)-1,1] = fixtures[3*len(fixtures)//4-1], fixtures[3*len(fixtures)//4]
+
+    bars4 = np.zeros((len(fixtures), 2), dtype=int)
+    for i in range(len(fixtures)//4-1):
+        bars4[i,0], bars4[i,1] = fixtures[i], fixtures[i+len(fixtures)//2]
+    bars4[len(fixtures)//4-1,0], bars4[len(fixtures)//4-1,1] = fixtures[len(fixtures)//4-1], fixtures[3*len(fixtures)//4-1]
+    for i in range(len(fixtures)//4, len(fixtures)//2-1):
+        bars4[i,0], bars4[i,1] = fixtures[i], fixtures[i+len(fixtures)//2]
+    bars4[len(fixtures)-1,0], bars4[len(fixtures)-1,1] = fixtures[len(fixtures)//2-1], fixtures[len(fixtures)-1]
+    return np.concatenate((bars, bars1, bars2, bars3, bars4), axis=0)
