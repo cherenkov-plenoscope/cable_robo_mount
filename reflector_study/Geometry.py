@@ -13,6 +13,8 @@ class Geometry(object):
         self.number_of_layers = config_dict['reflector']['main']['number_of_layers']
         self.x_over_z_ratio = config_dict['reflector']['main']['x_over_z_ratio']
         self.bar_outer_radius = config_dict['reflector']['bars']['outer_radius']
+
+        self.tension_ring_width = config_dict['tension_ring']['width']
         self._set_up_geometry()
 
 

@@ -18,7 +18,7 @@ example = {
         'main': {
             'max_outer_radius': 10.0,
             'min_inner_radius': 2.0,
-            'number_of_layers': 2,
+            'number_of_layers': 3,
             'x_over_z_ratio': 1.2
             },
         'optics': {
@@ -43,6 +43,9 @@ example = {
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
+        },
+    'tension_ring':{
+        'width': 3
         },
     'load_scenario': {
         'wind': {
