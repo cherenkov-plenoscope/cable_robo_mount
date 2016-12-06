@@ -142,9 +142,10 @@ def nodes_offseted_elastic_supports(geometry, fixtures, nodes):
             nodes_offseted[i,2] = Z
     elastic_supports = []
     closest_angles = []
+    support_position = geometry.tension_ring_support_position*np.pi/180
     for i in range(4):
-        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(np.pi/18+np.pi/2*i))))
-        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(4/9*np.pi+np.pi/2*i))))
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(support_position+np.pi/2*i))))
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(support_position*8+np.pi/2*i))))
     for i in range(nodes_offseted.shape[0]):
         if angle_from_y_clockwise[i] in closest_angles:
             elastic_supports.append(i+nodes.shape[0])
