@@ -89,9 +89,9 @@ def arrange_fixtures_according_to_radar_categorization(list_angles_fixtures):
         fixtures_arranged[i] = sorted_[i][1]
     return fixtures_arranged
 
-def nodes_offseted(geometry, fixtures, nodes, ring_width):
+def nodes_offseted(geometry, fixtures, nodes):
     angle_from_y_clockwise = np.zeros((len(fixtures)))
-    nodes_offseted= np.zeros((fixtures.shape[0], geometry.tension_ring_width))
+    nodes_offseted= np.zeros((fixtures.shape[0], 3))
     fixtures_offseted= np.arange(max(fixtures)+1, max(fixtures) + len(fixtures)+1, dtype=int)
     for i in range(len(fixtures)):
         X = nodes[fixtures[i]][0]
@@ -102,43 +102,43 @@ def nodes_offseted(geometry, fixtures, nodes, ring_width):
         hypot = np.hypot(X, Y)
         if (Y>0) and (X>0):
             angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot)
-            nodes_offseted[i,0] = X + ring_width * abs(np.sin(angle_from_y_clockwise[i]))
-            nodes_offseted[i,1] = Y + ring_width * abs(np.cos(angle_from_y_clockwise[i]))
+            nodes_offseted[i,0] = X + geometry.tension_ring_width * abs(np.sin(angle_from_y_clockwise[i]))
+            nodes_offseted[i,1] = Y + geometry.tension_ring_width * abs(np.cos(angle_from_y_clockwise[i]))
             nodes_offseted[i,2] = Z
         elif (Y<0) and (X>0):
             angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + np.pi/2
-            nodes_offseted[i,0] = X + ring_width * (abs(np.cos(angle_from_y_clockwise[i] - np.pi/2)))
-            nodes_offseted[i,1] = Y - ring_width * (abs(np.sin(angle_from_y_clockwise[i] - np.pi/2)))
+            nodes_offseted[i,0] = X + geometry.tension_ring_width * (abs(np.cos(angle_from_y_clockwise[i] - np.pi/2)))
+            nodes_offseted[i,1] = Y - geometry.tension_ring_width * (abs(np.sin(angle_from_y_clockwise[i] - np.pi/2)))
             nodes_offseted[i,2] = Z
         elif (Y<0) and (X<0):
             angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot) + np.pi
-            nodes_offseted[i,0] = X - ring_width * (abs(np.sin(angle_from_y_clockwise[i] - np.pi)))
-            nodes_offseted[i,1] = Y - ring_width * (abs(np.cos(angle_from_y_clockwise[i] - np.pi)))
+            nodes_offseted[i,0] = X - geometry.tension_ring_width * (abs(np.sin(angle_from_y_clockwise[i] - np.pi)))
+            nodes_offseted[i,1] = Y - geometry.tension_ring_width * (abs(np.cos(angle_from_y_clockwise[i] - np.pi)))
             nodes_offseted[i,2] = Z
         elif (Y>0) and (X<0):
             angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + 3*np.pi/2
-            nodes_offseted[i,0] = X - ring_width * (abs(np.cos(angle_from_y_clockwise[i] - 3*np.pi/2)))
-            nodes_offseted[i,1] = Y + ring_width * (abs(np.sin(angle_from_y_clockwise[i] - 3*np.pi/2)))
+            nodes_offseted[i,0] = X - geometry.tension_ring_width * (abs(np.cos(angle_from_y_clockwise[i] - 3*np.pi/2)))
+            nodes_offseted[i,1] = Y + geometry.tension_ring_width * (abs(np.sin(angle_from_y_clockwise[i] - 3*np.pi/2)))
             nodes_offseted[i,2] = Z
         elif (Y==0) and (X>0):
             angle_from_y_clockwise[i]= np.pi/2
-            nodes_offseted[i,0] = X + ring_width
+            nodes_offseted[i,0] = X + geometry.tension_ring_width
             nodes_offseted[i,1] = Y
             nodes_offseted[i,2] = Z
         elif (Y==0) and (X<0):
             angle_from_y_clockwise[i]= 3*np.pi/2
-            nodes_offseted[i,0] = X - ring_width
+            nodes_offseted[i,0] = X - geometry.tension_ring_width
             nodes_offseted[i,1] = Y
             nodes_offseted[i,2] = Z
         elif (Y>0) and (X==0):
             angle_from_y_clockwise[i]= 0
             nodes_offseted[i,0] = X
-            nodes_offseted[i,1] = Y + ring_width
+            nodes_offseted[i,1] = Y + geometry.tension_ring_width
             nodes_offseted[i,2] = Z
         elif (Y<0) and (X==0):
             angle_from_y_clockwise[i]= np.pi
             nodes_offseted[i,0] = X
-            nodes_offseted[i,1] = Y - ring_width
+            nodes_offseted[i,1] = Y - geometry.tension_ring_width
             nodes_offseted[i,2] = Z
     return np.concatenate((fixtures, fixtures_offseted), axis=0), np.concatenate((nodes, nodes_offseted), axis=0)
 
@@ -200,3 +200,15 @@ def bars_inbetween(bars, fixtures):
     bars7[len(fixtures)-1,0], bars7[len(fixtures)-1,1] = fixtures[3*len(fixtures)//4-1], fixtures[len(fixtures)//2-1]
 
     return np.concatenate((bars, bars1, bars2, bars3, bars4, bars5, bars6, bars7), axis=0)
+
+
+def nodisol_delete_and_renumbering(nodes, fixtures, bars):
+    new_nodes = []
+    new_bars = np.zeros((bars.shape[0], 2), dtype=int)
+    for i in range(fixtures.shape[0]):
+        new_nodes.append(nodes[fixtures[i]].tolist())
+        for j in range(bars.shape[0]):
+            for k in range(2):
+                if bars[j,k] == fixtures[i]:
+                    new_bars[j,k]= i
+    return np.array(new_nodes), new_bars
