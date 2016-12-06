@@ -120,6 +120,12 @@ class Bridge(object):
                 Value= deegres_of_freedom,
                 ItemType= 0)
 
+    def elastic_support_definition(self, reflector):
+        fixtures= reflector["fixtures"]
+        spring_stiffness= [10e6, 10e6, 10e6, 10e6, 10e6, 10e6]
+        for i in range ((fixtures.shape[0])):
+            self._SapModel.PointObj.SetSpring("node_"+str(fixtures[i]), spring_stiffness)
+
     def _restraints_definition(self, fixtures):
         deegres_of_freedom = [True, True, True, False, False, False]
         for i in range ((fixtures.shape[0])):
