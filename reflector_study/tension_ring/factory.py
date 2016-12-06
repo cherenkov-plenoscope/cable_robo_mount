@@ -18,7 +18,7 @@ def generate_tension_ring(geometry, reflector_ijk):
     flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower = nodes_of_upper_and_lower_layer(reflector_ijk)
     tension_ring_nodes = np.concatenate((flat_nodes_upper, flat_nodes_lower), axis=0)
 
-    new_fixtures, new_nodes= nodes_offseted(
+    new_fixtures, new_nodes, elastic_supports= nodes_offseted_elastic_supports(
                 geometry= geometry,
                 fixtures= tension_ring_inner_nodes(flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower),
                 nodes= tension_ring_nodes)
@@ -26,9 +26,10 @@ def generate_tension_ring(geometry, reflector_ijk):
     new_bars= bars_from_fixture(new_fixtures)
     final_bars = bars_inbetween(new_bars, new_fixtures)
 
-    clean_nodes = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars)[0]
-    clean_bars = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars)[1]
+    clean_nodes = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[0]
+    clean_elastic_supports = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[1]
+    clean_bars = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[2]
     return {
     'nodes': clean_nodes,
-    #'fixtures': new_fixtures,
+    'fixtures': clean_elastic_supports,
     'bars': clean_bars}

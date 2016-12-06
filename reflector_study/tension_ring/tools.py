@@ -89,7 +89,7 @@ def arrange_fixtures_according_to_radar_categorization(list_angles_fixtures):
         fixtures_arranged[i] = sorted_[i][1]
     return fixtures_arranged
 
-def nodes_offseted(geometry, fixtures, nodes):
+def nodes_offseted_elastic_supports(geometry, fixtures, nodes):
     angle_from_y_clockwise = np.zeros((len(fixtures)))
     nodes_offseted= np.zeros((fixtures.shape[0], 3))
     fixtures_offseted= np.arange(max(fixtures)+1, max(fixtures) + len(fixtures)+1, dtype=int)
@@ -140,7 +140,16 @@ def nodes_offseted(geometry, fixtures, nodes):
             nodes_offseted[i,0] = X
             nodes_offseted[i,1] = Y - geometry.tension_ring_width
             nodes_offseted[i,2] = Z
-    return np.concatenate((fixtures, fixtures_offseted), axis=0), np.concatenate((nodes, nodes_offseted), axis=0)
+    elastic_supports = []
+    closest_angles = []
+    for i in range(4):
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(np.pi/18+np.pi/2*i))))
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(4/9*np.pi+np.pi/2*i))))
+    for i in range(nodes_offseted.shape[0]):
+        if angle_from_y_clockwise[i] in closest_angles:
+            elastic_supports.append(i+nodes.shape[0])
+
+    return np.concatenate((fixtures, fixtures_offseted), axis=0), np.concatenate((nodes, nodes_offseted), axis=0), np.array(elastic_supports)
 
 def bars_inbetween(bars, fixtures):
     bars1 = np.zeros((len(fixtures), 2), dtype=int)
@@ -202,13 +211,17 @@ def bars_inbetween(bars, fixtures):
     return np.concatenate((bars, bars1, bars2, bars3, bars4, bars5, bars6, bars7), axis=0)
 
 
-def nodisol_delete_and_renumbering(nodes, fixtures, bars):
+def nodisol_delete_and_renumbering(nodes, fixtures, bars, elastic_supports):
     new_nodes = []
     new_bars = np.zeros((bars.shape[0], 2), dtype=int)
+    new_elastic_supports = np.zeros((elastic_supports.shape[0]), dtype=int)
     for i in range(fixtures.shape[0]):
         new_nodes.append(nodes[fixtures[i]].tolist())
+        for l in range(elastic_supports.shape[0]):
+            if elastic_supports[l] == fixtures[i]:
+                new_elastic_supports[l]= i
         for j in range(bars.shape[0]):
             for k in range(2):
                 if bars[j,k] == fixtures[i]:
                     new_bars[j,k]= i
-    return np.array(new_nodes), new_bars
+    return np.array(new_nodes), new_elastic_supports, new_bars
