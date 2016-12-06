@@ -1,4 +1,3 @@
-from ..factory import generate_non_flat_reflector
 from .tools import *
 
 def fixtures_arranged(nodes, joints):
@@ -14,10 +13,7 @@ def tension_ring_inner_nodes(flat_nodes_upper, flat_nodes_lower, flat_joints_upp
     outter_nodes_label_arranged_lower = fixtures_arranged(flat_nodes_lower, flat_joints_lower) + flat_nodes_upper.shape[0]
     return np.concatenate((outter_nodes_label_arranged_upper, outter_nodes_label_arranged_lower), axis= 0)
 
-def generate_tension_ring(geometry):
-    #reflector = generate_reflector(geometry)
-    reflector_ijk = generate_non_flat_reflector(geometry)
-
+def generate_tension_ring(geometry, reflector_ijk):
     #it is not the reflector coordinate system/framework
     flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower = nodes_of_upper_and_lower_layer(reflector_ijk)
     tension_ring_nodes = np.concatenate((flat_nodes_upper, flat_nodes_lower), axis=0)
