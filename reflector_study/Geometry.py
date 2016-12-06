@@ -15,6 +15,7 @@ class Geometry(object):
         self.bar_outer_radius = config_dict['reflector']['bars']['outer_radius']
 
         self.tension_ring_width = config_dict['tension_ring']['width']
+        self.tension_ring_support_position = config_dict['tension_ring']['support_position']
         self._set_up_geometry()
 
 

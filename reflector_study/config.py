@@ -45,7 +45,8 @@ example = {
             }
         },
     'tension_ring':{
-        'width': 3
+        'width': 3,
+        'support_position': 10,
         },
     'load_scenario': {
         'wind': {
