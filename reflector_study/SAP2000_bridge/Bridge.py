@@ -230,7 +230,7 @@ class Bridge(object):
         self.save_model()
         self._SapModel.Analyze.RunAnalysis()
 
-    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name= "ALL"):
+    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_name)
 
@@ -254,7 +254,7 @@ class Bridge(object):
             relative_displacements.append([Obj[i], U1[i], U2[i], U3[i], R1[i], R2[i], R3[i]])
         return relative_displacements
 
-    def get_displacements_for_group_of_nodes_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
+    def get_displacements_for_group_of_nodes_for_selected_load_combination(self, load_combination_name, group_name):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetComboSelectedForOutput(load_combination_name)
 
@@ -347,7 +347,8 @@ class Bridge(object):
         return forces
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(load_pattern_name)
+        self.group_of_nodes_definition(group_name="reflector_nodes", flat_part_of_reflector= np.arange(reflector["nodes"].shape[0]))
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(load_pattern_name, group_name="reflector_nodes")
         nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
         for i in range(len(relative_displacements)):
             nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
@@ -358,7 +359,8 @@ class Bridge(object):
         return reflector, reflector_deformed
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_combination(self, reflector, load_combination_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_combination(load_combination_name)
+        self.group_of_nodes_definition(group_name="reflector_nodes", flat_part_of_reflector= np.arange(reflector["nodes"].shape[0]))
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_combination(load_combination_name, group_name="reflector_nodes")
         nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
         for i in range(len(relative_displacements)):
             nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
