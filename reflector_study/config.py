@@ -1,5 +1,5 @@
 import json
-
+#everything in kN, m
 example = {
     'system': {
         'mctracer': {
@@ -32,7 +32,7 @@ example = {
             'actuator_weight': 5.0
             },
         'material': {
-            'e_modul': 210000,
+            'e_modul': 210e6,
             'yielding_point': 235000.0,
             'ultimate_point': 360000.0,
             'security_factor': 1.05
