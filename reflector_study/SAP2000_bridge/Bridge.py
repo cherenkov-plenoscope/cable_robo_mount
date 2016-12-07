@@ -292,7 +292,7 @@ class Bridge(object):
         [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = bridge._SapModel.Results.FrameForce(
+        ret] = self._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
                     Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
@@ -300,8 +300,16 @@ class Bridge(object):
         forces = []
         for i in range(NumberResults-1):
             if Obj[i] != Obj[i+1]:
-                forces.append([Obj[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
-        forces.append([Obj[NumberResults-1], P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
+                points= self._SapModel.FrameObj.GetPoints(Obj[i])
+                coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+                coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+                length= np.linalg.norm(coord_1 - coord_2)
+                forces.append([Obj[i], length, P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
+        coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+        coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+        length= np.linalg.norm(coord_1 - coord_2)
+        forces.append([Obj[NumberResults-1], length, P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
         return forces
 
     def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
@@ -318,7 +326,7 @@ class Bridge(object):
         [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = bridge._SapModel.Results.FrameForce(
+        ret] = self._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
                     Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
@@ -326,8 +334,16 @@ class Bridge(object):
         forces = []
         for i in range(NumberResults-1):
             if Obj[i] != Obj[i+1]:
-                forces.append([Obj[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
-        forces.append([Obj[NumberResults-1], P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
+                points= self._SapModel.FrameObj.GetPoints(Obj[i])
+                coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+                coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+                length= np.linalg.norm(coord_1 - coord_2)
+                forces.append([Obj[i], length, P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
+        coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+        coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+        length= np.linalg.norm(coord_1 - coord_2)
+        forces.append([Obj[NumberResults-1], length, P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
         return forces
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
