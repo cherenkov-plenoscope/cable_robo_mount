@@ -120,8 +120,7 @@ class Bridge(object):
                 Value= deegres_of_freedom,
                 ItemType= 0)
 
-    def elastic_support_definition(self, reflector):
-        fixtures= reflector["fixtures"]
+    def elastic_support_definition(self, fixtures):
         spring_stiffness= [10e6, 10e6, 10e6, 10e6, 10e6, 10e6]
         for i in range ((fixtures.shape[0])):
             self._SapModel.PointObj.SetSpring("node_"+str(fixtures[i]), spring_stiffness)
@@ -216,12 +215,13 @@ class Bridge(object):
             cp= 1,
             ItemType= 1)
 
-    def load_combination_2LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
+    def load_combination_3LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):
         self._SapModel.RespCombo.Add(
             Name= load_combination_name,
             ComboType= 0)
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, 1.35)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, 1.5)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, 1.35)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, 1.5)
 
     def save_model(self, path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example"):
         self._SapModel.File.Save(path)
@@ -285,21 +285,23 @@ class Bridge(object):
         Name = group_name
         ItemTypeElm = 2
         NumberResults = 0
-        Obj, Elm, PointElm = [], [], []
+        Obj, ObjSta, Elm, ElmSta = [], [], [], []
         LoadCase, StepType, StepNum = [], [], []
         P, V2, V3, T, M2, M3 = [], [], [], [], [], []
 
-        [NumberResults, Obj, Elm, PointElm,
+        [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = self._SapModel.Results.FrameJointForce(
+        ret] = bridge._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
-                    Obj, Elm, PointElm,
+                    Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
         forces = []
-        for i in range(len(Obj)):
-            forces.append([Obj[i], PointElm[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        for i in range(NumberResults-1):
+            if Obj[i] != Obj[i+1]:
+                forces.append([Obj[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        forces.append([Obj[NumberResults-1], P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
         return forces
 
     def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
@@ -309,21 +311,23 @@ class Bridge(object):
         Name = group_name
         ItemTypeElm = 2
         NumberResults = 0
-        Obj, Elm, PointElm = [], [], []
+        Obj, ObjSta, Elm, ElmSta = [], [], [], []
         LoadCase, StepType, StepNum = [], [], []
         P, V2, V3, T, M2, M3 = [], [], [], [], [], []
 
-        [NumberResults, Obj, Elm, PointElm,
+        [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = self._SapModel.Results.FrameJointForce(
+        ret] = bridge._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
-                    Obj, Elm, PointElm,
+                    Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
         forces = []
-        for i in range(len(Obj)):
-            forces.append([Obj[i], PointElm[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        for i in range(NumberResults-1):
+            if Obj[i] != Obj[i+1]:
+                forces.append([Obj[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        forces.append([Obj[NumberResults-1], P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
         return forces
 
     def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
