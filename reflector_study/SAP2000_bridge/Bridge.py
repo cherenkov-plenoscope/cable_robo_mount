@@ -121,7 +121,7 @@ class Bridge(object):
                 ItemType= 0)
 
     def elastic_support_definition(self, fixtures):
-        spring_stiffness= [10e6, 10e6, 10e6, 10e6, 10e6, 10e6]
+        spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
         for i in range ((fixtures.shape[0])):
             self._SapModel.PointObj.SetSpring("node_"+str(fixtures[i]), spring_stiffness)
 
@@ -184,7 +184,7 @@ class Bridge(object):
                     CSys= "Global",
                     ItemType= 0) # 0, 1, 2
 
-    def load_scenario_wind(self, reflector, load_pattern_name= "wind"):
+    def load_scenario_wind(self, reflector, nodes, load_pattern_name= "wind"):
         self._SapModel.LoadPatterns.Add(
             Name= load_pattern_name,
             MyType= 6,
@@ -195,24 +195,24 @@ class Bridge(object):
         self._SapModel.LoadPatterns.AutoWind.SetEurocode12005_1(
             Name= load_pattern_name,
             ExposureFrom= 2, #area objects
-            DirAngle= 0.0,
+            DirAngle= self.structural.wind_direction,
             Cpw= 0.0,
             Cpl= 0.0,
-            UserZ= False,
-            TopZ= 0.0,
-            BottomZ= 0.0,
-            WindSpeed= 100,
-            Terrain= 2,
-            Orography= 1,
-            K1= 1.0,
-            CsCd= 1.0,
-            Rho= 1.25, #wind density
+            UserZ= True,
+            TopZ= np.amax(nodes, axis= 0)[2],
+            BottomZ= np.amin(nodes, axis=0)[2]-self.structural.wind_security_distance_from_ground,
+            WindSpeed= self.structural.wind_speed,
+            Terrain= self.structural.wind_terrain_factor,
+            Orography= self.structural.wind_orography_factor,
+            K1= self.structural.wind_K1_factor,
+            CsCd= self.structural.wind_CsCd_factor,
+            Rho= self.structural.wind_density,
             UserExposure= False)
         self._SapModel.AreaObj.SetLoadWindPressure(
             Name= "ALL",
             LoadPat= "wind",
             MyType= 1,
-            cp= 1,
+            cp= 2.5,
             ItemType= 1)
 
     def load_combination_3LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):

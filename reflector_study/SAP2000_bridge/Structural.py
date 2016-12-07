@@ -27,9 +27,10 @@ class Structural(object):
         self.wind_speed = config_dict["load_scenario"]["wind"]["speed"]
         self.wind_terrain_factor = config_dict["load_scenario"]["wind"]["terrain_factor"]
         self.wind_orography_factor = config_dict["load_scenario"]["wind"]["orography_factor"]
-        self.wind_K1_factor =config_dict["load_scenario"]["wind"]["K1"]
-        self.wind_CsCd_factor =config_dict["load_scenario"]["wind"]["CsCd"]
-        self.wind_density =config_dict["load_scenario"]["wind"]["wind_density"]
+        self.wind_K1_factor = config_dict["load_scenario"]["wind"]["K1"]
+        self.wind_CsCd_factor = config_dict["load_scenario"]["wind"]["CsCd"]
+        self.wind_density = config_dict["load_scenario"]["wind"]["wind_density"]
+        self.wind_security_distance_from_ground = config_dict["load_scenario"]["wind"]["security_distance_from_ground"]
 
     def __repr__(self):
         info = 'Structural and loading assumptions'

@@ -50,8 +50,15 @@ example = {
         },
     'load_scenario': {
         'wind': {
-            'wind_speed': 0.0
-                },
+            'direction': 0.0,
+            'speed': 55, #m/s
+            'terrain_factor': 1, ##
+            'orography_factor': 1, ##
+            'K1': 1, ##
+            'CsCd': 2, ## usually 1. But our structure very prone to dynamic efects.
+            'wind_density': 1.25, #wind density
+            'security_distance_from_ground': 5
+            },
         'seismic': {
             'acceleration': 3.6
             }

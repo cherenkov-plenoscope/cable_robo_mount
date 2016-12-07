@@ -30,7 +30,7 @@ bridge._frames_definition(bars)
 
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(reflector)
-bridge.load_scenario_wind(reflector)
+bridge.load_scenario_wind(reflector, nodes)
 
 bridge.load_combination_3LP_definition()
 
