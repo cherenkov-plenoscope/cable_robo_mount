@@ -32,13 +32,13 @@ example = {
             'actuator_weight': 5.0
             },
         'material': {
-            'e-modul': 210000,
+            'e_modul': 210000,
             'yielding_point': 235000.0,
             'ultimate_point': 360000.0,
             'security_factor': 1.05
             },
         'bars': {
-            'outer_radius': 0.05,
+            'outer_diameter': 0.05,
             'thickness': 0.001,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9

@@ -14,7 +14,7 @@ def test_default_config():
                 'yielding_point': 1337.0,
             },
             'bar':{
-                'outer_radius': 0.05,
+                'outer_diameter': 0.05,
                 'thickness': 0.001,
             },
             'mirror_facet_weight': {

@@ -84,7 +84,7 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
 def bars2mctracer(reflector):
     nodes = reflector['nodes']
     bars = reflector['bars']
-    bar_radius = reflector['geometry'].bar_outer_radius
+    bar_radius = reflector['geometry'].bar_outer_diameter/2
     xml = ''
     for i, bar in enumerate(bars):
         start_pos = nodes[bar[0]]
@@ -100,7 +100,7 @@ def bars2mctracer(reflector):
 
 def facets2mctracer(reflector, alignment):
     reflector2facets = mirror_alignment.reflector2facets(
-        reflector=reflector, 
+        reflector=reflector,
         alignment=alignment)
 
     xml = ''
@@ -138,31 +138,31 @@ def image_sensor(focal_length, PAP_offset, field_of_view):
     rot = np.array([0., 0., 0.])
     xml = ''
     xml+= disc(
-        name='sensor_screen', 
-        pos=sensor_pos, 
-        rot=rot, 
-        radius=sensor_radius, 
-        color='green', 
-        refl='zero', 
+        name='sensor_screen',
+        pos=sensor_pos,
+        rot=rot,
+        radius=sensor_radius,
+        color='green',
+        refl='zero',
         sensor_id=0)
     xml+= disc(
-        name='sensor_housing', 
-        pos=housing_pos, 
-        rot=rot, 
-        radius=housing_radius, 
-        color='grey', 
+        name='sensor_housing',
+        pos=housing_pos,
+        rot=rot,
+        radius=housing_radius,
+        color='grey',
         refl='zero')
     return xml
 
 
 def ground(reflector):
     return disc(
-        name='ground', 
-        pos=np.array([0.0, 0.0, -0.1*reflector['geometry'].focal_length]), 
-        rot=np.array([0,0,0]), 
-        radius=reflector['geometry'].max_outer_radius*1.25, 
-        color='grass_green', 
-        refl='zero', 
+        name='ground',
+        pos=np.array([0.0, 0.0, -0.1*reflector['geometry'].focal_length]),
+        rot=np.array([0,0,0]),
+        radius=reflector['geometry'].max_outer_radius*1.25,
+        color='grass_green',
+        refl='zero',
         sensor_id=1)
 
 
@@ -194,8 +194,8 @@ def star_light(radius, pos, number_of_photons):
     xml+= '        disc_radius_in_m="'+float2str(radius)+'"\n'
     xml+= '        number_of_photons="'+float2str(number_of_photons)+'"\n'
     xml+= '        pos="'+tuple3(pos)+'"\n'
-    xml+= '        rot_in_deg="[0.0, 180.0, 0.0]"\n'     
-    xml+= '    />\n'  
+    xml+= '        rot_in_deg="[0.0, 180.0, 0.0]"\n'
+    xml+= '    />\n'
     xml+= '</lightsource>\n'
     return xml
 
@@ -231,8 +231,8 @@ def write_star_light_xml(reflector, path, number_of_photons=1e6):
     ---------
     reflector           The reflector dictionary
 
-    path                Path of the output xml file 
-    
+    path                Path of the output xml file
+
     number_of_photons   The total number of photons to be emitted
     """
     write_xml(
@@ -240,7 +240,7 @@ def write_star_light_xml(reflector, path, number_of_photons=1e6):
             radius=1.1*reflector['geometry'].max_outer_radius,
             pos=np.array([0.0, 0.0, 10.0*reflector['geometry'].focal_length]),
             number_of_photons=number_of_photons),
-        path)    
+        path)
 
 
 def write_propagation_config_xml(path, mutlithread=True):
@@ -249,15 +249,15 @@ def write_propagation_config_xml(path, mutlithread=True):
 
     Parameter
     ---------
-    path                Path of the output xml file 
-    
+    path                Path of the output xml file
+
     mutlithread         propagate in parallel if True
     """
     parallel = 'False'
     if mutlithread:
         parallel='True'
 
-    xml = '<settings\n' 
+    xml = '<settings\n'
     xml+= '    max_number_of_interactions_per_photon="42"\n'
     xml+= '    use_multithread_when_possible="'+parallel+'"\n'
     xml+= '/>\n'
