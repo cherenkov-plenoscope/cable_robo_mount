@@ -10,7 +10,6 @@ class Structural(object):
         self.bar_thickness = config_dict['reflector']['bars']['thickness']
         self.facet_surface_weight = config_dict['reflector']['facet']['surface_weight']
         self.facet_actuator_weight = config_dict['reflector']['facet']['actuator_weight']
-        self.angle_from_zenith = config_dict['reflector']['position_from_zenith']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
         self._set_up_loading()
         self._set_up_loading_scenarios(config_dict)

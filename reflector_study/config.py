@@ -15,13 +15,13 @@ example = {
         },
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0 ,0.0, 0.0],
-        'rotational_vector_Rx_Ry_Rz': [0.0, 30.0, 0.0]
-        }
+        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
+        },
     'reflector': {
         'main': {
             'max_outer_radius': 10.0,
             'min_inner_radius': 2.0,
-            'number_of_layers': 3,
+            'number_of_layers': 5,
             'x_over_z_ratio': 1.2
             },
         'optics': {
@@ -36,20 +36,20 @@ example = {
             },
         'material': {
             'e_modul': 210e6,
-            'yielding_point': 235000.0,
+            'yielding_point': 460000.0,
             'ultimate_point': 360000.0,
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.05,
-            'thickness': 0.001,
+            'outer_diameter': 0.0424,
+            'thickness': 0.0026,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
         },
     'tension_ring':{
-        'width': 3,
-        'support_position': 10,
+        'width': 4,
+        'support_position': 15,
         },
     'load_scenario': {
         'wind': {
