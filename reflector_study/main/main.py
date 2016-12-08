@@ -6,8 +6,6 @@ geometry = rs.Geometry(rs.config.example)
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 general_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
 
-reflector = rs.factory.generate_reflector(geometry)
-
 nodes = general_geometry["nodes"]["all"]
 fixtures = general_geometry["fixtures"]["all"]
 bars = general_geometry["bars"]["all"]
@@ -16,6 +14,10 @@ mirror_tripods = general_geometry["mirror_tripods"]
 """
 dish rotation
 """
+homogenous_transformation = rs.HomTra()
+homogenous_transformation.set_translation([50,0,0])
+homogenous_transformation.set_rotation_tait_bryan_angles(0,3.14/4,0)
+nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_translated_position(nodes, homogenous_transformation)
 
 """
 initialize SAP2000 and make assigns
@@ -24,13 +26,13 @@ initialize SAP2000 and make assigns
 bridge = rs.SAP2000_bridge.Bridge(structural)
 bridge._SapObject.Unhide()
 
-bridge._nodes_definition(nodes)
+bridge._nodes_definition(nodes_rotated)
 bridge.elastic_support_definition(fixtures)
 bridge._frames_definition(bars)
 
 bridge.load_scenario_dead()
-bridge.load_scenario_facet_weight(reflector)
-bridge.load_scenario_wind(reflector, nodes)
+bridge.load_scenario_facet_weight(mirror_tripods)
+bridge.load_scenario_wind(mirror_tripods, nodes_rotated)
 
 bridge.load_combination_3LP_definition()
 
@@ -43,7 +45,16 @@ forces= bridge.get_forces_for_group_of_bars_for_selected_load_combination(load_c
 buckling = rs.SAP2000_bridge.BucklingControl.Knicknachweis(rs.config.example, forces)
 #log = buckling.log
 
-reflector, reflector_deformed = bridge.get_deformed_reflector_for_all_nodes_for_selected_load_combination(reflector, "dead+live+wind")
+nodes_deformed_rotated= bridge.get_total_absolute_deformations_for_load_combination(nodes= nodes_rotated, load_combination_name= "dead+live+wind", group_name= "ALL")
+
+"""
+bring dish to original position and prepare for mctracing simulation
+"""
+nodes_deformed = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_zenith_position(nodes_deformed_rotated, homogenous_transformation)
+
+reflector = rs.factory.generate_reflector(geometry)
+reflector_deformed = reflector.copy()
+reflector_deformed["nodes"]= nodes_deformed[:reflector["nodes"].copy().shape[0]]
 
 """
 initialize ssh connection
