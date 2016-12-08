@@ -13,6 +13,10 @@ example = {
             'path': 'C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe'
             }
         },
+    'structure_spatial_position': {
+        'translational_vector_xyz': [0.0 ,0.0, 0.0],
+        'rotational_vector_Rx_Ry_Rz': [0.0, 30.0, 0.0]
+        },
     'reflector': {
         'position_from_zenith': 30,
         'main': {

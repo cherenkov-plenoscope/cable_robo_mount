@@ -15,8 +15,8 @@ mirror_tripods = general_geometry["mirror_tripods"]
 dish rotation
 """
 homogenous_transformation = rs.HomTra()
-homogenous_transformation.set_translation([50,0,0])
-homogenous_transformation.set_rotation_tait_bryan_angles(0,3.14/4,0)
+homogenous_transformation.set_translation(geometry.translational_vector_xyz)
+homogenous_transformation.set_rotation_tait_bryan_angles(geometry.tait_bryan_angle_Rx, geometry.tait_bryan_angle_Ry, geometry.tait_bryan_angle_Rz)
 nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_translated_position(nodes, homogenous_transformation)
 
 """
