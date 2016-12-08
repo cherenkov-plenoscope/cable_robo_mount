@@ -16,9 +16,8 @@ example = {
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0 ,0.0, 0.0],
         'rotational_vector_Rx_Ry_Rz': [0.0, 30.0, 0.0]
-        },
+        }
     'reflector': {
-        'position_from_zenith': 30,
         'main': {
             'max_outer_radius': 10.0,
             'min_inner_radius': 2.0,
