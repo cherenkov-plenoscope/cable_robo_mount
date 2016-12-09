@@ -182,13 +182,13 @@ class Bridge(object):
             cp= 2.5,
             ItemType= 1)
 
-    def load_combination_3LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):
+    def load_combination_3LP_definition(self, structural, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):
         self._SapModel.RespCombo.Add(
             Name= load_combination_name,
             ComboType= 0)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, 1.35)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, 1.35)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, 1.5)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, structural.dead_load_scenario_security_factor)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, structural.wind_load_scenario_security_factor)
 
     def save_model(self, path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example"):
         self._SapModel.File.Save(path)

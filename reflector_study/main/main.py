@@ -34,7 +34,7 @@ bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(mirror_tripods)
 bridge.load_scenario_wind(mirror_tripods, nodes_rotated)
 
-bridge.load_combination_3LP_definition()
+bridge.load_combination_3LP_definition(structural)
 
 """
 run analysis and take Results

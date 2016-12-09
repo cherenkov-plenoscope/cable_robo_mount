@@ -52,6 +52,11 @@ example = {
         'support_position': 15,
         },
     'load_scenario': {
+        'security_factor': {
+            'dead': 1.35,
+            'live': 1.35,
+            'wind': 1.5
+            },
         'wind': {
             'direction': 0.0,
             'speed': 55, #m/s

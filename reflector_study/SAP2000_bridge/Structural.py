@@ -31,6 +31,10 @@ class Structural(object):
         self.wind_density = config_dict["load_scenario"]["wind"]["wind_density"]
         self.wind_security_distance_from_ground = config_dict["load_scenario"]["wind"]["security_distance_from_ground"]
 
+        self.dead_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["dead"]
+        self.live_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["live"]
+        self.wind_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["wind"]
+
     def __repr__(self):
         info = 'Structural and loading assumptions'
         info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kg/m2)"
