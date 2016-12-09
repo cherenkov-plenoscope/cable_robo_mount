@@ -123,7 +123,7 @@ def mirror_facet_centers(reflector):
     tripods = reflector['mirror_tripods']
     tripod_centers = tools.mirror_tripod_centers(nodes, tripods)
     facet_centers = tripod_centers.copy()
-    facet_centers[:,2] += 2.0*reflector['geometry'].bar_outer_diameter
+    facet_centers[:,2] += reflector['geometry'].bar_outer_diameter
     return facet_centers
 
 
