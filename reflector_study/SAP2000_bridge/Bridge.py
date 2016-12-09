@@ -81,11 +81,12 @@ class Bridge(object):
                 MergeOff=True)
 
     def _frames_definition(self, bars):
+        PropName="ROR_"+str(1000 * self.structural.bar_outter_radius)+"x"+str(1000 * self.structural.bar_thickness)
         for i in range ((bars.shape[0])):
             self._SapModel.FrameObj.AddByPoint(
                 Point1="node_"+str(bars[i,0]), #Point name
                 Point2="node_"+str(bars[i,1]), #Point name
-                PropName="ROR_"+str(1000 * self.structural.bar_outter_radius)+"x"+str(1000 * self.structural.bar_thickness),
+                PropName= PropName,
                 Name='whatever',
                 UserName='bar_'+str(i))
 
