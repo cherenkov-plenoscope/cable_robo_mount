@@ -264,20 +264,7 @@ class Bridge(object):
                     Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
-        forces = []
-        for i in range(NumberResults-1):
-            if Obj[i] != Obj[i+1]:
-                points= self._SapModel.FrameObj.GetPoints(Obj[i])
-                coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
-                coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
-                length= np.linalg.norm(coord_1 - coord_2)
-                forces.append([Obj[i], length, P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
-        points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
-        coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
-        coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
-        length= np.linalg.norm(coord_1 - coord_2)
-        forces.append([Obj[NumberResults-1], length, P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
-        return forces
+        return forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
 
     def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
@@ -298,6 +285,9 @@ class Bridge(object):
                     Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
+        return self.forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
+
+    def forces_arrange(self, NumberResults, Obj, P, V2, V3, T, M2, M3):
         forces = []
         for i in range(NumberResults-1):
             if Obj[i] != Obj[i+1]:

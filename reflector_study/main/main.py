@@ -43,7 +43,7 @@ bridge.run_analysis()
 
 forces= bridge.get_forces_for_group_of_bars_for_selected_load_combination(load_combination_name= "dead+live+wind")
 buckling = rs.SAP2000_bridge.BucklingControl.Knicknachweis(rs.config.example, forces)
-#log = buckling.log
+log = buckling.log
 
 nodes_deformed_rotated= bridge.get_total_absolute_deformations_for_load_combination(nodes= nodes_rotated, load_combination_name= "dead+live+wind", group_name= "ALL")
 
