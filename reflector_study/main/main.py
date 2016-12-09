@@ -6,9 +6,9 @@ geometry = rs.Geometry(rs.config.example)
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 general_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
 
-nodes = general_geometry["nodes"]["all"]
-fixtures = general_geometry["fixtures"]["all"]
-bars = general_geometry["bars"]["all"]
+nodes = general_geometry["nodes"]
+fixtures = general_geometry["cable_supports"]
+bars = general_geometry["bars"]
 mirror_tripods = general_geometry["mirror_tripods"]
 
 """
