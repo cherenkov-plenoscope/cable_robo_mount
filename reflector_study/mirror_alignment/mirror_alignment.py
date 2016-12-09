@@ -5,7 +5,7 @@ from ..HomTra import HomTra
 
 def mean_distance_between(focal_point, facet_centers):
     """
-    Returns the average distance between the focal_point position and all 
+    Returns the average distance between the focal_point position and all
     the individual mirror facet center positions.
 
     Parameter
@@ -22,12 +22,12 @@ def mean_distance_between(focal_point, facet_centers):
 
 
 def PAP_offset_in_z(
-    focal_length, 
-    facet_centers, 
-    max_iterations=10000, 
+    focal_length,
+    facet_centers,
+    max_iterations=10000,
     precision=1e-4):
     """
-    Returns the position offset in z direction of the factory's frame to the  
+    Returns the position offset in z direction of the factory's frame to the
     Principal Aperture Plane (PAP) of the reflector.
 
     Parameter
@@ -51,7 +51,7 @@ def PAP_offset_in_z(
         iteration += 1
         mean_dist = mean_distance_between(focal_piont, facet_centers)
         delta_z = mean_dist - focal_length
-        if delta_z < precision: 
+        if delta_z < precision:
             break
 
         if iteration > max_iterations:
@@ -66,7 +66,7 @@ def PAP_offset_in_z(
 
 def ideal_reflector2facet(focal_piont, facet_center):
     """
-    Returns an ideal homogenoues transformation reflector2facet for a mirror 
+    Returns an ideal homogenoues transformation reflector2facet for a mirror
     facet located at facet_center.
 
     Parameter
@@ -112,7 +112,7 @@ def ideal_reflector2facets(focal_length, facet_centers, PAP_offset):
 
 def mirror_facet_centers(reflector):
     """
-    Returns a list of mirror facet center positions calculated from the 
+    Returns a list of mirror facet center positions calculated from the
     mirror tripod center positions.
 
     Parameter
@@ -123,7 +123,7 @@ def mirror_facet_centers(reflector):
     tripods = reflector['mirror_tripods']
     tripod_centers = tools.mirror_tripod_centers(nodes, tripods)
     facet_centers = tripod_centers.copy()
-    facet_centers[:,2] += 2.0*reflector['geometry'].bar_outer_radius  
+    facet_centers[:,2] += reflector['geometry'].bar_outer_diameter
     return facet_centers
 
 
@@ -156,15 +156,15 @@ def make_reflector2tripods(reflector):
 def ideal_alignment(reflector):
     """
     Returns the ideal alignment of the mirror facets for a given reflector.
-        
-        tripod2facet                        A list of homogenoues 
+
+        tripod2facet                        A list of homogenoues
                                             transformations from a mirror
-                                            tripod frame to the corresponding 
+                                            tripod frame to the corresponding
                                             mirror facet frame
 
-        principal_aperture_plane_offset     The positional offset to the 
-                                            principal aperture plane of the 
-                                            segmented reflector in the reflector 
+        principal_aperture_plane_offset     The positional offset to the
+                                            principal aperture plane of the
+                                            segmented reflector in the reflector
                                             factory frame
 
     Parameter
@@ -174,7 +174,7 @@ def ideal_alignment(reflector):
     facet_centers = mirror_facet_centers(reflector)
     focal_length = reflector['geometry'].focal_length
     PAP_offset = PAP_offset_in_z(
-        focal_length=focal_length, 
+        focal_length=focal_length,
         facet_centers=facet_centers)
     reflector2facets = ideal_reflector2facets(
         focal_length=focal_length,

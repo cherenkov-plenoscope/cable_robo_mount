@@ -69,8 +69,7 @@ class Bridge(object):
             Color= -1,
             Notes= "surface_included_just_for_wind_load_scenario")
 
-    def nodes_definition(self, reflector):
-        nodes = reflector["nodes"]
+    def _nodes_definition(self, nodes):
         for i in range ((nodes.shape[0])):
             self._SapModel.PointObj.AddCartesian(
                 X=nodes[i,0],
@@ -81,8 +80,7 @@ class Bridge(object):
                 CSys='Global',
                 MergeOff=True)
 
-    def frames_definition(self, reflector):
-        bars = reflector["bars"]
+    def _frames_definition(self, bars):
         for i in range ((bars.shape[0])):
             self._SapModel.FrameObj.AddByPoint(
                 Point1="node_"+str(bars[i,0]), #Point name
@@ -91,8 +89,12 @@ class Bridge(object):
                 Name='whatever',
                 UserName='bar_'+str(i))
 
-    def restraints_definition(self, reflector):
-        fixtures = reflector["fixtures"]
+    def elastic_support_definition(self, fixtures):
+        spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
+        for i in range ((fixtures.shape[0])):
+            self._SapModel.PointObj.SetSpring("node_"+str(fixtures[i]), spring_stiffness)
+
+    def _restraints_definition(self, fixtures):
         deegres_of_freedom = [True, True, True, False, False, False]
         for i in range ((fixtures.shape[0])):
             self._SapModel.PointObj.SetRestraint(
@@ -114,13 +116,12 @@ class Bridge(object):
             Name= material_name,
             Value= stiffness_mass_weight_modifiers)
 
-    def _area_object_with_points_definition(self, reflector, points_number= 3):
-        mirror_tripods= reflector["mirror_tripods"].copy().tolist()
+    def _area_object_with_points_definition(self, mirror_tripods, points_number= 3):
         nodes_of_mirror_tripod= []
         for i in range(len(mirror_tripods)):
             nodes_of_mirror_tripod.append([])
             for j in range(len(mirror_tripods[i])):
-                nodes_of_mirror_tripod[i].append("node_"+str(mirror_tripods[i][j]))
+                nodes_of_mirror_tripod[i].append("node_"+str(mirror_tripods[i,j]))
             self._SapModel.AreaObj.AddByPoint(
                 NumberPoints= points_number,
                 Point= nodes_of_mirror_tripod[i],
@@ -135,8 +136,7 @@ class Bridge(object):
             MyType= 1,
             SelfWTMultiplier= 1)
 
-    def load_scenario_facet_weight(self, reflector, load_pattern_name= "facets_live_load"):
-        mirror_tripods = reflector["mirror_tripods"]
+    def load_scenario_facet_weight(self, mirror_tripods, load_pattern_name= "facets_live_load"):
         self._SapModel.LoadPatterns.Add(
             Name= load_pattern_name,
             MyType= 3,
@@ -151,43 +151,44 @@ class Bridge(object):
                     CSys= "Global",
                     ItemType= 0) # 0, 1, 2
 
-    def load_scenario_wind(self, reflector, load_pattern_name= "wind"):
+    def load_scenario_wind(self, mirror_tripods, nodes, load_pattern_name= "wind"):
         self._SapModel.LoadPatterns.Add(
             Name= load_pattern_name,
             MyType= 6,
             SelfWTMultiplier= 0)
         self._shell_definition()
         self._material_property_modifiers()
-        self._area_object_with_points_definition(reflector)
+        self._area_object_with_points_definition(mirror_tripods)
         self._SapModel.LoadPatterns.AutoWind.SetEurocode12005_1(
             Name= load_pattern_name,
             ExposureFrom= 2, #area objects
-            DirAngle= 0.0,
+            DirAngle= self.structural.wind_direction,
             Cpw= 0.0,
             Cpl= 0.0,
-            UserZ= False,
-            TopZ= 0.0,
-            BottomZ= 0.0,
-            WindSpeed= 100,
-            Terrain= 2,
-            Orography= 1,
-            K1= 1.0,
-            CsCd= 1.0,
-            Rho= 1.25, #wind density
+            UserZ= True,
+            TopZ= np.amax(nodes, axis= 0)[2],
+            BottomZ= np.amin(nodes, axis=0)[2]-self.structural.wind_security_distance_from_ground,
+            WindSpeed= self.structural.wind_speed,
+            Terrain= self.structural.wind_terrain_factor,
+            Orography= self.structural.wind_orography_factor,
+            K1= self.structural.wind_K1_factor,
+            CsCd= self.structural.wind_CsCd_factor,
+            Rho= self.structural.wind_density,
             UserExposure= False)
         self._SapModel.AreaObj.SetLoadWindPressure(
             Name= "ALL",
             LoadPat= "wind",
             MyType= 1,
-            cp= 1,
+            cp= 2.5,
             ItemType= 1)
 
-    def load_combination_2LP_definition(self, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
+    def load_combination_3LP_definition(self, structural, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):
         self._SapModel.RespCombo.Add(
             Name= load_combination_name,
             ComboType= 0)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, 1.35)
-        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, 1.5)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, structural.dead_load_scenario_security_factor)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, structural.wind_load_scenario_security_factor)
 
     def save_model(self, path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example"):
         self._SapModel.File.Save(path)
@@ -196,7 +197,7 @@ class Bridge(object):
         self.save_model()
         self._SapModel.Analyze.RunAnalysis()
 
-    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name= "ALL"):
+    def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetCaseSelectedForOutput(load_pattern_name)
 
@@ -220,7 +221,7 @@ class Bridge(object):
             relative_displacements.append([Obj[i], U1[i], U2[i], U3[i], R1[i], R2[i], R3[i]])
         return relative_displacements
 
-    def get_displacements_for_group_of_nodes_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
+    def get_displacements_for_group_of_nodes_for_selected_load_combination(self, load_combination_name, group_name):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetComboSelectedForOutput(load_combination_name)
 
@@ -251,22 +252,19 @@ class Bridge(object):
         Name = group_name
         ItemTypeElm = 2
         NumberResults = 0
-        Obj, Elm, PointElm = [], [], []
+        Obj, ObjSta, Elm, ElmSta = [], [], [], []
         LoadCase, StepType, StepNum = [], [], []
         P, V2, V3, T, M2, M3 = [], [], [], [], [], []
 
-        [NumberResults, Obj, Elm, PointElm,
+        [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = self._SapModel.Results.FrameJointForce(
+        ret] = self._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
-                    Obj, Elm, PointElm,
+                    Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
-        forces = []
-        for i in range(len(Obj)):
-            forces.append([Obj[i], PointElm[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
-        return forces
+        return forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
 
     def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
@@ -275,44 +273,55 @@ class Bridge(object):
         Name = group_name
         ItemTypeElm = 2
         NumberResults = 0
-        Obj, Elm, PointElm = [], [], []
+        Obj, ObjSta, Elm, ElmSta = [], [], [], []
         LoadCase, StepType, StepNum = [], [], []
         P, V2, V3, T, M2, M3 = [], [], [], [], [], []
 
-        [NumberResults, Obj, Elm, PointElm,
+        [NumberResults, Obj, ObjSta, Elm, ElmSta,
         LoadCase, StepType, StepNum,
         P, V2, V3, T, M2, M3,
-        ret] = self._SapModel.Results.FrameJointForce(
+        ret] = self._SapModel.Results.FrameForce(
                     Name, ItemTypeElm, NumberResults,
-                    Obj, Elm, PointElm,
+                    Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
+        return self.forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
+
+    def forces_arrange(self, NumberResults, Obj, P, V2, V3, T, M2, M3):
         forces = []
-        for i in range(len(Obj)):
-            forces.append([Obj[i], PointElm[i], P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        for i in range(NumberResults-1):
+            if Obj[i] != Obj[i+1]:
+                points= self._SapModel.FrameObj.GetPoints(Obj[i])
+                coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+                coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+                length= np.linalg.norm(coord_1 - coord_2)
+                forces.append([Obj[i], length, P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
+        points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
+        coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
+        coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
+        length= np.linalg.norm(coord_1 - coord_2)
+        forces.append([Obj[NumberResults-1], length, P[NumberResults-1], V2[NumberResults-1], V3[NumberResults-1], T[NumberResults-1], M2[NumberResults-1], M3[NumberResults-1]])
         return forces
 
-    def get_deformed_reflector_for_all_nodes_for_selected_load_pattern(self, reflector, load_pattern_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_pattern(load_pattern_name)
-        nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
+    def get_total_absolute_deformations_for_load_pattern(self, nodes, load_pattern_name, group_name= "ALL"):
+        self.group_of_nodes_definition(group_name, flat_part_of_reflector= np.arange(nodes.shape[0]))
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_combination(load_pattern_name, group_name)
+        nodes_deformed = np.zeros((nodes.shape[0],3))
         for i in range(len(relative_displacements)):
-            nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
-            nodes_deformed[i][1] = reflector["nodes"][i][1] + relative_displacements[i][2]
-            nodes_deformed[i][2] = reflector["nodes"][i][2] + relative_displacements[i][3]
-        reflector_deformed = reflector.copy()
-        reflector_deformed["nodes"] = nodes_deformed
-        return reflector, reflector_deformed
+            nodes_deformed[i, 0] = nodes[i, 0] + relative_displacements[i][1]
+            nodes_deformed[i, 1] = nodes[i, 1] + relative_displacements[i][2]
+            nodes_deformed[i, 2] = nodes[i, 2] + relative_displacements[i][3]
+        return nodes_deformed
 
-    def get_deformed_reflector_for_all_nodes_for_selected_load_combination(self, reflector, load_combination_name):
-        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_combination(load_combination_name)
-        nodes_deformed = np.zeros((reflector["nodes"].shape[0],3))
+    def get_total_absolute_deformations_for_load_combination(self, nodes, load_combination_name, group_name= "ALL"):
+        self.group_of_nodes_definition(group_name, flat_part_of_reflector= np.arange(nodes.shape[0]))
+        relative_displacements = self.get_displacements_for_group_of_nodes_for_selected_load_combination(load_combination_name, group_name)
+        nodes_deformed = np.zeros((nodes.shape[0],3))
         for i in range(len(relative_displacements)):
-            nodes_deformed[i][0] = reflector["nodes"][i][0] + relative_displacements[i][1]
-            nodes_deformed[i][1] = reflector["nodes"][i][1] + relative_displacements[i][2]
-            nodes_deformed[i][2] = reflector["nodes"][i][2] + relative_displacements[i][3]
-        reflector_deformed = reflector.copy()
-        reflector_deformed["nodes"] = nodes_deformed
-        return reflector, reflector_deformed
+            nodes_deformed[i, 0] = nodes[i, 0] + relative_displacements[i][1]
+            nodes_deformed[i, 1] = nodes[i, 1] + relative_displacements[i][2]
+            nodes_deformed[i, 2] = nodes[i, 2] + relative_displacements[i][3]
+        return nodes_deformed
 
     def __repr__(self):
         out = "SAP2000_OAPI"

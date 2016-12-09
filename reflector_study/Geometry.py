@@ -12,7 +12,16 @@ class Geometry(object):
 
         self.number_of_layers = config_dict['reflector']['main']['number_of_layers']
         self.x_over_z_ratio = config_dict['reflector']['main']['x_over_z_ratio']
-        self.bar_outer_radius = config_dict['reflector']['bars']['outer_radius']
+        self.bar_outer_diameter = config_dict['reflector']['bars']['outer_diameter']
+
+        self.tension_ring_width = config_dict['tension_ring']['width']
+        self.tension_ring_support_position = config_dict['tension_ring']['support_position']
+
+        self.translational_vector_xyz = config_dict["structure_spatial_position"]["translational_vector_xyz"]
+        self.tait_bryan_angle_Rx = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][0])
+        self.tait_bryan_angle_Ry = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][1])
+        self.tait_bryan_angle_Rz = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][2])
+
         self._set_up_geometry()
 
 
