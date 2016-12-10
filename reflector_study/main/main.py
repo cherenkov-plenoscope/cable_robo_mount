@@ -26,9 +26,13 @@ initialize SAP2000 and make assigns
 bridge = rs.SAP2000_bridge.Bridge(structural)
 bridge._SapObject.Unhide()
 
-bridge._nodes_definition(nodes_rotated)
+bridge.save_model("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k")
+rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated)
+rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars)
+
+bridge._SapModel.File.OpenFile("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k")
+
 bridge.elastic_support_definition(fixtures)
-bridge._frames_definition(bars)
 
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(mirror_tripods)
