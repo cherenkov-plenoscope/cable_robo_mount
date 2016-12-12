@@ -24,13 +24,20 @@ initialize SAP2000 and make assigns
 """
 
 bridge = rs.SAP2000_bridge.Bridge(structural)
-bridge._SapObject.Unhide()
+#bridge._SapObject.Hide()
+#bridge._SapObject.Unhide()
+
+
+import time
+##S2V procedure
+start = time.time()
 
 bridge.save_model("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k")
 rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated)
 rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars)
-
 bridge._SapModel.File.OpenFile("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k")
+end = time.time()
+
 
 bridge.elastic_support_definition(fixtures)
 
