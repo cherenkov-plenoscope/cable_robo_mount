@@ -42,6 +42,12 @@ bridge._SapObject.Unhide()
 
 
 
+reflector = rs.factory.generate_reflector(geometry)
+
+nodes = reflector["nodes"]
+fixtures = reflector["fixtures"]
+bars = reflector["bars"]
+mirror_tripods = reflector["mirror_tripods"]
 
 """
 dish rotation
@@ -56,11 +62,21 @@ initialize SAP2000 and make assigns
 """
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
-bridge._SapObject.Unhide()
+#bridge._SapObject.Hide()
+#bridge._SapObject.Unhide()
 
-bridge._nodes_definition(nodes_rotated)
+path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\test1\\spr"
+
+
+bridge.save_model(path+".sdb")
+rs.SAP2000_bridge.bridge_s2v.s2k(nodes, path)
+rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars, path)
+
+
+bridge._SapModel.File.OpenFile(path+".$2k")
+
+
 bridge.elastic_support_definition(fixtures)
-bridge._frames_definition(bars)
 
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(mirror_tripods)
