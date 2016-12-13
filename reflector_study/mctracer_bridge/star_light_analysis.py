@@ -14,12 +14,11 @@ config = {
 }
 
 
-def read_sensor_response(path):
-    # 0     x: [m], intersection on screen
-    # 1     y: [m], intersection on screen
-    # 2     cos_x: [1], x component of inverse incident direction
-    # 3     cos_y: [1], y component of inverse incident direction
-    #             inverse_incident = (cos_x, cos_y, sqrt(1 - cos_x^2 - cos_y^2))^T
+def read_text_response(path):
+    # 0     x: [m],
+    # 1     y: [m],
+    # 2     cos_x: [1], x
+    # 3     cos_y: [1], y
     # 4     wavelength: [m]
     # 5     arrival_time: [s]
     # 6     simulation_truth_id [1]
@@ -27,13 +26,33 @@ def read_sensor_response(path):
     return {
         'x': response[:,0],
         'y': response[:,1],
-        #'cos_x': response[:,2],
-        #'cos_y': response[:,3],
-        #'wavelength': response[:,4],
         'arrival_time': response[:,5],
-        #'id': response[:,6],
-        'number_of_photons': response.shape[0]
-    }
+        'number_of_photons': response.shape[0]}
+
+
+def read_binary_response(path):
+    # 0 simulation_truth_id
+    # 1 wavelength
+    # 2 arrival_time
+    # 3 x_intersect
+    # 4 y_intersect
+    # 5 theta_x
+    # 6 theta_y
+    raw = np.fromfile(path, dtype=np.float32)
+    phs = raw.reshape([raw.shape[0]/7, 7])
+    return {
+        'x': phs[:,3],
+        'y': phs[:,4],
+        'arrival_time': phs[:,2],
+        'number_of_photons': phs.shape[0]}
+
+
+def read_sensor_response(path):
+    try:
+        return read_binary_response(path)
+    except:
+        return read_text_response(path)
+        
 
 
 def make_image_from_sensor_response(reflector, sensor_response, analysis_config):
