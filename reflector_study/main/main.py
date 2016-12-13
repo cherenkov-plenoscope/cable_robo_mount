@@ -51,11 +51,11 @@ initialize SAP2000 and make assigns
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
 #bridge._SapObject.Hide()
-bridge._SapObject.Unhide()
+#bridge._SapObject.Unhide()
 
 path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\test1\\spr"
 bridge.save_model(path+".sdb")
-rs.SAP2000_bridge.bridge_s2v.s2k(nodes, path)
+rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated, path)
 rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars, path)
 bridge._SapModel.File.OpenFile(path+".$2k")
 
@@ -71,14 +71,14 @@ bridge.load_combination_3LP_definition(structural)
 """
 run analysis and take Results
 """
-bridge._SapModel.Analyze.SetRunCaseFlag("DEAD", False, True)
-bridge._SapModel.Analyze.SetRunCaseFlag("MODEL", False, True)
+bridge._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
+bridge._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
 
 bridge.run_analysis()
 
-forces= bridge.get_forces_for_group_of_bars_for_selected_load_combination(load_combination_name= "dead+live+wind")
-buckling = rs.SAP2000_bridge.BucklingControl.Knicknachweis(rs.config.example, forces)
-log = buckling.log
+#forces= bridge.get_forces_for_group_of_bars_for_selected_load_combination(load_combination_name= "dead+live+wind")
+#buckling = rs.SAP2000_bridge.BucklingControl.Knicknachweis(rs.config.example, forces)
+#log = buckling.log
 
 nodes_deformed_rotated= bridge.get_total_absolute_deformations_for_load_combination(nodes= nodes_rotated, load_combination_name= "dead+live+wind", group_name= "ALL")
 
@@ -87,7 +87,6 @@ bring dish to original position and prepare for mctracing simulation
 """
 nodes_deformed = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_zenith_position(nodes_deformed_rotated, homogenous_transformation)
 
-reflector = rs.factory.generate_reflector(geometry)
 reflector_deformed = reflector.copy()
 reflector_deformed["nodes"]= nodes_deformed[:reflector["nodes"].copy().shape[0]]
 
