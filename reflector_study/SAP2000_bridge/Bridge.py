@@ -5,12 +5,15 @@ import numpy as np
 class Bridge(object):
 
     def __init__(self, structural):
+
         self.structural = structural
+        """
         self._SapObject = comtypes.client.GetActiveObject("CSI.SAP2000.API.SapObject")
         self._SapModel = self._SapObject.SapModel
-        """
+
         To create new model do the following
         -----------------
+        """
         self._helper = comtypes.client.CreateObject("Sap2000v18.Helper").QueryInterface(comtypes.gen.SAP2000v18.cHelper)
         self._SapObject = self._helper.CreateObject(self.structural.SAP_2000_directory)
         self._SapObject.ApplicationStart(
@@ -18,7 +21,7 @@ class Bridge(object):
             Visible= False,
             FileName= "")
         self._SapModel = self._SapObject.SapModel
-        """
+
 
         self.initialize_new_workspace()
         self.material_definition()
