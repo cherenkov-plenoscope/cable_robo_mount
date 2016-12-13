@@ -6,7 +6,7 @@ config = {
     'photons_per_square_meter': 1000,
     'sensor': {
         'bin_width_deg': 0.001,
-        'region_of_interest_deg': 1 
+        'region_of_interest_deg': 1
     },
     'ground': {
         'bin_width_m': 0.1
@@ -39,20 +39,12 @@ def read_binary_response(path):
     # 5 theta_x
     # 6 theta_y
     raw = np.fromfile(path, dtype=np.float32)
-    phs = raw.reshape([raw.shape[0]/7, 7])
+    phs = raw.reshape([raw.shape[0]//7, 7])
     return {
         'x': phs[:,3],
         'y': phs[:,4],
         'arrival_time': phs[:,2],
         'number_of_photons': phs.shape[0]}
-
-
-def read_sensor_response(path):
-    try:
-        return read_binary_response(path)
-    except:
-        return read_text_response(path)
-        
 
 
 def make_image_from_sensor_response(reflector, sensor_response, analysis_config):
@@ -105,14 +97,14 @@ def make_image_from_ground_response(reflector, ground_response, analysis_config)
 def add2ax_image(ax, image):
     bins = image['bins']
     im = ax.matshow(
-        image['histogram'], 
-        interpolation='none', 
-        origin='low', 
-        extent=[bins[0], bins[-1], bins[0], bins[-1]], 
+        image['histogram'],
+        interpolation='none',
+        origin='low',
+        extent=[bins[0], bins[-1], bins[0], bins[-1]],
         aspect='equal')
     im.set_cmap('viridis')
     ax.set_xlabel('x/'+image['unit'])
-    ax.set_ylabel('y/'+image['unit']) 
+    ax.set_ylabel('y/'+image['unit'])
 
 
 def plot_image(image):

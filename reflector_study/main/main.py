@@ -82,7 +82,8 @@ mctracer_server.execute(
         ' -s '+run_path+'/'+'scenery.xml'+
         ' -c '+run_path+'/'+'config.xml'+
         ' -i '+run_path+'/'+'light.xml'+
-        ' -o '+run_path+'/'+'out',
+        ' -o '+run_path+'/'+'out'+
+        ' -b',
     out_path='mct_call')
 
 mctracer_server.get(run_path+'/'+'out1_0', 'out1_0')
@@ -90,8 +91,8 @@ mctracer_server.get(run_path+'/'+'out1_1', 'out1_1')
 
 mctracer_server.execute('rm -r '+run_path)
 
-res = rs.mctracer_bridge.star_light_analysis.read_sensor_response('out1_0')
-ground_res = rs.mctracer_bridge.star_light_analysis.read_sensor_response('out1_1')
+res = rs.mctracer_bridge.star_light_analysis.read_binary_response('out1_0')
+ground_res = rs.mctracer_bridge.star_light_analysis.read_binary_response('out1_1')
 image = rs.mctracer_bridge.star_light_analysis.make_image_from_sensor_response(reflector, res, rs.mctracer_bridge.star_light_analysis.config)
 shadow_image = rs.mctracer_bridge.star_light_analysis.make_image_from_ground_response(reflector, ground_res, rs.mctracer_bridge.star_light_analysis.config)
 rs.mctracer_bridge.star_light_analysis.plot_image(image)
