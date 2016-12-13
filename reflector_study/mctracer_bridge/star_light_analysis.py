@@ -6,7 +6,7 @@ config = {
     'photons_per_square_meter': 1000,
     'sensor': {
         'bin_width_deg': 0.001,
-        'region_of_interest_deg': 1 
+        'region_of_interest_deg': 1
     },
     'ground': {
         'bin_width_m': 0.1
@@ -14,12 +14,11 @@ config = {
 }
 
 
-def read_sensor_response(path):
-    # 0     x: [m], intersection on screen
-    # 1     y: [m], intersection on screen
-    # 2     cos_x: [1], x component of inverse incident direction
-    # 3     cos_y: [1], y component of inverse incident direction
-    #             inverse_incident = (cos_x, cos_y, sqrt(1 - cos_x^2 - cos_y^2))^T
+def read_text_response(path):
+    # 0     x: [m],
+    # 1     y: [m],
+    # 2     cos_x: [1], x
+    # 3     cos_y: [1], y
     # 4     wavelength: [m]
     # 5     arrival_time: [s]
     # 6     simulation_truth_id [1]
@@ -27,13 +26,25 @@ def read_sensor_response(path):
     return {
         'x': response[:,0],
         'y': response[:,1],
-        #'cos_x': response[:,2],
-        #'cos_y': response[:,3],
-        #'wavelength': response[:,4],
         'arrival_time': response[:,5],
-        #'id': response[:,6],
-        'number_of_photons': response.shape[0]
-    }
+        'number_of_photons': response.shape[0]}
+
+
+def read_binary_response(path):
+    # 0 simulation_truth_id
+    # 1 wavelength
+    # 2 arrival_time
+    # 3 x_intersect
+    # 4 y_intersect
+    # 5 theta_x
+    # 6 theta_y
+    raw = np.fromfile(path, dtype=np.float32)
+    phs = raw.reshape([raw.shape[0]//7, 7])
+    return {
+        'x': phs[:,3],
+        'y': phs[:,4],
+        'arrival_time': phs[:,2],
+        'number_of_photons': phs.shape[0]}
 
 
 def make_image_from_sensor_response(reflector, sensor_response, analysis_config):
@@ -86,14 +97,14 @@ def make_image_from_ground_response(reflector, ground_response, analysis_config)
 def add2ax_image(ax, image):
     bins = image['bins']
     im = ax.matshow(
-        image['histogram'], 
-        interpolation='none', 
-        origin='low', 
-        extent=[bins[0], bins[-1], bins[0], bins[-1]], 
+        image['histogram'],
+        interpolation='none',
+        origin='low',
+        extent=[bins[0], bins[-1], bins[0], bins[-1]],
         aspect='equal')
     im.set_cmap('viridis')
     ax.set_xlabel('x/'+image['unit'])
-    ax.set_ylabel('y/'+image['unit']) 
+    ax.set_ylabel('y/'+image['unit'])
 
 
 def plot_image(image):
