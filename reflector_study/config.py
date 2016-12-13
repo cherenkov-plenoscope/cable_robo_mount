@@ -19,9 +19,9 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 10.0,
+            'max_outer_radius': 8.0,
             'min_inner_radius': 2.0,
-            'number_of_layers': 5,
+            'number_of_layers': 3,
             'x_over_z_ratio': 1.2
             },
         'optics': {

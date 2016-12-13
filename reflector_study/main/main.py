@@ -4,12 +4,14 @@ general imports
 """
 geometry = rs.Geometry(rs.config.example)
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
-general_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
+#create reflector geometry
+reflector = rs.factory.generate_reflector(geometry)
+nodes = reflector["nodes"]
+fixtures = reflector["fixtures"]
+bars = reflector["bars"]
+mirror_tripods = reflector["mirror_tripods"]
 
-nodes = general_geometry["nodes"]
-fixtures = general_geometry["cable_supports"]
-bars = general_geometry["bars"]
-mirror_tripods = general_geometry["mirror_tripods"]
+#create tension ring geometry
 
 """
 dish rotation
