@@ -1,7 +1,7 @@
 
 class s2k(object):
-    def __init__(self, nodes):
-        self.file_path= "C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k"
+    def __init__(self, nodes, path):
+        self.file_path= path+".$2k"
         self.s2k_contents = self.txtlines_to_contents(self.file_path)
         self.table_joint_coordinates = self.create_table_nodes(nodes)
         self.final_s2k = self.import_table_to_s2k(self.table_joint_coordinates, self.s2k_contents)
@@ -29,8 +29,8 @@ class s2k(object):
                 f.write(str(item))
 
 class s2k_frames(object):
-    def __init__(self, bars):
-        self.file_path= "C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k"
+    def __init__(self, bars, path):
+        self.file_path= path+".$2k"
         self.s2k_contents = self.txtlines_to_contents(self.file_path)
         self.tables_1_frames, self.tables_2_frames = self.create_table_frames(bars)
         self.final_s2k = self.import_tables_to_s2k(self.tables_1_frames, self.tables_2_frames, self.s2k_contents)
@@ -45,6 +45,7 @@ class s2k_frames(object):
         tables_1 = ["TABLE:  "'"CONNECTIVITY - FRAME"'"\n"]
         for i in range(bars.shape[0]):
             tables_1.append("   Frame=bar_"+str(i)+"   JointI=node_"+str(bars[i,0])+"   JointJ=node_"+str(bars[i,1])+"   IsCurved=No   GUID=9752f2a1-3a94-4f86-b5ea-81a589ee9daa\n")
+        tables_1.append(" \n")    
 
         tables_2 = ["TABLE:  "'"FRAME AUTO MESH ASSIGNMENTS"'"\n"]
         for i in range(bars.shape[0]):

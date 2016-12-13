@@ -4,12 +4,12 @@ general imports
 """
 geometry = rs.Geometry(rs.config.example)
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
-general_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
+reflector = rs.factory.generate_reflector(geometry)
 
-nodes = general_geometry["nodes"]
-fixtures = general_geometry["cable_supports"]
-bars = general_geometry["bars"]
-mirror_tripods = general_geometry["mirror_tripods"]
+nodes = reflector["nodes"]
+fixtures = reflector["fixtures"]
+bars = reflector["bars"]
+mirror_tripods = reflector["mirror_tripods"]
 
 """
 dish rotation
@@ -27,18 +27,15 @@ bridge = rs.SAP2000_bridge.Bridge(structural)
 #bridge._SapObject.Hide()
 #bridge._SapObject.Unhide()
 
-
-import time
-##S2V procedure
-start = time.time()
-bridge.save_model("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k")
-rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated)
-rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars)
+path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\test1\\spr"
 
 
-bridge._SapModel.File.OpenFile("C:\\Users\\Spiros Daglas\\Desktop\\hinges_untersuchen\\SPUR.$2k", ".\\kbr.py")
+bridge.save_model(path+".sdb")
+rs.SAP2000_bridge.bridge_s2v.s2k(nodes, path)
+rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars, path)
 
-end = time.time()
+
+bridge._SapModel.File.OpenFile(path+".$2k")
 
 
 bridge.elastic_support_definition(fixtures)
