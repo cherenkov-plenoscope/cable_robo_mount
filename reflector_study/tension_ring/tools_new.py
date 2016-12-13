@@ -66,7 +66,7 @@ def bars_from_fixture(fixtures):
     bars_straight[len(fixtures)-1, 0], bars_straight[len(fixtures)-1, 1] = fixtures[len(fixtures)-2], fixtures[0]
     bars_straight[len(fixtures)-2, 0], bars_straight[len(fixtures)-2, 1] = fixtures[len(fixtures)-1], fixtures[1]
 
-    
+
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)
 
 def tension_ring_outter_nodes(geometry, fixtures, nodes):
@@ -120,3 +120,22 @@ def tension_ring_outter_nodes(geometry, fixtures, nodes):
             nodes_offseted[i,1] = Y - geometry.tension_ring_width
             nodes_offseted[i,2] = Z
     return nodes_offseted
+
+def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nodes_categorized):
+    bars_straight = np.zeros((tension_ring_inner_nodes_categorized.shape[0], 2), dtype=int)
+    for i in range(tension_ring_inner_nodes_categorized.shape[0]):
+        bars_straight[i,0], bars_straight[i,1] = tension_ring_inner_nodes_categorized[i], tension_ring_outter_nodes_categorized[i]
+
+    bars_diagonal_1 = np.zeros((tension_ring_inner_nodes_categorized.shape[0], 2), dtype=int)
+    for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-1, 2):
+        bars_diagonal_1[i,0], bars_diagonal_1[i,1] = tension_ring_inner_nodes_categorized[i], tension_ring_outter_nodes_categorized[i+1]
+    mask = np.all(np.isnan(bars_diagonal_1), axis=1) | np.all(bars_diagonal_1 == 0, axis=1)
+    bars_diagonal_1 = bars_diagonal_1[~mask]
+
+    bars_diagonal_2 = np.zeros((tension_ring_inner_nodes_categorized.shape[0], 2), dtype=int)
+    for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-1, 2):
+        bars_diagonal_2[i,0], bars_diagonal_2[i,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i]
+    mask = np.all(np.isnan(bars_diagonal_2), axis=1) | np.all(bars_diagonal_2 == 0, axis=1)
+    bars_diagonal_2 = bars_diagonal_2[~mask]
+    
+    return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)
