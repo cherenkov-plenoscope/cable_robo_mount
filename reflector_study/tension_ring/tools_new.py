@@ -9,7 +9,7 @@ def inner_tension_ring_nodes_indices(reflector_nodes, reflector_fixtures):
     tension_ring_inner_node_indices = []
     for i in range(reflector_fixtures.shape[0]):
         check = reflector_nodes[reflector_fixtures[i]][2]
-        if check > z_upper-0.1 or check < z_lower+0.1:
+        if check > z_upper-0.5 or check < z_lower+0.5:
             tension_ring_inner_node_indices.append(reflector_fixtures[i])
     return np.array(tension_ring_inner_node_indices)
 
@@ -137,5 +137,5 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
         bars_diagonal_2[i,0], bars_diagonal_2[i,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i]
     mask = np.all(np.isnan(bars_diagonal_2), axis=1) | np.all(bars_diagonal_2 == 0, axis=1)
     bars_diagonal_2 = bars_diagonal_2[~mask]
-    
+
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)

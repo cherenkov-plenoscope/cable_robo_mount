@@ -19,7 +19,7 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 15.0,
+            'max_outer_radius': 50.0,
             'min_inner_radius': 2.0,
             'number_of_layers': 3,
             'x_over_z_ratio': 1.2

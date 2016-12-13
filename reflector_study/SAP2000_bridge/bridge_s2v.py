@@ -20,7 +20,7 @@ class s2k(object):
         return table_joint_coordinates
 
     def import_table_to_s2k(self, table, s2k_contents):
-        final_s2k = s2k_contents[:51] + table + s2k_contents[51:]
+        final_s2k = s2k_contents[:58] + table + s2k_contents[58:]
         return final_s2k
 
     def write_contents_to_file(self, contents, path):
