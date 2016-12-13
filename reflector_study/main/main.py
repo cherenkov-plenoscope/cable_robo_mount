@@ -1,17 +1,47 @@
 import reflector_study as rs
+import numpy as np
 """
 general imports
 """
 geometry = rs.Geometry(rs.config.example)
-structural = rs.SAP2000_bridge.Structural(rs.config.example)
 #create reflector geometry
 reflector = rs.factory.generate_reflector(geometry)
-nodes = reflector["nodes"]
-fixtures = reflector["fixtures"]
-bars = reflector["bars"]
+reflector_nodes = reflector["nodes"]
+reflector_fixtures = np.array([x for x in reflector["fixtures"] if x != -1])
+reflector_bars = reflector["bars"]
 mirror_tripods = reflector["mirror_tripods"]
 
 #create tension ring geometry
+
+#find inner nodes of tension ring (not the same with fixtures, as in fixtures there are nodes in the middle layers)
+tension_ring_inner_nodes = rs.tension_ring.tools_new.inner_tension_ring_nodes_indices(reflector_nodes, reflector_fixtures)
+#categorize the inner nodes according to the angle from y axis
+tension_ring_inner_nodes_categorized = rs.tension_ring.tools_new.radar_categorization(tension_ring_inner_nodes, reflector_nodes)
+#create the bars related to the inner nodes (3 sets, the two diagonals and the straight ones)
+bars_inner = rs.tension_ring.tools_new.bars_from_fixture(tension_ring_inner_nodes_categorized)
+
+#create the new nodes of the tension ring (this is an array with coordinates)
+tension_ring_new_nodes_coordinates= rs.tension_ring.tools_new.tension_ring_outter_nodes(geometry, tension_ring_inner_nodes_categorized, reflector_nodes)
+#append them to the existing nodes array(from the reflector)
+nodes = np.concatenate((reflector_nodes, tension_ring_new_nodes_coordinates), axis=0)
+#find the node indices (simply the last tension_ring_new_nodes_coordinates.shape[0] nodes)
+tension_ring_outter_nodes = np.arange(reflector_nodes.shape[0], nodes.shape[0])
+#categorize the outter nodes according to the angle from y axis
+tension_ring_outter_nodes_categorized = rs.tension_ring.tools_new.radar_categorization(tension_ring_outter_nodes, nodes)
+#create the bars related to the outter nodes (3 sets, the two diagonals and the straight ones)
+bars_outter = rs.tension_ring.tools_new.bars_from_fixture(tension_ring_outter_nodes_categorized)
+
+
+structural = rs.SAP2000_bridge.Structural(rs.config.example)
+bridge = rs.SAP2000_bridge.Bridge(structural)
+bridge._SapObject.Unhide()
+
+bridge._nodes_definition(reflector_nodes)
+bridge._frames_definition(bars)
+
+
+
+
 
 """
 dish rotation
@@ -24,7 +54,7 @@ nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_translated_posit
 """
 initialize SAP2000 and make assigns
 """
-
+structural = rs.SAP2000_bridge.Structural(rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
 bridge._SapObject.Unhide()
 
