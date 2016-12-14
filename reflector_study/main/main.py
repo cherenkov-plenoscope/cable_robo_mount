@@ -31,8 +31,8 @@ bridge = rs.SAP2000_bridge.Bridge(structural)
 bridge._SapObject.Unhide()
 
 bridge.save_model_in_working_directory()
-rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated, structural.SAP_2000_working_directory)
-rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars, structural.SAP_2000_working_directory)
+rs.SAP2000_bridge.TextFilesBridge.JointsCreate(nodes_rotated, structural.SAP_2000_working_directory)
+rs.SAP2000_bridge.TextFilesBridge.FramesCreate(bars, structural.SAP_2000_working_directory)
 bridge._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
 #bridge.elastic_support_definition(fixtures)

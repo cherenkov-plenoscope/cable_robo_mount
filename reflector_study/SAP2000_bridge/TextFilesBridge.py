@@ -1,13 +1,12 @@
-
-class s2k(object):
+class JointsCreate(object):
     def __init__(self, nodes, path):
         self.file_path= path+".$2k"
-        self.s2k_contents = self.txtlines_to_contents(self.file_path)
+        self.s2k_contents = self.text_file_to_list(self.file_path)
         self.table_joint_coordinates = self.create_table_nodes(nodes)
-        self.final_s2k = self.import_table_to_s2k(self.table_joint_coordinates, self.s2k_contents)
+        self.final_s2k = self.import_table_to_text_file(self.table_joint_coordinates, self.s2k_contents)
         self.write_contents_to_file(self.final_s2k, self.file_path)
 
-    def txtlines_to_contents(self, file_path):
+    def text_file_to_list(self, file_path):
         with open(file_path) as f:
             contents = f.readlines()
         return contents
@@ -19,7 +18,7 @@ class s2k(object):
         table_joint_coordinates.append(" \n")
         return table_joint_coordinates
 
-    def import_table_to_s2k(self, table, s2k_contents):
+    def import_table_to_text_file(self, table, s2k_contents):
         final_s2k = s2k_contents[:58] + table + s2k_contents[58:]
         return final_s2k
 
@@ -28,15 +27,15 @@ class s2k(object):
             for item in contents:
                 f.write(str(item))
 
-class s2k_frames(object):
+class FramesCreate(object):
     def __init__(self, bars, path):
         self.file_path= path+".$2k"
-        self.s2k_contents = self.txtlines_to_contents(self.file_path)
+        self.s2k_contents = self.text_file_to_list(self.file_path)
         self.tables_1_frames, self.tables_2_frames = self.create_table_frames(bars)
-        self.final_s2k = self.import_tables_to_s2k(self.tables_1_frames, self.tables_2_frames, self.s2k_contents)
+        self.final_s2k = self.import_tables_to_text_file(self.tables_1_frames, self.tables_2_frames, self.s2k_contents)
         self.write_contents_to_file(self.final_s2k, self.file_path)
 
-    def txtlines_to_contents(self, file_path):
+    def text_file_to_list(self, file_path):
         with open(file_path) as f:
             contents = f.readlines()
         return contents
@@ -70,7 +69,7 @@ class s2k_frames(object):
 
         return tables_1, tables_2
 
-    def import_tables_to_s2k(self, tables_1, tables_2, s2k_contents):
+    def import_tables_to_text_file(self, tables_1, tables_2, s2k_contents):
         final_s2k = s2k_contents[:25] + tables_2 + s2k_contents[25:]
         final_s2k = s2k_contents[:17] + tables_1 + s2k_contents[17:]
         return final_s2k
