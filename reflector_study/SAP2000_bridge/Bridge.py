@@ -95,6 +95,8 @@ class Bridge(object):
                 Name='whatever',
                 UserName='bar_'+str(i))
 
+    def set_tension_compression_limits_for_specific_frame_elements():
+
     def elastic_support_definition(self, fixtures):
         spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
         for i in range ((fixtures.shape[0])):
