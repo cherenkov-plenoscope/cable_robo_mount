@@ -4,6 +4,7 @@ class Structural(object):
 
     def __init__(self, config_dict):
         self.SAP_2000_directory = config_dict['system']['sap2000']['path']
+        self.SAP_2000_working_directory = config_dict['system']['sap2000']['working_directory']
         self.yielding_point = config_dict['reflector']['material']['yielding_point']
         self.ultimate_point = config_dict['reflector']['material']['ultimate_point']
         self.bar_outter_radius = config_dict['reflector']['bars']['outer_diameter']

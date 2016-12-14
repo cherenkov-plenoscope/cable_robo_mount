@@ -10,7 +10,8 @@ example = {
             'ray_tracer_propagation_path_linux': '/home/spiros/Desktop/build/mctPropagate'
             },
         'sap2000': {
-            'path': 'C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe'
+            'path': 'C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe',
+            'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\SAP2000_working_directory\\example_1'
             }
         },
     'structure_spatial_position': {

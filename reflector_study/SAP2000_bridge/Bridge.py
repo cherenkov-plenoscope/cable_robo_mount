@@ -22,7 +22,6 @@ class Bridge(object):
             FileName= "")
         self._SapModel = self._SapObject.SapModel
 
-
         self.initialize_new_workspace()
         self.material_definition()
         self.cross_section_definition()
@@ -197,11 +196,11 @@ class Bridge(object):
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, structural.wind_load_scenario_security_factor)
 
-    def save_model(self, path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example"):
-        self._SapModel.File.Save(path)
+    def save_model_in_working_directory(self):
+        self._SapModel.File.Save(self.structural.SAP_2000_working_directory)
 
     def run_analysis(self):
-        self.save_model()
+        self.save_model_in_working_directory()
         self._SapModel.Analyze.RunAnalysis()
 
     def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name):
