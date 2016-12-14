@@ -4,7 +4,7 @@ from . import tools
 def generate_tension_ring(geometry, reflector):
     reflector_fixtures = np.array([x for x in reflector["fixtures"] if x != -1])
     #find inner nodes of tension ring (not the same with fixtures, as in fixtures there are nodes in the middle layers)
-    tension_ring_inner_nodes_indices = tools.inner_tension_ring_nodes_indices(reflector["nodes"], reflector_fixtures)
+    tension_ring_inner_nodes_indices = tools.inner_tension_ring_nodes_indices(geometry, reflector["nodes"], reflector_fixtures)
     #categorize the inner nodes according to the angle from y axis
     tension_ring_inner_nodes_categorized = tools.radar_categorization(tension_ring_inner_nodes_indices, reflector["nodes"])
     #create an array with the coordinates of the inner nodes of tension ring (just in case someone wants to create the tension ring alone)
