@@ -1,35 +1,49 @@
-from .tools import *
+import numpy as np
+from . import tools
 
-def fixtures_arranged(nodes, joints):
-    #takes the outter nodes
-    fixtures = fixtures_according_to_joints(nodes, joints)
-    #takes a list of tuples with the angle and the fixture(node)
-    list_angles_fixtures = radar_categorization(fixtures, nodes)
-    #arranges the upper list according to the angle and exports only the second part.(the fixtures)
-    return arrange_fixtures_according_to_radar_categorization(list_angles_fixtures)
+def generate_tension_ring(geometry, reflector):
+    reflector_fixtures = np.array([x for x in reflector["fixtures"] if x != -1])
+    #find inner nodes of tension ring (not the same with fixtures, as in fixtures there are nodes in the middle layers)
+    tension_ring_inner_nodes_indices = tools.inner_tension_ring_nodes_indices(geometry, reflector["nodes"], reflector_fixtures)
+    #categorize the inner nodes according to the angle from y axis
+    tension_ring_inner_nodes_categorized = tools.radar_categorization(tension_ring_inner_nodes_indices, reflector["nodes"])
+    #create an array with the coordinates of the inner nodes of tension ring (just in case someone wants to create the tension ring alone)
+    inner_tension_ring_nodes = np.array([reflector["nodes"][indice] for indice in tension_ring_inner_nodes_categorized])
+    #create the bars related to the inner nodes (3 sets, the two diagonals and the straight ones)
+    bars_inner = tools.bars_from_fixture(tension_ring_inner_nodes_categorized)
+    #create the new nodes of the tension ring (this is an array with coordinates)
+    tension_ring_new_nodes_coordinates, elastic_supports_indices= tools.tension_ring_outter_nodes_and_elastic_supports(geometry, tension_ring_inner_nodes_categorized, reflector["nodes"])
+    #append them to the existing nodes array(from the reflector)
+    nodes = np.concatenate((reflector["nodes"], tension_ring_new_nodes_coordinates), axis=0)
+    #find the node indices (simply the last tension_ring_new_nodes_coordinates.shape[0] nodes)
+    tension_ring_outter_nodes = np.arange(reflector["nodes"].shape[0], nodes.shape[0])
+    #categorize the outter nodes according to the angle from y axis
+    tension_ring_outter_nodes_categorized = tools.radar_categorization(tension_ring_outter_nodes, nodes)
+    #create the bars related to the outter nodes (3 sets, the two diagonals and the straight ones)
+    bars_outter = tools.bars_from_fixture(tension_ring_outter_nodes_categorized)
+    #create the bars inbetween
+    bars_inbetween = tools.bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nodes_categorized)
+    #bring all bars together
+    bars = np.concatenate((bars_inner, bars_outter, bars_inbetween), axis= 0)
+    #put the total nodes of the tension ring together
+    tension_ring_nodes_coordinates = np.concatenate((inner_tension_ring_nodes, tension_ring_new_nodes_coordinates), axis= 0)
 
-def tension_ring_inner_nodes(flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower):
-    outter_nodes_label_arranged_upper = fixtures_arranged(flat_nodes_upper, flat_joints_upper)
-    outter_nodes_label_arranged_lower = fixtures_arranged(flat_nodes_lower, flat_joints_lower) + flat_nodes_upper.shape[0]
-    return np.concatenate((outter_nodes_label_arranged_upper, outter_nodes_label_arranged_lower), axis= 0)
+    #create cables
+    #cable support coordinates
+    cable_supports_coordinates = tools.add_cable_supports_coordinates_to_nodes_array(geometry, nodes, elastic_supports_indices)
+    #final nodes
+    nodes_final = np.concatenate((nodes, cable_supports_coordinates), axis= 0)
+    #create cables (elements) and their supporting nodes (indices)
+    cables = tools.cables(nodes_final, elastic_supports_indices)[0]
+    cable_supports_indices = tools.cables(nodes_final, elastic_supports_indices)[1]
 
-def generate_tension_ring(geometry, reflector_ijk):
-    #it is not the reflector coordinate system/framework
-    flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower = nodes_of_upper_and_lower_layer(reflector_ijk)
-    tension_ring_nodes = np.concatenate((flat_nodes_upper, flat_nodes_lower), axis=0)
-
-    new_fixtures, new_nodes, elastic_supports= nodes_offseted_elastic_supports(
-                geometry= geometry,
-                fixtures= tension_ring_inner_nodes(flat_nodes_upper, flat_nodes_lower, flat_joints_upper, flat_joints_lower),
-                nodes= tension_ring_nodes)
-
-    new_bars= bars_from_fixture(new_fixtures)
-    final_bars = bars_inbetween(new_bars, new_fixtures)
-
-    clean_nodes = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[0]
-    clean_elastic_supports = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[1]
-    clean_bars = nodisol_delete_and_renumbering(new_nodes, new_fixtures, final_bars, elastic_supports)[2]
     return {
-    'nodes': clean_nodes,
-    'fixtures': clean_elastic_supports,
-    'bars': clean_bars}
+    'nodes_all': nodes_final,
+    'nodes_tension_ring': tension_ring_nodes_coordinates,
+    'nodes_tension_ring_only_new': tension_ring_new_nodes_coordinates,
+    'nodes_cables_supports': cable_supports_coordinates,
+    'bars': bars,
+    'elastic_supports': elastic_supports_indices,
+    'cables': cables,
+    'cable_supports': cable_supports_indices
+    }

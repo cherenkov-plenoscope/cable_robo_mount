@@ -1,5 +1,3 @@
-import os
-import sys
 import comtypes.client
 import numpy as np
 
@@ -7,8 +5,15 @@ import numpy as np
 class Bridge(object):
 
     def __init__(self, structural):
-        self.structural = structural
 
+        self.structural = structural
+        """
+        self._SapObject = comtypes.client.GetActiveObject("CSI.SAP2000.API.SapObject")
+        self._SapModel = self._SapObject.SapModel
+
+        To create new model do the following
+        -----------------
+        """
         self._helper = comtypes.client.CreateObject("Sap2000v18.Helper").QueryInterface(comtypes.gen.SAP2000v18.cHelper)
         self._SapObject = self._helper.CreateObject(self.structural.SAP_2000_directory)
         self._SapObject.ApplicationStart(
@@ -89,6 +94,16 @@ class Bridge(object):
                 PropName= PropName,
                 Name='whatever',
                 UserName='bar_'+str(i))
+
+    def _set_tension_compression_limits_for_specific_frame_elements(self, cables):
+        for i in range(cables.shape[0]):
+            self._SapModel.FrameObj.SetTCLimits(
+                Name= str(2),
+                LimitCompressionExists= True,
+                LimitCompression= 0,
+                LimitTensionExists= True,
+                LimitTension= 100,
+                ItemType=0)
 
     def elastic_support_definition(self, fixtures):
         spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
@@ -191,11 +206,11 @@ class Bridge(object):
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, structural.wind_load_scenario_security_factor)
 
-    def save_model(self, path= "C:\\Users\\Spiros Daglas\\Desktop\\asdf\\First_Model_Example"):
-        self._SapModel.File.Save(path)
+    def save_model_in_working_directory(self):
+        self._SapModel.File.Save(self.structural.SAP_2000_working_directory)
 
     def run_analysis(self):
-        self.save_model()
+        self.save_model_in_working_directory()
         self._SapModel.Analyze.RunAnalysis()
 
     def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name):

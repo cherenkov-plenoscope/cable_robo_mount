@@ -153,19 +153,15 @@ def generate_reflector(geometry):
     return flatten(generate_non_flat_reflector(geometry))
 
 def generate_reflector_with_tension_ring(geometry):
-    reflector_ijk = generate_non_flat_reflector(geometry)
     reflector= generate_reflector(geometry)
-    tension_ring= generate_tension_ring(geometry, reflector_ijk)
-    all_nodes = np.concatenate((reflector["nodes"], tension_ring["nodes"]), axis= 0)
-    cable_supports = tension_ring["fixtures"]+reflector["nodes"].shape[0]
-    all_bars = np.concatenate((reflector["bars"], tension_ring["bars"] + reflector["nodes"].shape[0]), axis= 0)
+    tension_ring= generate_tension_ring(geometry, reflector)
+    all_nodes = np.concatenate((reflector["nodes"], tension_ring["nodes_tension_ring_only_new"], tension_ring["nodes_cables_supports"]), axis= 0)
+    all_bars = np.concatenate((reflector["bars"], tension_ring["bars"]), axis= 0)
     return {
         'nodes': all_nodes,
-        'cable_supports': cable_supports,
         'bars': all_bars,
         'mirror_tripods': reflector["mirror_tripods"],
-        'reflector_nodes': reflector["nodes"],
-        'reflector_bars': reflector["bars"],
-        'tension_ring_nodes_indice': np.arange(reflector["nodes"].shape[0], all_nodes.shape[0]),
-        'tension_ring_bars': all_bars[reflector["bars"].shape[0]:]
+        'elastic_supports': tension_ring["elastic_supports"],
+        'cables': tension_ring["cables"],
+        'cable_supports': tension_ring["cable_supports"]
         }
