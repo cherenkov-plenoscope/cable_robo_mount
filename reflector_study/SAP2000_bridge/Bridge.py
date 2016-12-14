@@ -95,6 +95,16 @@ class Bridge(object):
                 Name='whatever',
                 UserName='bar_'+str(i))
 
+    def _set_tension_compression_limits_for_specific_frame_elements(self, cables):
+        for i in range(cables.shape[0]):
+            self._SapModel.FrameObj.SetTCLimits(
+                Name= str(2),
+                LimitCompressionExists= True,
+                LimitCompression= 0,
+                LimitTensionExists= True,
+                LimitTension= 100,
+                ItemType=0)
+
     def elastic_support_definition(self, fixtures):
         spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
         for i in range ((fixtures.shape[0])):

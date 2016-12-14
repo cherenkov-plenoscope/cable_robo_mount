@@ -38,6 +38,7 @@ bridge._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 #bridge.elastic_support_definition(fixtures)
 ################for cables uncomment the following
 bridge._frames_definition(cables)
+bridge._set_tension_compression_limits_for_specific_frame_elements(cables)
 bridge._restraints_definition(cable_supports)
 ################
 
