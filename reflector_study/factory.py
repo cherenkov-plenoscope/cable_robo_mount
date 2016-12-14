@@ -161,5 +161,5 @@ def generate_reflector_with_tension_ring(geometry):
         'nodes': all_nodes,
         'bars': all_bars,
         'mirror_tripods': reflector["mirror_tripods"],
-        'fixtures': reflector["fixtures"]
+        'fixtures': tension_ring["elastic_supports"]
         }

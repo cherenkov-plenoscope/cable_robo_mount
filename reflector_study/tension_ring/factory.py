@@ -12,7 +12,7 @@ def generate_tension_ring(geometry, reflector):
     #create the bars related to the inner nodes (3 sets, the two diagonals and the straight ones)
     bars_inner = tools.bars_from_fixture(tension_ring_inner_nodes_categorized)
     #create the new nodes of the tension ring (this is an array with coordinates)
-    tension_ring_new_nodes_coordinates= tools.tension_ring_outter_nodes(geometry, tension_ring_inner_nodes_categorized, reflector["nodes"])
+    tension_ring_new_nodes_coordinates, elastic_supports_indices= tools.tension_ring_outter_nodes_and_elastic_supports(geometry, tension_ring_inner_nodes_categorized, reflector["nodes"])
     #append them to the existing nodes array(from the reflector)
     nodes = np.concatenate((reflector["nodes"], tension_ring_new_nodes_coordinates), axis=0)
     #find the node indices (simply the last tension_ring_new_nodes_coordinates.shape[0] nodes)
@@ -31,5 +31,6 @@ def generate_tension_ring(geometry, reflector):
     return {
     'nodes_all': tension_ring_nodes_coordinates,
     'nodes_only_new': tension_ring_new_nodes_coordinates,
-    'bars': bars
+    'bars': bars,
+    'elastic_supports': elastic_supports_indices
     }

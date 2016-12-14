@@ -65,11 +65,9 @@ def bars_from_fixture(fixtures):
         bars_straight[i,0], bars_straight[i,1] = fixtures[i], fixtures[i+2]
     bars_straight[len(fixtures)-1, 0], bars_straight[len(fixtures)-1, 1] = fixtures[len(fixtures)-2], fixtures[0]
     bars_straight[len(fixtures)-2, 0], bars_straight[len(fixtures)-2, 1] = fixtures[len(fixtures)-1], fixtures[1]
-
-
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)
 
-def tension_ring_outter_nodes(geometry, fixtures, nodes):
+def tension_ring_outter_nodes_and_elastic_supports(geometry, fixtures, nodes):
     angle_from_y_clockwise = np.zeros((len(fixtures)))
     nodes_offseted= np.zeros((fixtures.shape[0], 3))
     for i in range(len(fixtures)):
@@ -119,7 +117,18 @@ def tension_ring_outter_nodes(geometry, fixtures, nodes):
             nodes_offseted[i,0] = X
             nodes_offseted[i,1] = Y - geometry.tension_ring_width
             nodes_offseted[i,2] = Z
-    return nodes_offseted
+
+    elastic_supports = []
+    closest_angles = []
+    support_position = geometry.tension_ring_support_position*np.pi/180
+    for i in range(4):
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(support_position+np.pi/2*i))))
+        closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(np.pi/2-support_position+np.pi/2*i))))
+    for i in range(nodes_offseted.shape[0]):
+        if angle_from_y_clockwise[i] in closest_angles:
+            elastic_supports.append(i+nodes.shape[0])
+
+    return nodes_offseted, np.array(elastic_supports)
 
 def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nodes_categorized):
     bars_straight = np.zeros((tension_ring_inner_nodes_categorized.shape[0], 2), dtype=int)
