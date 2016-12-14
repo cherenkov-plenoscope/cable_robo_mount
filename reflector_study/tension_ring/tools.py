@@ -148,3 +148,21 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
     bars_diagonal_2 = bars_diagonal_2[~mask]
 
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)
+
+def add_cable_supports_coordinates_to_nodes_array(geometry, nodes, elastic_supports):
+    cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
+    for i in range(elastic_supports.shape[0]):
+        hypot = np.hypot(nodes[elastic_supports[i]][0], nodes[elastic_supports[i]][1])
+        hypot_new = hypot + 20/25*geometry.max_outer_radius
+        cable_supports_coordinates[i][0] = nodes[elastic_supports[i]][0]*hypot_new/hypot
+        cable_supports_coordinates[i][1] = nodes[elastic_supports[i]][1]*hypot_new/hypot
+        cable_supports_coordinates[i][2] = nodes[elastic_supports[i]][2] + 40/25*geometry.max_outer_radius
+
+    return cable_supports_coordinates
+
+def cables(nodes, elastic_supports):
+    cables = np.zeros((elastic_supports.shape[0], 2), dtype=int)
+    cable_supports_indices = np.arange(nodes.shape[0]-elastic_supports.shape[0], nodes.shape[0])
+    for i in range(elastic_supports.shape[0]):
+        cables[i][0], cables[i][1] = elastic_supports[i], cable_supports_indices[i]
+    return cables, cable_supports_indices

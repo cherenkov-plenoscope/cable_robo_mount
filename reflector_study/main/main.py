@@ -9,8 +9,10 @@ geometry = rs.Geometry(rs.config.example)
 total_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
 nodes = total_geometry["nodes"]
 bars = total_geometry["bars"]
+cables = total_geometry["cables"]
+cable_supports = total_geometry["cable_supports"]
 mirror_tripods = total_geometry["mirror_tripods"]
-fixtures = total_geometry["fixtures"]
+fixtures = total_geometry["elastic_supports"]
 
 """
 dish rotation
@@ -33,8 +35,11 @@ rs.SAP2000_bridge.bridge_s2v.s2k(nodes_rotated, structural.SAP_2000_working_dire
 rs.SAP2000_bridge.bridge_s2v.s2k_frames(bars, structural.SAP_2000_working_directory)
 bridge._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
-
-bridge.elastic_support_definition(fixtures)
+#bridge.elastic_support_definition(fixtures)
+################for cables uncomment the following
+bridge._frames_definition(cables)
+bridge._restraints_definition(cable_supports)
+################
 
 bridge.load_scenario_dead()
 bridge.load_scenario_facet_weight(mirror_tripods)
