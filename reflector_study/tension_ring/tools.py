@@ -9,7 +9,8 @@ def inner_tension_ring_nodes_indices(geometry, reflector_nodes, reflector_fixtur
     tension_ring_inner_node_indices = []
     for i in range(reflector_fixtures.shape[0]):
         check = reflector_nodes[reflector_fixtures[i]][2]
-        if check > z_upper-geometry.x_over_z_ratio/2 or check < z_lower+geometry.x_over_z_ratio/2:
+        height_between_layers = z_upper-geometry.x_over_z_ratio*geometry.facet_spacing/2
+        if check > height_between_layers/2 or check < height_between_layers/2:
             tension_ring_inner_node_indices.append(reflector_fixtures[i])
     return np.array(tension_ring_inner_node_indices)
 
