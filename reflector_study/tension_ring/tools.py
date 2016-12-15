@@ -147,8 +147,7 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
         bars_diagonal_2[i,0], bars_diagonal_2[i,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i]
     mask = np.all(np.isnan(bars_diagonal_2), axis=1) | np.all(bars_diagonal_2 == 0, axis=1)
     bars_diagonal_2 = bars_diagonal_2[~mask]
-    """
-    """
+    
     bars_diagonal_3 = np.zeros((tension_ring_inner_nodes_categorized.shape[0]+1, 2), dtype=int)
     for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-2, 2):
         bars_diagonal_3[i,0], bars_diagonal_3[i,1] = tension_ring_inner_nodes_categorized[i], tension_ring_outter_nodes_categorized[i+2]
