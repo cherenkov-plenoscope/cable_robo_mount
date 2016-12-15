@@ -147,8 +147,30 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
         bars_diagonal_2[i,0], bars_diagonal_2[i,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i]
     mask = np.all(np.isnan(bars_diagonal_2), axis=1) | np.all(bars_diagonal_2 == 0, axis=1)
     bars_diagonal_2 = bars_diagonal_2[~mask]
+    """
+    """
+    bars_diagonal_3 = np.zeros((tension_ring_inner_nodes_categorized.shape[0]+1, 2), dtype=int)
+    for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-2, 2):
+        bars_diagonal_3[i,0], bars_diagonal_3[i,1] = tension_ring_inner_nodes_categorized[i], tension_ring_outter_nodes_categorized[i+2]
+        bars_diagonal_3[i+1,0], bars_diagonal_3[i+1,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i+3]
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0]-1, 0] = tension_ring_inner_nodes_categorized[tension_ring_inner_nodes_categorized.shape[0]-2]
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0]-1, 1] = tension_ring_outter_nodes_categorized[0]
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0], 0] = tension_ring_inner_nodes_categorized[tension_ring_inner_nodes_categorized.shape[0]-1]
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0], 1] = tension_ring_outter_nodes_categorized[1]
+    mask = np.all(np.isnan(bars_diagonal_3), axis=1) | np.all(bars_diagonal_3 == 0, axis=1)
+    bars_diagonal_3 = bars_diagonal_3[~mask]
 
-    return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_straight), axis=0)
+    bars_diagonal_4 = np.zeros((tension_ring_inner_nodes_categorized.shape[0]+1, 2), dtype=int)
+    for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-2, 2):
+        bars_diagonal_4[i,0], bars_diagonal_4[i,1] = tension_ring_outter_nodes_categorized[i], tension_ring_inner_nodes_categorized[i+2]
+        bars_diagonal_4[i+1,0], bars_diagonal_4[i+1,1] = tension_ring_outter_nodes_categorized[i+1], tension_ring_inner_nodes_categorized[i+3]
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0]-1, 0] = tension_ring_outter_nodes_categorized[tension_ring_inner_nodes_categorized.shape[0]-2]
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0]-1, 1] = tension_ring_inner_nodes_categorized[0]
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0], 0] = tension_ring_outter_nodes_categorized[tension_ring_inner_nodes_categorized.shape[0]-1]
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0], 1] = tension_ring_inner_nodes_categorized[1]
+    mask = np.all(np.isnan(bars_diagonal_4), axis=1) | np.all(bars_diagonal_4 == 0, axis=1)
+    bars_diagonal_4 = bars_diagonal_4[~mask]
+    return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_diagonal_3, bars_diagonal_4, bars_straight), axis=0)
 
 def add_cable_supports_coordinates_to_nodes_array(geometry, nodes, elastic_supports):
     cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
