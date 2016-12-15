@@ -23,28 +23,38 @@ class Bridge(object):
         self._SapModel = self._SapObject.SapModel
         """
         self.initialize_new_workspace()
-        self.material_definition()
-        self.cross_section_definition()
+        self.material_definition_steel("reflector")
+        self.material_definition_steel("tension_ring")
+        self.pipe_cross_section_definition("reflector")
+        self.pipe_cross_section_definition("tension_ring")
 
     def initialize_new_workspace(self):
         Units = 6
         self.new_model = self._SapModel.InitializeNewModel(6)
         self.new_file = self._SapModel.File.NewBlank()
 
-    def material_definition(self):
+    def material_definition_steel(self, part_of_structure_as_string):
         steel, concrete = 1, 2
         nodesign, aluminium, coldformed, rebar, tendon = 3, 4, 5, 6, 7
+        if part_of_structure_as_string == "reflector":
+            material_name = "Steel_S"+str(self.structural.reflector_yielding_point/1000)+"SpaceFrameBars"
+            yielding_point = self.structural.reflector_yielding_point
+            ultimate_point = self.structural.reflector_ultimate_point
+        elif part_of_structure_as_string == "tension_ring":
+            material_name = "Steel_S"+str(self.structural.tension_ring_yielding_point/1000)+"TensionRingBars"
+            yielding_point = self.structural.tension_ring_yielding_point
+            ultimate_point = self.structural.tension_ring_ultimate_point
         self._SapModel.PropMaterial.SetMaterial(
-            Name= "Steel_S"+str(self.structural.yielding_point/1000), #Divided by 1000 cause we give it in kPa. Notation is in MPa.
+            Name= material_name,
             MatType= steel,
             Color= -1,
             Notes= "custom-made")
         self._SapModel.PropMaterial.SetOSteel_1(
-            Name= "Steel_S"+str(self.structural.yielding_point/1000), #Divided by 1000 cause we give it in kPa. Notation is in MPa.
-            FY= self.structural.yielding_point,
-            Fu= self.structural.ultimate_point,
-            EFy= self.structural.yielding_point, #effective yield strength
-            EFu= self.structural.ultimate_point, #effective ultimate strength
+            Name= material_name,
+            FY= yielding_point,
+            Fu= ultimate_point,
+            EFy= yielding_point, #effective yield strength
+            EFu= ultimate_point, #effective ultimate strength
             SSType= 1, #Stress-Strain curve type. 1 if Parametric-Simple, 0 if User-defined
             SSHysType= 2, #Stress-Strain hysteresis type. 0 Elastic, 1 Kinematic, 2 Takeda
             StrainAtHardening= 0.02, #Applies only for parametric Stress-Strain curves, value of SSType 0.
@@ -53,12 +63,22 @@ class Bridge(object):
             FinalSlope= -0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
             Temp= 25) #
 
-    def cross_section_definition(self):
+    def pipe_cross_section_definition(self, part_of_structure_as_string):
+        if part_of_structure_as_string == "reflector":
+            property_name= "ROR_"+str(1000 * self.structural.reflector_bar_outer_diameter)+"x"+str(1000 * self.structural.reflector_bar_thickness)+"SpaceFrameBars"
+            material_name= "Steel_S"+str(self.structural.reflector_yielding_point/1000)+"SpaceFrameBars"
+            bar_diameter= self.structural.reflector_bar_outer_diameter
+            bar_thickness= self.structural.reflector_bar_thickness
+        elif part_of_structure_as_string == "tension_ring":
+            property_name = "ROR_"+str(1000 * self.structural.tension_ring_bar_outer_diameter)+"x"+str(1000 * self.structural.tension_ring_bar_thickness)+"SpaceFrameBars"
+            material_name = "Steel_S"+str(self.structural.tension_ring_yielding_point/1000)+"TensionRingBars"
+            bar_diameter= self.structural.tension_ring_bar_outer_diameter
+            bar_thickness= self.structural.tension_ring_bar_thickness
         self._SapModel.PropFrame.SetPipe(
-            Name= "ROR_"+str(1000 * self.structural.bar_outter_radius)+"x"+str(1000 * self.structural.bar_thickness),
-            MatProp= "Steel_S"+str(self.structural.yielding_point/1000),
-            T3= self.structural.bar_outter_radius,
-            Tw= self.structural.bar_thickness,
+            Name= property_name,
+            MatProp= material_name,
+            T3= bar_diameter,
+            Tw= bar_thickness,
             Color= -1,
             Notes= "pipe according to SIA263")
 
@@ -86,7 +106,7 @@ class Bridge(object):
                 MergeOff=True)
 
     def _frames_definition(self, bars):
-        PropName="ROR_"+str(1000 * self.structural.bar_outter_radius)+"x"+str(1000 * self.structural.bar_thickness)
+        PropName="ROR_"+str(1000 * self.structural.bar_outer_radius)+"x"+str(1000 * self.structural.bar_thickness)
         for i in range ((bars.shape[0])):
             self._SapModel.FrameObj.AddByPoint(
                 Point1="node_"+str(bars[i,0]), #Point name

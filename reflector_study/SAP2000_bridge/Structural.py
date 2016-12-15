@@ -5,13 +5,21 @@ class Structural(object):
     def __init__(self, config_dict):
         self.SAP_2000_directory = config_dict['system']['sap2000']['path']
         self.SAP_2000_working_directory = config_dict['system']['sap2000']['working_directory']
-        self.yielding_point = config_dict['reflector']['material']['yielding_point']
-        self.ultimate_point = config_dict['reflector']['material']['ultimate_point']
-        self.bar_outter_radius = config_dict['reflector']['bars']['outer_diameter']
-        self.bar_thickness = config_dict['reflector']['bars']['thickness']
+
+        self.reflector_yielding_point = config_dict['reflector']['material']['yielding_point']
+        self.reflector_ultimate_point = config_dict['reflector']['material']['ultimate_point']
+        self.reflector_bar_outer_diameter = config_dict['reflector']['bars']['outer_diameter']
+        self.reflector_bar_thickness = config_dict['reflector']['bars']['thickness']
+
+        self.tension_ring_yielding_point = config_dict['tension_ring']['material']['yielding_point']
+        self.tension_ring_ultimate_point = config_dict['tension_ring']['material']['ultimate_point']
+        self.tension_ring_bar_outer_diameter = config_dict['tension_ring']['bars']['outer_diameter']
+        self.tension_ring_bar_thickness = config_dict['tension_ring']['bars']['thickness']
+
         self.facet_surface_weight = config_dict['reflector']['facet']['surface_weight']
         self.facet_actuator_weight = config_dict['reflector']['facet']['actuator_weight']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
+
         self._set_up_loading()
         self._set_up_loading_scenarios(config_dict)
 
@@ -38,5 +46,5 @@ class Structural(object):
 
     def __repr__(self):
         info = 'Structural and loading assumptions'
-        info+= '(steel: S'+str(self.yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kg/m2)"
+        info+= '(steel: S'+str(self.reflector_yielding_point/1000)+', facet_surface_weight: '+str(self.facet_surface_weight)+"kg/m2)"
         return info

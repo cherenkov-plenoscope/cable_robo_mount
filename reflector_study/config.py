@@ -51,6 +51,18 @@ example = {
     'tension_ring':{
         'width': 4,
         'support_position': 15,
+        'material': {
+            'e_modul': 210e6,
+            'yielding_point': 460000.0,
+            'ultimate_point': 360000.0,
+            'security_factor': 1.05
+            },
+        'bars': {
+            'outer_diameter': 0.0824,
+            'thickness': 0.005,
+            'imperfection_factor': 0.49,
+            'buckling_length_factor': 0.9
+            }
         },
     'load_scenario': {
         'security_factor': {
