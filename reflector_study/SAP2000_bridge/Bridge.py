@@ -70,7 +70,7 @@ class Bridge(object):
             bar_diameter= self.structural.reflector_bar_outer_diameter
             bar_thickness= self.structural.reflector_bar_thickness
         elif part_of_structure_as_string == "tension_ring":
-            property_name = "ROR_"+str(1000 * self.structural.tension_ring_bar_outer_diameter)+"x"+str(1000 * self.structural.tension_ring_bar_thickness)+"SpaceFrameBars"
+            property_name = "ROR_"+str(1000 * self.structural.tension_ring_bar_outer_diameter)+"x"+str(1000 * self.structural.tension_ring_bar_thickness)+"TensionRingBars"
             material_name = "Steel_S"+str(self.structural.tension_ring_yielding_point/1000)+"TensionRingBars"
             bar_diameter= self.structural.tension_ring_bar_outer_diameter
             bar_thickness= self.structural.tension_ring_bar_thickness
@@ -105,13 +105,16 @@ class Bridge(object):
                 CSys='Global',
                 MergeOff=True)
 
-    def _frames_definition(self, bars):
-        PropName="ROR_"+str(1000 * self.structural.bar_outer_radius)+"x"+str(1000 * self.structural.bar_thickness)
+    def _frames_definition(self, bars, part_of_structure_as_string):
+        if part_of_structure_as_string == "reflector":
+            property_name = "ROR_"+str(1000 * self.structural.reflector_bar_outer_diameter)+"x"+str(1000 * self.structural.reflector_bar_thickness)+"SpaceFrameBars"
+        elif part_of_structure_as_string == "tension_ring":
+            property_name = "ROR_"+str(1000 * self.structural.tension_ring_bar_outer_diameter)+"x"+str(1000 * self.structural.tension_ring_bar_thickness)+"TensionRingBars"
         for i in range ((bars.shape[0])):
             self._SapModel.FrameObj.AddByPoint(
                 Point1="node_"+str(bars[i,0]), #Point name
                 Point2="node_"+str(bars[i,1]), #Point name
-                PropName= PropName,
+                PropName= property_name,
                 Name='whatever',
                 UserName='bar_'+str(i))
 
