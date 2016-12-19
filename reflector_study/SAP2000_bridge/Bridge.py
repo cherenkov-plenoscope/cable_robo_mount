@@ -34,8 +34,6 @@ class Bridge(object):
         self.pipe_cross_section_definition("tension_ring")
 
     def material_definition_steel(self, part_of_structure_as_string):
-        steel, concrete = 1, 2
-        nodesign, aluminium, coldformed, rebar, tendon = 3, 4, 5, 6, 7
         if part_of_structure_as_string == "reflector":
             material_name = "Steel_S"+str(self.structural.reflector_yielding_point/1000)+"SpaceFrameBars"
             yielding_point = self.structural.reflector_yielding_point
@@ -46,7 +44,7 @@ class Bridge(object):
             ultimate_point = self.structural.tension_ring_ultimate_point
         self._SapModel.PropMaterial.SetMaterial(
             Name= material_name,
-            MatType= steel,
+            MatType= 1,
             Color= -1,
             Notes= "custom-made")
         self._SapModel.PropMaterial.SetOSteel_1(
@@ -87,7 +85,7 @@ class Bridge(object):
             Name= "densless_shell",
             ShellType= 2,
             IncludeDrillingDOF= True,
-            MatProp= "Steel_S"+str(self.structural.yielding_point/1000),
+            MatProp= "Steel_S"+str(self.structural.reflector_yielding_point/1000)+"SpaceFrameBars", #ignored in any case
             MatAng= 0.0,
             Thickness= 0.0,
             Bending= 0.0,
@@ -127,6 +125,40 @@ class Bridge(object):
                 LimitTensionExists= True,
                 LimitTension= 100,
                 ItemType=0)
+
+    def _cables_definition(self, cables):
+        property_name = "Steel_Y"+str(self.structural.cables_yielding_point/1000)+"TensionRingCables"
+
+        self._SapModel.PropMaterial.SetMaterial(
+            Name= property_name,
+            MatType= 1,
+            Color= -1,
+            Notes= "custom-made")
+
+        self._SapModel.PropMaterial.SetMPIsotropic(
+            Name= property_name,
+            E= self.structural.cables_e_modul,
+            U= 0.3,
+            A= 1.170e-05)
+
+        self._SapModel.PropCable.SetProp(
+            Name= property_name,
+            MatProp= property_name,
+            Area= self.structural.cables_cs_area,
+            Color= -1,
+            Notes= "cables 1860Mpa")
+
+        CSarea_mass_weight_modifiers = [1,1,1]
+        self._SapModel.PropCable.SetModifiers(
+            Name= property_name,
+            Value= CSarea_mass_weight_modifiers)
+
+        for i in range(cables.shape[0]):
+            self._SapModel.CableObj.AddByPoint(
+                Point1= "node_"+str(cables[i,0]),
+                Point2= "node_"+str(cables[i,1]),
+                Name= "cable_"+str(i),
+                PropName= property_name)
 
     def elastic_support_definition(self, fixtures):
         spring_stiffness= [10e6, 10e6, 10e6, 0, 0, 0]
@@ -233,7 +265,6 @@ class Bridge(object):
         self._SapModel.File.Save(self.structural.SAP_2000_working_directory)
 
     def run_analysis(self):
-        self.save_model_in_working_directory()
         self._SapModel.Analyze.RunAnalysis()
 
     def get_displacements_for_group_of_nodes_for_selected_load_pattern(self, load_pattern_name, group_name):

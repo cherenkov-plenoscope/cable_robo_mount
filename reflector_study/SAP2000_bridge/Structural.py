@@ -16,6 +16,11 @@ class Structural(object):
         self.tension_ring_bar_outer_diameter = config_dict['tension_ring']['bars']['outer_diameter']
         self.tension_ring_bar_thickness = config_dict['tension_ring']['bars']['thickness']
 
+        self.cables_yielding_point = config_dict['cables']['material']['yielding_point']
+        self.cables_ultimate_point = config_dict['cables']['material']['ultimate_point']
+        self.cables_cs_area = config_dict['cables']['cross_section_area']
+        self.cables_e_modul = config_dict['cables']['material']['e_modul']
+
         self.facet_surface_weight = config_dict['reflector']['facet']['surface_weight']
         self.facet_actuator_weight = config_dict['reflector']['facet']['actuator_weight']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
