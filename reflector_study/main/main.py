@@ -8,7 +8,8 @@ general imports
 geometry = rs.Geometry(rs.config.example)
 total_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
 nodes = total_geometry["nodes"]
-bars = total_geometry["bars"]
+bars_reflector = total_geometry["bars_reflector"]
+bars_tension_ring = total_geometry["bars_tension_ring"]
 cables = total_geometry["cables"]
 cable_supports = total_geometry["cable_supports"]
 mirror_tripods = total_geometry["mirror_tripods"]
@@ -28,11 +29,11 @@ initialize SAP2000 and make assigns
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
 #bridge._SapObject.Hide()
-bridge._SapObject.Unhide()
+#bridge._SapObject.Unhide()
 
 bridge.save_model_in_working_directory()
 rs.SAP2000_bridge.TextFilesBridge.JointsCreate(nodes_rotated, structural.SAP_2000_working_directory)
-rs.SAP2000_bridge.TextFilesBridge.FramesCreate(bars, structural.SAP_2000_working_directory)
+rs.SAP2000_bridge.TextFilesBridge.FramesCreate(bars_reflector, bars_tension_ring, structural)
 bridge._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
 #bridge.elastic_support_definition(fixtures)

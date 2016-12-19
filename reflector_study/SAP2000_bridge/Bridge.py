@@ -22,16 +22,16 @@ class Bridge(object):
             FileName= "")
         self._SapModel = self._SapObject.SapModel
         """
-        self.initialize_new_workspace()
+        self.initialize_new_workspace_with_basic_properties()
+
+    def initialize_new_workspace_with_basic_properties(self):
+        Units = 6
+        self.new_model = self._SapModel.InitializeNewModel(6)
+        self.new_file = self._SapModel.File.NewBlank()
         self.material_definition_steel("reflector")
         self.material_definition_steel("tension_ring")
         self.pipe_cross_section_definition("reflector")
         self.pipe_cross_section_definition("tension_ring")
-
-    def initialize_new_workspace(self):
-        Units = 6
-        self.new_model = self._SapModel.InitializeNewModel(6)
-        self.new_file = self._SapModel.File.NewBlank()
 
     def material_definition_steel(self, part_of_structure_as_string):
         steel, concrete = 1, 2
