@@ -203,4 +203,17 @@ def cable_supports_coordinates_definition(geometry, nodes, elastic_supports):
             angle= np.arctan(Y_abs/X_abs)
             cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
             cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+        elif (Y>0) and (X==0):
+            cable_supports_coordinates[i][0] = 0.0
+            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
+        elif (Y<0) and (X==0):
+            cable_supports_coordinates[i][0] = 0.0
+            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
+        elif (Y==0) and (X<0):
+            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
+            cable_supports_coordinates[i][1] = 0.0
+        elif (Y==0) and (X>0):
+            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
+            cable_supports_coordinates[i][1] = 0.0
+
     return cable_supports_coordinates
