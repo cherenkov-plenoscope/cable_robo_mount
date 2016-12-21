@@ -177,7 +177,7 @@ def cables(nodes, elastic_supports):
         cables[i][0], cables[i][1] = elastic_supports[i], cable_supports_indices[i]
     return cables, cable_supports_indices
 
-def cable_supports_coor(geometry, nodes, elastic_supports):
+def cable_supports_coordinates_definition(geometry, nodes, elastic_supports):
     height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
     cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
     for i in range(elastic_supports.shape[0]):

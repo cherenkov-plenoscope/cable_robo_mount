@@ -39,7 +39,7 @@ def generate_tension_ring(geometry, reflector):
 
 def generate_cables(geometry, nodes, elastic_supports_indices):
     #cable support coordinates
-    cable_supports_coordinates = tools.cable_supports_coor(geometry, nodes, elastic_supports_indices)
+    cable_supports_coordinates = tools.cable_supports_coordinates_definition(geometry, nodes, elastic_supports_indices)
     #final nodes
     nodes_final = np.concatenate((nodes, cable_supports_coordinates), axis= 0)
     #create cables (elements) and their supporting nodes (indices)
