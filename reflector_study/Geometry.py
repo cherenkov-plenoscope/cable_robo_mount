@@ -9,6 +9,7 @@ class Geometry(object):
         self.gap_between_facets = config_dict['reflector']['facet']['gap_in_between']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
         self.davies_cotton_over_parabola_ratio = config_dict['reflector']['optics']['davies_cotton_over_parabola_ratio']
+        self.reflector_security_distance_from_ground = config_dict["reflector"]["main"]["security_distance_from_ground"]
 
         self.number_of_layers = config_dict['reflector']['main']['number_of_layers']
         self.x_over_z_ratio = config_dict['reflector']['main']['x_over_z_ratio']

@@ -10,6 +10,7 @@ class Structural(object):
         self.reflector_ultimate_point = config_dict['reflector']['material']['ultimate_point']
         self.reflector_bar_outer_diameter = config_dict['reflector']['bars']['outer_diameter']
         self.reflector_bar_thickness = config_dict['reflector']['bars']['thickness']
+        self.reflector_security_distance_from_ground = config_dict["reflector"]["main"]["security_distance_from_ground"]
 
         self.tension_ring_yielding_point = config_dict['tension_ring']['material']['yielding_point']
         self.tension_ring_ultimate_point = config_dict['tension_ring']['material']['ultimate_point']
@@ -43,7 +44,6 @@ class Structural(object):
         self.wind_K1_factor = config_dict["load_scenario"]["wind"]["K1"]
         self.wind_CsCd_factor = config_dict["load_scenario"]["wind"]["CsCd"]
         self.wind_density = config_dict["load_scenario"]["wind"]["wind_density"]
-        self.wind_security_distance_from_ground = config_dict["load_scenario"]["wind"]["security_distance_from_ground"]
 
         self.dead_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["dead"]
         self.live_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["live"]

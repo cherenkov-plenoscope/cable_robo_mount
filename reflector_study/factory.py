@@ -7,6 +7,7 @@ from .tools.non_flat.tools import bar_start_and_end_position
 from .tools.non_flat.tools import mirror_tripod_center
 from .flatten import flatten
 from .tension_ring.factory import generate_tension_ring
+from .tension_ring.factory import generate_cables
 
 def bar_is_part_of_reflector_dish(bar, nodes, geometry):
     if not bar_in_range(nodes, bar):
@@ -152,16 +153,17 @@ def generate_non_flat_reflector(geometry):
 def generate_reflector(geometry):
     return flatten(generate_non_flat_reflector(geometry))
 
-def generate_reflector_with_tension_ring(geometry):
-    reflector= generate_reflector(geometry)
-    tension_ring= generate_tension_ring(geometry, reflector)
-    all_nodes = np.concatenate((reflector["nodes"], tension_ring["nodes_tension_ring_only_new"], tension_ring["nodes_cables_supports"]), axis= 0)
+def generate_reflector_with_tension_ring_and_cables(geometry):
+    reflector = generate_reflector(geometry)
+    tension_ring = generate_tension_ring(geometry, reflector)
+    cables_structure = generate_cables(geometry, tension_ring["nodes_all"], tension_ring["elastic_supports"])
+    all_nodes = np.concatenate((reflector["nodes"], tension_ring["nodes_tension_ring_only_new"], cables_structure["nodes"]), axis= 0)
     return {
         'nodes': all_nodes,
         'bars_reflector': reflector["bars"],
         'bars_tension_ring': tension_ring["bars"],
         'mirror_tripods': reflector["mirror_tripods"],
         'elastic_supports': tension_ring["elastic_supports"],
-        'cables': tension_ring["cables"],
-        'cable_supports': tension_ring["cable_supports"]
+        'cables': cables_structure["cables"],
+        'cable_supports': cables_structure["cable_supports"]
         }

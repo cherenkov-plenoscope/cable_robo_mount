@@ -15,15 +15,16 @@ example = {
             }
         },
     'structure_spatial_position': {
-        'translational_vector_xyz': [0.0 ,0.0, 0.0],
+        'translational_vector_xyz': [18.6 , 0.0, 18.4],
         'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 10.0,
+            'max_outer_radius': 25.0,
             'min_inner_radius': 2.0,
             'number_of_layers': 3,
-            'x_over_z_ratio': 1.2
+            'x_over_z_ratio': 1.2,
+            'security_distance_from_ground': 2.6
             },
         'optics': {
             'focal_length': 75.0,
@@ -49,7 +50,7 @@ example = {
             }
         },
     'tension_ring':{
-        'width': 4,
+        'width': 1,
         'support_position': 15,
         'material': {
             'e_modul': 210e6,
@@ -86,8 +87,7 @@ example = {
             'orography_factor': 1, ##
             'K1': 1, ##
             'CsCd': 2, ## usually 1. But our structure very prone to dynamic efects.
-            'wind_density': 1.25, #wind density
-            'security_distance_from_ground': 5
+            'wind_density': 1.25 #wind density
             },
         'seismic': {
             'acceleration': 3.6

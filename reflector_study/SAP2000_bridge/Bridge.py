@@ -237,7 +237,7 @@ class Bridge(object):
             Cpl= 0.0,
             UserZ= True,
             TopZ= np.amax(nodes, axis= 0)[2],
-            BottomZ= np.amin(nodes, axis=0)[2]-self.structural.wind_security_distance_from_ground,
+            BottomZ= np.amin(nodes, axis=0)[2]-self.structural.reflector_security_distance_from_ground,
             WindSpeed= self.structural.wind_speed,
             Terrain= self.structural.wind_terrain_factor,
             Orography= self.structural.wind_orography_factor,

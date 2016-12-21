@@ -39,12 +39,12 @@ def radar_categorization(fixtures, nodes):
         elif (Y<0) and (X==0):
             angle_from_y_clockwise[i]= np.pi
 
-        list_angles_fixtures = list(zip(angle_from_y_clockwise, fixtures))
+    list_angles_fixtures = list(zip(angle_from_y_clockwise, fixtures))
 
-        sorted_= sorted(list_angles_fixtures, key=lambda x: x[0])
-        fixtures_arranged = np.zeros(len(sorted_), dtype=int)
-        for i in range(len(sorted_)):
-            fixtures_arranged[i] = sorted_[i][1]
+    sorted_= sorted(list_angles_fixtures, key=lambda x: x[0])
+    fixtures_arranged = np.zeros(len(sorted_), dtype=int)
+    for i in range(len(sorted_)):
+        fixtures_arranged[i] = sorted_[i][1]
     return fixtures_arranged
 
 def bars_from_fixture(fixtures):
@@ -147,7 +147,7 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
         bars_diagonal_2[i,0], bars_diagonal_2[i,1] = tension_ring_inner_nodes_categorized[i+1], tension_ring_outter_nodes_categorized[i]
     mask = np.all(np.isnan(bars_diagonal_2), axis=1) | np.all(bars_diagonal_2 == 0, axis=1)
     bars_diagonal_2 = bars_diagonal_2[~mask]
-    
+
     bars_diagonal_3 = np.zeros((tension_ring_inner_nodes_categorized.shape[0]+1, 2), dtype=int)
     for i in range(0, tension_ring_inner_nodes_categorized.shape[0]-2, 2):
         bars_diagonal_3[i,0], bars_diagonal_3[i,1] = tension_ring_inner_nodes_categorized[i], tension_ring_outter_nodes_categorized[i+2]
@@ -171,20 +171,37 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
     bars_diagonal_4 = bars_diagonal_4[~mask]
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_diagonal_3, bars_diagonal_4, bars_straight), axis=0)
 
-def add_cable_supports_coordinates_to_nodes_array(geometry, nodes, elastic_supports):
-    cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
-    for i in range(elastic_supports.shape[0]):
-        hypot = np.hypot(nodes[elastic_supports[i]][0], nodes[elastic_supports[i]][1])
-        hypot_new = hypot + 20/25*geometry.max_outer_radius
-        cable_supports_coordinates[i][0] = nodes[elastic_supports[i]][0]*hypot_new/hypot
-        cable_supports_coordinates[i][1] = nodes[elastic_supports[i]][1]*hypot_new/hypot
-        cable_supports_coordinates[i][2] = nodes[elastic_supports[i]][2] + 40/25*geometry.max_outer_radius
-
-    return cable_supports_coordinates
-
 def cables(nodes, elastic_supports):
     cables = np.zeros((elastic_supports.shape[0], 2), dtype=int)
     cable_supports_indices = np.arange(nodes.shape[0]-elastic_supports.shape[0], nodes.shape[0])
     for i in range(elastic_supports.shape[0]):
         cables[i][0], cables[i][1] = elastic_supports[i], cable_supports_indices[i]
     return cables, cable_supports_indices
+
+def cable_supports_coor(geometry, nodes, elastic_supports):
+    height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
+    cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
+    for i in range(elastic_supports.shape[0]):
+        X = nodes[elastic_supports[i]][0]
+        Y = nodes[elastic_supports[i]][1]
+        X_abs = abs(X)
+        Y_abs = abs(Y)
+        hypot = np.hypot(X, Y)
+        cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
+        if (Y>0) and (X>0):
+            angle= np.arctan(Y_abs/X_abs)
+            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
+            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+        elif (Y<0) and (X>0):
+            angle= np.arctan(Y_abs/X_abs)
+            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
+            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+        elif (Y<0) and (X<0):
+            angle= np.arctan(Y_abs/X_abs)
+            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
+            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+        elif (Y>0) and (X<0):
+            angle= np.arctan(Y_abs/X_abs)
+            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
+            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+    return cable_supports_coordinates
