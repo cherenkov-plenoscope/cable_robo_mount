@@ -132,8 +132,7 @@ class Bridge(object):
         self._SapModel.PropMaterial.SetMaterial(
             Name= property_name,
             MatType= 1,
-            Color= -1,
-            Notes= "custom-made")
+            Color= -1)
 
         self._SapModel.PropMaterial.SetMPIsotropic(
             Name= property_name,
