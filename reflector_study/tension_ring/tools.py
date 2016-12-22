@@ -179,14 +179,25 @@ def cables(nodes, elastic_supports):
 
 def cable_supports_coordinates_definition(geometry, nodes, elastic_supports):
     height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
+    cable_supports_coordinates_upper = np.zeros((elastic_supports.shape[0]//2, 3))
+    cable_supports_coordinates_auxiliary = np.zeros((elastic_supports.shape[0]//2, 3))
+    l= np.zeros((elastic_supports.shape[0]))
+    for i in range(elastic_supports.shape[0]):
+        l[i] = nodes[elastic_supports[i]][2]
+    z_upper= np.amax(l)
+    z_lower= np.amin(l)
+
     cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
     for i in range(elastic_supports.shape[0]):
+        if nodes[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+            cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
+        elif nodes[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+            cable_supports_coordinates[i][2] = -(geometry.reflector_security_distance_from_ground + height_between_layers)
         X = nodes[elastic_supports[i]][0]
         Y = nodes[elastic_supports[i]][1]
         X_abs = abs(X)
         Y_abs = abs(Y)
         hypot = np.hypot(X, Y)
-        cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
         if (Y>0) and (X>0):
             angle= np.arctan(Y_abs/X_abs)
             cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
