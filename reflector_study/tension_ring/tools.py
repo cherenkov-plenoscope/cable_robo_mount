@@ -258,12 +258,12 @@ def cable_supports_coordinates_definition(geometry):
 
     for i in range(8):
         angle = np.pi/4
-        cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle*i)
-        cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle*i)
+        cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+18/25)+geometry.tension_ring_width)*np.cos(angle*i)
+        cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+18/25)+geometry.tension_ring_width)*np.sin(angle*i)
         cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
     for i in range(8):
         angle = np.pi/4
-        cable_supports_coordinates[i+8][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle*i)
-        cable_supports_coordinates[i+8][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle*i)
+        cable_supports_coordinates[i+8][0] = (geometry.max_outer_radius*(1+18/25)+geometry.tension_ring_width)*np.cos(angle*i)
+        cable_supports_coordinates[i+8][1] = (geometry.max_outer_radius*(1+18/25)+geometry.tension_ring_width)*np.sin(angle*i)
         cable_supports_coordinates[i+8][2] = -(geometry.reflector_security_distance_from_ground + height_between_layers)
     return cable_supports_coordinates
