@@ -9,6 +9,7 @@ nodes = total_geometry["nodes"]
 bars_reflector = total_geometry["bars_reflector"]
 bars_tension_ring = total_geometry["bars_tension_ring"]
 cables = total_geometry["cables"]
+elastic_supports = total_geometry["elastic_supports"]
 cable_supports = total_geometry["cable_supports"]
 mirror_tripods = total_geometry["mirror_tripods"]
 fixtures = total_geometry["elastic_supports"]
@@ -19,7 +20,7 @@ dish rotation
 homogenous_transformation = rs.HomTra()
 homogenous_transformation.set_translation(geometry.translational_vector_xyz)
 homogenous_transformation.set_rotation_tait_bryan_angles(geometry.tait_bryan_angle_Rx, geometry.tait_bryan_angle_Ry, geometry.tait_bryan_angle_Rz)
-nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_moved_position(nodes, cable_supports, homogenous_transformation)
+nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_moved_position(nodes, elastic_supports, homogenous_transformation)
 
 """
 initialize SAP2000 and make assigns

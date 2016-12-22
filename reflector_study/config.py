@@ -20,7 +20,7 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 25.0,
+            'max_outer_radius': 10.0,
             'min_inner_radius': 2.0,
             'number_of_layers': 3,
             'x_over_z_ratio': 1.2,
@@ -51,7 +51,7 @@ example = {
         },
     'tension_ring':{
         'width': 1,
-        'support_position': 15,
+        'support_position': 22.5,
         'material': {
             'e_modul': 210e6,
             'yielding_point': 460000.0,

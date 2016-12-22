@@ -29,7 +29,7 @@ def generate_tension_ring(geometry, reflector):
     tension_ring_nodes_coordinates = np.concatenate((inner_tension_ring_nodes_coordinates, tension_ring_new_nodes_coordinates), axis= 0)
 
     return {
-    'nodes_all': nodes,
+    'nodes_reflector_tension_ring': nodes,
     'nodes_tension_ring': tension_ring_nodes_coordinates,
     'nodes_tension_ring_only_new': tension_ring_new_nodes_coordinates,
     'bars': bars,
@@ -37,14 +37,13 @@ def generate_tension_ring(geometry, reflector):
     }
 
 
-def generate_cables(geometry, nodes, elastic_supports_indices):
+def generate_cables(geometry, nodes_reflector_tension_ring, elastic_supports_indices):
     #cable support coordinates
-    cable_supports_coordinates = tools.cable_supports_coordinates_definition(geometry, nodes, elastic_supports_indices)
-    #final nodes
-    nodes_final = np.concatenate((nodes, cable_supports_coordinates), axis= 0)
+    cable_supports_coordinates = tools.cable_supports_coordinates_definition(geometry)
     #create cables (elements) and their supporting nodes (indices)
-    cables = tools.cables(nodes_final, elastic_supports_indices)[0]
-    cable_supports_indices = tools.cables(nodes_final, elastic_supports_indices)[1]
+    cable_supports_indices = tools.cable_supports_indices(nodes_reflector_tension_ring)
+    #create cables (elemnts)
+    cables = tools.cables(nodes_reflector_tension_ring, elastic_supports_indices, cable_supports_indices)
     return {
     'nodes': cable_supports_coordinates,
     'cables': cables,

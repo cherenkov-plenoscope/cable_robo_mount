@@ -156,7 +156,7 @@ def generate_reflector(geometry):
 def generate_reflector_with_tension_ring_and_cables(geometry):
     reflector = generate_reflector(geometry)
     tension_ring = generate_tension_ring(geometry, reflector)
-    cables_structure = generate_cables(geometry, tension_ring["nodes_all"], tension_ring["elastic_supports"])
+    cables_structure = generate_cables(geometry, tension_ring["nodes_reflector_tension_ring"], tension_ring["elastic_supports"])
     all_nodes = np.concatenate((reflector["nodes"], tension_ring["nodes_tension_ring_only_new"], cables_structure["nodes"]), axis= 0)
     return {
         'nodes': all_nodes,

@@ -122,7 +122,7 @@ def tension_ring_outter_nodes_and_elastic_supports(geometry, fixtures, nodes):
     elastic_supports = []
     closest_angles = []
     support_position = geometry.tension_ring_support_position*np.pi/180
-    for i in range(int(2*np.pi/support_position)):
+    for i in range(int(2*np.pi//support_position)):
         closest_angles.append(min(angle_from_y_clockwise, key=lambda x:abs(x-(support_position*i))))
     for i in range(nodes_offseted.shape[0]):
         if angle_from_y_clockwise[i] in closest_angles:
@@ -170,61 +170,76 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
     bars_diagonal_4 = bars_diagonal_4[~mask]
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_diagonal_3, bars_diagonal_4, bars_straight), axis=0)
 
-def cables(nodes, elastic_supports):
-    cables = np.zeros((elastic_supports.shape[0], 2), dtype=int)
-    cable_supports_indices = np.arange(nodes.shape[0]-elastic_supports.shape[0], nodes.shape[0])
+def cables(nodes_reflector_tension_ring, elastic_supports, cable_supports_indices):
+    cables = []
+    angle_from_y_clockwise = np.zeros(elastic_supports.shape[0])
     for i in range(elastic_supports.shape[0]):
-        cables[i][0], cables[i][1] = elastic_supports[i], cable_supports_indices[i]
-    return cables, cable_supports_indices
-
-def cable_supports_coordinates_definition(geometry, nodes, elastic_supports):
-    height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
-    cable_supports_coordinates_upper = np.zeros((elastic_supports.shape[0]//2, 3))
-    cable_supports_coordinates_auxiliary = np.zeros((elastic_supports.shape[0]//2, 3))
-    l= np.zeros((elastic_supports.shape[0]))
-    for i in range(elastic_supports.shape[0]):
-        l[i] = nodes[elastic_supports[i]][2]
-    z_upper= np.amax(l)
-    z_lower= np.amin(l)
-
-    cable_supports_coordinates = np.zeros((elastic_supports.shape[0], 3))
-    for i in range(elastic_supports.shape[0]):
-        if nodes[elastic_supports[i]][2] > z_upper - height_between_layers/2:
-            cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
-        elif nodes[elastic_supports[i]][2] < z_lower + height_between_layers/2:
-            cable_supports_coordinates[i][2] = -(geometry.reflector_security_distance_from_ground + height_between_layers)
-        X = nodes[elastic_supports[i]][0]
-        Y = nodes[elastic_supports[i]][1]
+        X = nodes_reflector_tension_ring[elastic_supports[i]][0]
+        Y = nodes_reflector_tension_ring[elastic_supports[i]][1]
+        Z = nodes_reflector_tension_ring[elastic_supports[i]][2]
         X_abs = abs(X)
         Y_abs = abs(Y)
         hypot = np.hypot(X, Y)
         if (Y>0) and (X>0):
-            angle= np.arctan(Y_abs/X_abs)
-            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
-            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+            angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot)
         elif (Y<0) and (X>0):
-            angle= np.arctan(Y_abs/X_abs)
-            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
-            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+            angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + np.pi/2
         elif (Y<0) and (X<0):
-            angle= np.arctan(Y_abs/X_abs)
-            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
-            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
+            angle_from_y_clockwise[i]= np.arccos(Y_abs / hypot) + np.pi
         elif (Y>0) and (X<0):
-            angle= np.arctan(Y_abs/X_abs)
-            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle)
-            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle)
-        elif (Y>0) and (X==0):
-            cable_supports_coordinates[i][0] = 0.0
-            cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
-        elif (Y<0) and (X==0):
-            cable_supports_coordinates[i][0] = 0.0
-            cable_supports_coordinates[i][1] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
-        elif (Y==0) and (X<0):
-            cable_supports_coordinates[i][0] = -(geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
-            cable_supports_coordinates[i][1] = 0.0
+            angle_from_y_clockwise[i]= np.arccos(X_abs / hypot) + 3*np.pi/2
         elif (Y==0) and (X>0):
-            cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)
-            cable_supports_coordinates[i][1] = 0.0
+            angle_from_y_clockwise[i]= np.pi/2
+        elif (Y==0) and (X<0):
+            angle_from_y_clockwise[i]= 3*np.pi/2
+        elif (Y>0) and (X==0):
+            angle_from_y_clockwise[i]= 0
+        elif (Y<0) and (X==0):
+            angle_from_y_clockwise[i]= np.pi
 
+    for i in range(elastic_supports.shape[0]):
+        if (angle_from_y_clockwise[i] <= np.pi/8) or (angle_from_y_clockwise[i] >= 15*np.pi/8):
+            cables.append([elastic_supports[i], cable_supports_indices[2]])
+        elif np.pi/8 <= angle_from_y_clockwise[i] <= 3*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[1]])
+        elif 3*np.pi/8 <= angle_from_y_clockwise[i] <= 5*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[0]])
+        elif 5*np.pi/8 <= angle_from_y_clockwise[i] <= 7*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[7]])
+        elif 7*np.pi/8 <= angle_from_y_clockwise[i] <= 9*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[6]])
+        elif 9*np.pi/8 <= angle_from_y_clockwise[i] <= 11*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[5]])
+        elif 11*np.pi/8 <= angle_from_y_clockwise[i] <= 13*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[4]])
+        elif 13*np.pi/8 <= angle_from_y_clockwise[i] <= 15*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[3]])
+        elif 15*np.pi/8 <= angle_from_y_clockwise[i] <= 17*np.pi/8:
+            cables.append([elastic_supports[i], cable_supports_indices[2]])
+
+        """
+        for j in range(8):
+            if (np.cos(angle_from_y_clockwise[i]) <= np.cos(np.pi/8 + np.pi/4*j)) and (np.cos(angle_from_y_clockwise[i]) >= np.cos(15*np.pi/8 + np.pi/4*j)):
+                cables.append([elastic_supports[i], cable_supports_indices[j]])
+        """
+    return np.array(cables)
+
+def cable_supports_indices(nodes_reflector_tension_ring):
+    cable_supports_indices = np.arange(nodes_reflector_tension_ring.shape[0], nodes_reflector_tension_ring.shape[0]+16)
+    return cable_supports_indices
+
+def cable_supports_coordinates_definition(geometry):
+    height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
+    cable_supports_coordinates = np.zeros((16, 3))
+
+    for i in range(8):
+        angle = np.pi/4
+        cable_supports_coordinates[i][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle*i)
+        cable_supports_coordinates[i][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle*i)
+        cable_supports_coordinates[i][2] = geometry.max_outer_radius*40/25 + geometry.reflector_security_distance_from_ground + height_between_layers
+    for i in range(8):
+        angle = np.pi/4
+        cable_supports_coordinates[i+8][0] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.cos(angle*i)
+        cable_supports_coordinates[i+8][1] = (geometry.max_outer_radius*(1+20/25)+geometry.tension_ring_width)*np.sin(angle*i)
+        cable_supports_coordinates[i+8][2] = -(geometry.reflector_security_distance_from_ground + height_between_layers)
     return cable_supports_coordinates
