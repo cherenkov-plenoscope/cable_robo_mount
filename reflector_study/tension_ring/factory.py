@@ -43,7 +43,7 @@ def generate_cables(geometry, nodes_reflector_tension_ring, elastic_supports_ind
     #create cables (elements) and their supporting nodes (indices)
     cable_supports_indices = tools.cable_supports_indices(nodes_reflector_tension_ring)
     #create cables (elemnts)
-    cables = tools.cables(nodes_reflector_tension_ring, elastic_supports_indices, cable_supports_indices)
+    cables = tools.cables(geometry, nodes_reflector_tension_ring, elastic_supports_indices, cable_supports_indices)
     return {
     'nodes': cable_supports_coordinates,
     'cables': cables,

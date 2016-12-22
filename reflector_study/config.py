@@ -51,7 +51,7 @@ example = {
         },
     'tension_ring':{
         'width': 1,
-        'support_position': 22.5,
+        'support_position': 10,
         'material': {
             'e_modul': 210e6,
             'yielding_point': 460000.0,

@@ -170,7 +170,7 @@ def bars_inbetween(tension_ring_inner_nodes_categorized, tension_ring_outter_nod
     bars_diagonal_4 = bars_diagonal_4[~mask]
     return np.concatenate((bars_diagonal_1, bars_diagonal_2, bars_diagonal_3, bars_diagonal_4, bars_straight), axis=0)
 
-def cables(nodes_reflector_tension_ring, elastic_supports, cable_supports_indices):
+def cables(geometry, nodes_reflector_tension_ring, elastic_supports, cable_supports_indices):
     cables = []
     angle_from_y_clockwise = np.zeros(elastic_supports.shape[0])
     for i in range(elastic_supports.shape[0]):
@@ -197,31 +197,55 @@ def cables(nodes_reflector_tension_ring, elastic_supports, cable_supports_indice
         elif (Y<0) and (X==0):
             angle_from_y_clockwise[i]= np.pi
 
+    l= np.zeros((elastic_supports.shape[0]))
+    for i in range(elastic_supports.shape[0]):
+        l[i] = nodes_reflector_tension_ring[elastic_supports[i]][2]
+    z_upper= np.amax(l)
+    z_lower= np.amin(l)
+
+    height_between_layers = geometry.x_over_z_ratio*geometry.facet_spacing/2
+
     for i in range(elastic_supports.shape[0]):
         if (angle_from_y_clockwise[i] <= np.pi/8) or (angle_from_y_clockwise[i] >= 15*np.pi/8):
-            cables.append([elastic_supports[i], cable_supports_indices[2]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[2]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[10]])
         elif np.pi/8 <= angle_from_y_clockwise[i] <= 3*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[1]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[1]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[9]])
         elif 3*np.pi/8 <= angle_from_y_clockwise[i] <= 5*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[0]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[0]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[8]])
         elif 5*np.pi/8 <= angle_from_y_clockwise[i] <= 7*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[7]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[7]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[15]])
         elif 7*np.pi/8 <= angle_from_y_clockwise[i] <= 9*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[6]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[6]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[14]])
         elif 9*np.pi/8 <= angle_from_y_clockwise[i] <= 11*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[5]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[5]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[13]])
         elif 11*np.pi/8 <= angle_from_y_clockwise[i] <= 13*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[4]])
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[4]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[12]])
         elif 13*np.pi/8 <= angle_from_y_clockwise[i] <= 15*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[3]])
-        elif 15*np.pi/8 <= angle_from_y_clockwise[i] <= 17*np.pi/8:
-            cables.append([elastic_supports[i], cable_supports_indices[2]])
-
-        """
-        for j in range(8):
-            if (np.cos(angle_from_y_clockwise[i]) <= np.cos(np.pi/8 + np.pi/4*j)) and (np.cos(angle_from_y_clockwise[i]) >= np.cos(15*np.pi/8 + np.pi/4*j)):
-                cables.append([elastic_supports[i], cable_supports_indices[j]])
-        """
+            if nodes_reflector_tension_ring[elastic_supports[i]][2] > z_upper - height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[3]])
+            elif nodes_reflector_tension_ring[elastic_supports[i]][2] < z_lower + height_between_layers/2:
+                cables.append([elastic_supports[i], cable_supports_indices[11]])
     return np.array(cables)
 
 def cable_supports_indices(nodes_reflector_tension_ring):
