@@ -8,7 +8,7 @@ class Structural(object):
         self.yielding_point = config_dict['reflector']['material']['yielding_point']
         self.ultimate_point = config_dict['reflector']['material']['ultimate_point']
         self.bar_outter_radius = var_vector[0]
-        self.bar_thickness = var_vector[1]
+        self.bar_thickness = config_dict['reflector']['bars']['thickness']
         self.facet_surface_weight = config_dict['reflector']['facet']['surface_weight']
         self.facet_actuator_weight = config_dict['reflector']['facet']['actuator_weight']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']

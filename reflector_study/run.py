@@ -1,5 +1,5 @@
 import os
-from pyswarm import pso
+from . import pyswarm
 from . import config
 from .Geometry import Geometry
 from .SAP2000_bridge.Structural import Structural
@@ -63,8 +63,8 @@ def run(var_vector, cfg=config.example):
 
     return value_to_minimize
 
-def ParticleSwarmOptimizer(run):
-    lb = [0.08, 0.004, 0]
-    ub = [0.4, 0.04, 45]
-    xopt, fopt = pso(run, lb, ub)
+def PSO():
+    lb = [0.08, 0]
+    ub = [0.4, 45]
+    xopt, fopt = pyswarm.pso(run, lb, ub, swarmsize = 5, maxiter = 10, debug = True)
     return xopt, fopt
