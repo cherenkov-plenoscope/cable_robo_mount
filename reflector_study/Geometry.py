@@ -18,11 +18,11 @@ class Geometry(object):
         self.tension_ring_width = config_dict['tension_ring']['width']
         self.tension_ring_support_position = config_dict['tension_ring']['support_position']
 
-        self.translational_vector_xyz = config_dict["structure_spatial_position"]["translational_vector_xyz"]
         self.tait_bryan_angle_Rx = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][0])
         self.tait_bryan_angle_Ry = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][1])
         self.tait_bryan_angle_Rz = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][2])
 
+        self._set_up_translational_vector_from_dish_orientation_2D()
         self._set_up_geometry()
 
 
@@ -46,6 +46,14 @@ class Geometry(object):
         self.lattice_range_j = 2*self.lattice_radius_j+1
         self.lattice_range_k = self.number_of_layers
 
+    def _set_up_translational_vector_from_dish_orientation_2D(self):
+        #create BC arrays for the creation of the line
+        x = np.array([-self.max_outer_radius/25*23.6, 0, self.max_outer_radius/25*23.6])
+        y = np.array([self.max_outer_radius/25*18.5, 0, self.max_outer_radius/25*18.5])
+        #find the actual line equation(2nd order polynomial/parabolic trajectory)
+        z = np.polyfit(x, y, 2)
+        p = np.poly1d(z)
+        self.translational_vector_xyz = [np.rad2deg(self.tait_bryan_angle_Ry)/45*x[2], 0, p(x[2])]
 
     def __repr__(self):
         info = 'Geometry'
