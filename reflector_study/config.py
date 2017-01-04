@@ -15,15 +15,16 @@ example = {
             }
         },
     'structure_spatial_position': {
-        'translational_vector_xyz': [0.0 ,0.0, 0.0],
-        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
+        'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
+        'rotational_vector_Rx_Ry_Rz': [0.0, 10.0, 0.0]
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 10.0,
+            'max_outer_radius': 25.0,
             'min_inner_radius': 2.0,
             'number_of_layers': 3,
-            'x_over_z_ratio': 1.2
+            'x_over_z_ratio': 1.2,
+            'security_distance_from_ground': 2.6
             },
         'optics': {
             'focal_length': 75.0,
@@ -49,9 +50,30 @@ example = {
             }
         },
     'tension_ring':{
-        'width': 4,
-        'support_position': 15,
+        'width': 1,
+        'support_position': 10,
+        'material': {
+            'e_modul': 210e6,
+            'yielding_point': 460000.0,
+            'ultimate_point': 360000.0,
+            'security_factor': 1.05
+            },
+        'bars': {
+            'outer_diameter': 0.0824,
+            'thickness': 0.005,
+            'imperfection_factor': 0.49,
+            'buckling_length_factor': 0.9
+            }
         },
+    'cables':{
+        'material': {
+            'e_modul': 210e6,
+            'yielding_point': 1860000.0,
+            'ultimate_point': 2160000.0,
+            'security_factor': 1.05
+            },
+        'cross_section_area': 600
+    },
     'load_scenario': {
         'security_factor': {
             'dead': 1.35,

@@ -1,15 +1,15 @@
-import time
-start = time.time()
 import reflector_study as rs
 
 """
 general imports
 """
 geometry = rs.Geometry(rs.config.example)
-total_geometry = rs.factory.generate_reflector_with_tension_ring(geometry)
+total_geometry = rs.factory.generate_reflector_with_tension_ring_and_cables(geometry)
 nodes = total_geometry["nodes"]
-bars = total_geometry["bars"]
+bars_reflector = total_geometry["bars_reflector"]
+bars_tension_ring = total_geometry["bars_tension_ring"]
 cables = total_geometry["cables"]
+elastic_supports = total_geometry["elastic_supports"]
 cable_supports = total_geometry["cable_supports"]
 mirror_tripods = total_geometry["mirror_tripods"]
 fixtures = total_geometry["elastic_supports"]
@@ -20,7 +20,7 @@ dish rotation
 homogenous_transformation = rs.HomTra()
 homogenous_transformation.set_translation(geometry.translational_vector_xyz)
 homogenous_transformation.set_rotation_tait_bryan_angles(geometry.tait_bryan_angle_Rx, geometry.tait_bryan_angle_Ry, geometry.tait_bryan_angle_Rz)
-nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_translated_position(nodes, homogenous_transformation)
+nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_moved_position(nodes, cable_supports, homogenous_transformation)
 
 """
 initialize SAP2000 and make assigns
@@ -28,17 +28,17 @@ initialize SAP2000 and make assigns
 structural = rs.SAP2000_bridge.Structural(rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
 #bridge._SapObject.Hide()
-bridge._SapObject.Unhide()
+#bridge._SapObject.Unhide()
 
 bridge.save_model_in_working_directory()
 rs.SAP2000_bridge.TextFilesBridge.JointsCreate(nodes_rotated, structural.SAP_2000_working_directory)
-rs.SAP2000_bridge.TextFilesBridge.FramesCreate(bars, structural.SAP_2000_working_directory)
+rs.SAP2000_bridge.TextFilesBridge.FramesCreate(bars_reflector, bars_tension_ring, structural)
 bridge._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
 #bridge.elastic_support_definition(fixtures)
 ################for cables uncomment the following
-bridge._frames_definition(cables)
-bridge._set_tension_compression_limits_for_specific_frame_elements(cables)
+bridge._cables_definition(cables)
+#bridge._set_tension_compression_limits_for_specific_frame_elements(cables)
 bridge._restraints_definition(cable_supports)
 ################
 
@@ -65,7 +65,7 @@ nodes_deformed_rotated= bridge.get_total_absolute_deformations_for_load_combinat
 """
 bring dish to original position and prepare for mctracing simulation
 """
-nodes_deformed = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_zenith_position(nodes_deformed_rotated, homogenous_transformation)
+nodes_deformed = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_zenith_position(nodes_deformed_rotated, cable_supports, homogenous_transformation)
 
 reflector = rs.factory.generate_reflector(geometry)
 reflector_deformed = reflector.copy()
