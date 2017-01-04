@@ -59,14 +59,14 @@ example = {
             'wind': 1.5
             },
         'wind': {
-            'direction': 0.0,
-            'speed': 55, #m/s
-            'terrain_factor': 1, ##
-            'orography_factor': 1, ##
-            'K1': 1, ##
-            'CsCd': 2, ## usually 1. But our structure very prone to dynamic efects.
-            'wind_density': 1.25, #wind density
-            'security_distance_from_ground': 5
+            'direction': 0.0, #OK
+            'speed': 55, #m/s.OK
+            'terrain_factor': 1, ##Terrain 1.OK
+            'orography_factor': 1, ##No increase of the wind due to mountains etc.OK
+            'K1': 1, ##Turbulence factor. No accurate information available.OK
+            'CsCd': 1.2, ## usually 1. But our structure very prone to dynamic efects, so Cd very conservative 1.2.OK
+            'wind_density': 1.25, #wind density.OK
+            'security_distance_from_ground': 5 #OK
             },
         'seismic': {
             'acceleration': 3.6
