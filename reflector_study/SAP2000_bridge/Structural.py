@@ -2,13 +2,13 @@ import numpy as np
 
 class Structural(object):
 
-    def __init__(self, config_dict):
+    def __init__(self, var_vector, config_dict):
         self.SAP_2000_directory = config_dict['system']['sap2000']['path']
         self.SAP_2000_working_directory = config_dict['system']['sap2000']['working_directory']
 
         self.reflector_yielding_point = config_dict['reflector']['material']['yielding_point']
         self.reflector_ultimate_point = config_dict['reflector']['material']['ultimate_point']
-        self.reflector_bar_outer_diameter = config_dict['reflector']['bars']['outer_diameter']
+        self.reflector_bar_outer_diameter = var_vector[0]
         self.reflector_bar_thickness = config_dict['reflector']['bars']['thickness']
         self.reflector_security_distance_from_ground = config_dict["reflector"]["main"]["security_distance_from_ground"]
 
