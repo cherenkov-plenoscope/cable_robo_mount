@@ -71,6 +71,6 @@ def run(var_vector, cfg=config.example):
 
 def PSO():
     lb = [0.0081, 0.0121, 0]
-    ub = [0.1, 0.2, 5000]
-    xopt, fopt, p, fp = pyswarm.pso(run, lb, ub, swarmsize = 5, maxiter = 20, debug = True, particle_output= True)
+    ub = [0.05, 0.1, 0.5]
+    xopt, fopt, p, fp = pyswarm.pso(run, lb, ub, swarmsize = 5, maxiter = 10, debug = True, particle_output= True)
     return xopt, fopt, p, fp
