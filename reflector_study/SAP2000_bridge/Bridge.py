@@ -221,7 +221,7 @@ class Bridge(object):
                     CSys= "Global",
                     ItemType= 0) # 0, 1, 2
 
-    def load_scenario_wind(self, mirror_tripods, nodes, cpei=-1.5, load_pattern_name= "wind"):
+    def load_scenario_wind(self, mirror_tripods, nodes, load_pattern_name= "wind"):
         self._SapModel.LoadPatterns.Add(
             Name= load_pattern_name,
             MyType= 6,
@@ -249,7 +249,7 @@ class Bridge(object):
             Name= "ALL",
             LoadPat= "wind",
             MyType= 1,
-            cp= cpei, #according to EC1-4 Z.7.3(freistehende Dächer) und Z. 7.2 Tab.7.4a (big?, although a preciser definition is impossible)
+            cp= self.structural.cpei,
             ItemType= 1)
 
     def load_combination_3LP_definition(self, structural, CName1= "dead_load", CName2= "facets_live_load", CName3= "wind", load_combination_name= "dead+live+wind"):

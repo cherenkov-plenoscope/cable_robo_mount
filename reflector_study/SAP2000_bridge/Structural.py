@@ -14,12 +14,12 @@ class Structural(object):
 
         self.tension_ring_yielding_point = config_dict['tension_ring']['material']['yielding_point']
         self.tension_ring_ultimate_point = config_dict['tension_ring']['material']['ultimate_point']
-        self.tension_ring_bar_outer_diameter = config_dict['tension_ring']['bars']['outer_diameter']
+        self.tension_ring_bar_outer_diameter = var_vector[1]
         self.tension_ring_bar_thickness = config_dict['tension_ring']['bars']['thickness']
 
         self.cables_yielding_point = config_dict['cables']['material']['yielding_point']
         self.cables_ultimate_point = config_dict['cables']['material']['ultimate_point']
-        self.cables_cs_area = config_dict['cables']['cross_section_area']
+        self.cables_cs_area = var_vector[2]
         self.cables_e_modul = config_dict['cables']['material']['e_modul']
 
         self.facet_surface_weight = config_dict['reflector']['facet']['surface_weight']
@@ -44,6 +44,7 @@ class Structural(object):
         self.wind_K1_factor = config_dict["load_scenario"]["wind"]["K1"]
         self.wind_CsCd_factor = config_dict["load_scenario"]["wind"]["CsCd"]
         self.wind_density = config_dict["load_scenario"]["wind"]["wind_density"]
+        self.cpei = config_dict["load_scenario"]["wind"]["cpei"]
 
         self.dead_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["dead"]
         self.live_load_scenario_security_factor = config_dict["load_scenario"]["security_factor"]["live"]

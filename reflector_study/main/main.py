@@ -3,7 +3,7 @@ import reflector_study as rs
 """
 general imports
 """
-geometry = rs.Geometry(rs.config.example)
+geometry = rs.Geometry([0.04,0], rs.config.example)
 total_geometry = rs.factory.generate_reflector_with_tension_ring_and_cables(geometry)
 nodes = total_geometry["nodes"]
 bars_reflector = total_geometry["bars_reflector"]
@@ -25,9 +25,9 @@ nodes_rotated = rs.SAP2000_bridge.HomTra_bridge_tools.get_nodes_moved_position(n
 """
 initialize SAP2000 and make assigns
 """
-structural = rs.SAP2000_bridge.Structural(rs.config.example)
+structural = rs.SAP2000_bridge.Structural([0.04, 0], rs.config.example)
 bridge = rs.SAP2000_bridge.Bridge(structural)
-#bridge._SapObject.Hide()
+bridge._SapObject.Hide()
 #bridge._SapObject.Unhide()
 
 bridge.save_model_in_working_directory()

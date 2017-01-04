@@ -19,7 +19,7 @@ class Geometry(object):
         self.tension_ring_support_position = config_dict['tension_ring']['support_position']
 
         self.tait_bryan_angle_Rx = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][0])
-        self.tait_bryan_angle_Ry = np.deg2rad(var_vector[1])
+        self.tait_bryan_angle_Ry = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][1])
         self.tait_bryan_angle_Rz = np.deg2rad(config_dict["structure_spatial_position"]["rotational_vector_Rx_Ry_Rz"][2])
 
         self._set_up_translational_vector_from_dish_orientation_2D()

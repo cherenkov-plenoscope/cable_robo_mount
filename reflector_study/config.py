@@ -16,12 +16,12 @@ example = {
         },
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
-        'rotational_vector_Rx_Ry_Rz': [0.0, 10.0, 0.0]
+        'rotational_vector_Rx_Ry_Rz': [0.0, 0.0, 0.0]
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 25.0,
-            'min_inner_radius': 2.0,
+            'max_outer_radius': 10.0,
+            'min_inner_radius': 1.0,
             'number_of_layers': 3,
             'x_over_z_ratio': 1.2,
             'security_distance_from_ground': 2.6
@@ -44,7 +44,7 @@ example = {
             },
         'bars': {
             'outer_diameter': 0.0424,
-            'thickness': 0.0026,
+            'thickness': 0.004,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -60,7 +60,7 @@ example = {
             },
         'bars': {
             'outer_diameter': 0.0824,
-            'thickness': 0.005,
+            'thickness': 0.006,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -72,7 +72,7 @@ example = {
             'ultimate_point': 2160000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 600
+        'cross_section_area': 200
     },
     'load_scenario': {
         'security_factor': {
@@ -88,7 +88,7 @@ example = {
             'K1': 1, ##Turbulence factor. No accurate information available.OK
             'CsCd': 1.2, ## usually 1. But our structure very prone to dynamic efects, so Cd very conservative 1.2.OK
             'wind_density': 1.25, #wind density.OK
-            'security_distance_from_ground': 5 #OK
+            'cpei': 1.5 #according to EC1-4 Z.7.3(freistehende Dächer) und Z. 7.2 Tab.7.4a (big?, although a preciser definition is impossible), OK
             },
         'seismic': {
             'acceleration': 3.6
