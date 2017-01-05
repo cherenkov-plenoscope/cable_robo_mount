@@ -10,14 +10,25 @@ from .SAP2000_bridge import TextFilesBridge
 from .factory import generate_reflector
 from .HomTra import HomTra
 
-def run(var_vector, cfg=config.example):
+
+def make_run_config(var_vector, template_config):
+    run_config = template_config.copy()
+    run_config['reflector']['bars']['outer_diameter'] = var_vector[0]
+    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
+    run_config['cables']['cross_section_area'] = var_vector[2]
+    return run_config
+
+
+def run(var_vector, template_config=config.example):
 
     #os.mkdir(output_path)
     #cfg_path = os.path.join(output_path, 'config.json')
     #config.write(cfg, cfg_path)
 
+    cfg = make_run_config(var_vector, template_config)
+
     # SET UP REFLECTOR GEOMETRY
-    geometry = Geometry(var_vector, cfg)
+    geometry = Geometry(cfg)
     total_geometry = generate_reflector_with_tension_ring_and_cables(geometry)
     nodes = total_geometry["nodes"]
     bars_reflector = total_geometry["bars_reflector"]
@@ -35,7 +46,7 @@ def run(var_vector, cfg=config.example):
     nodes_rotated = get_nodes_moved_position(nodes, cable_supports, homogenous_transformation)
 
     # RUN SAP
-    structural = Structural(var_vector, cfg)
+    structural = Structural(cfg)
     bridge = Bridge(structural)
     bridge._SapObject.Hide()
     #bridge._SapObject.Unhide()
