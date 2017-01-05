@@ -44,5 +44,5 @@ ground_image = rs.mctracer_bridge.star_light_analysis.make_image_from_ground_res
     ground_res, 
     rs.config.example['star_light_analysis'])
 
-rs.mctracer_bridge.star_light_analysis.plot_image(image)
-rs.mctracer_bridge.star_light_analysis.plot_image(ground_image)
+rs.mctracer_bridge.star_light_analysis.save_image(image, 'camera_image.png')
+rs.mctracer_bridge.star_light_analysis.save_image(ground_image, 'ground_image.png')
