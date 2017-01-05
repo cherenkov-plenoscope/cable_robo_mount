@@ -165,5 +165,5 @@ def generate_reflector_with_tension_ring_and_cables(geometry):
         'mirror_tripods': reflector["mirror_tripods"],
         'elastic_supports': tension_ring["elastic_supports"],
         'cables': cables_structure["cables"],
-        'cable_supports': cables_structure["cable_supports"]
-        }
+        'cable_supports': cables_structure["cable_supports"],
+        'geometry': geometry}

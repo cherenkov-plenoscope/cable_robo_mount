@@ -103,15 +103,16 @@ def plot_image(image):
 
 
 def save_image(image, path):
-    plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(10, 10))
     ax = plt.gca()
     add2ax_image(ax, image)
     plt.savefig(path, dpi=384//2)
+    plt.close(fig)
 
 
 def stddev_of_point_spread_function(sensor_response):
     """
-    Returns the optical quality parameter of a point spread function found in a 
+    Returns the optical quality parameter of a point spread function found in a
     sensor response.
     """
     x_stddev = sensor_response['x'].std()

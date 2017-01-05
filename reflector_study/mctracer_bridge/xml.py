@@ -83,7 +83,7 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
 
 def bars2mctracer(reflector):
     nodes = reflector['nodes']
-    bars = reflector['bars']
+    bars = reflector['bars_reflector']
     bar_radius = reflector['geometry'].bar_outer_diameter/2
     xml = ''
     for i, bar in enumerate(bars):
