@@ -29,12 +29,20 @@ subprocess.call(
         '-o', 'out',
         '-b'])
 
-res = rs.mctracer_bridge.star_light_analysis.read_binary_response('out1_0')
+camera_res = rs.mctracer_bridge.star_light_analysis.read_binary_response('out1_0')
 ground_res = rs.mctracer_bridge.star_light_analysis.read_binary_response('out1_1')
-stddev = rs.mctracer_bridge.star_light_analysis.stddev_of_point_spread_function(res)
 
-image = rs.mctracer_bridge.star_light_analysis.make_image_from_sensor_response(reflector, res, rs.mctracer_bridge.star_light_analysis.config)
-shadow_image = rs.mctracer_bridge.star_light_analysis.make_image_from_ground_response(reflector, ground_res, rs.mctracer_bridge.star_light_analysis.config)
+stddev = rs.mctracer_bridge.star_light_analysis.stddev_of_point_spread_function(camera_res)
+
+image = rs.mctracer_bridge.star_light_analysis.make_image_from_sensor_response(
+    reflector, 
+    camera_res,
+    rs.config.example['star_light_analysis'])
+
+ground_image = rs.mctracer_bridge.star_light_analysis.make_image_from_ground_response(
+    reflector, 
+    ground_res, 
+    rs.config.example['star_light_analysis'])
 
 rs.mctracer_bridge.star_light_analysis.plot_image(image)
-rs.mctracer_bridge.star_light_analysis.plot_image(shadow_image)
+rs.mctracer_bridge.star_light_analysis.plot_image(ground_image)
