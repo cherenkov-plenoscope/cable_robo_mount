@@ -8,9 +8,9 @@ from . import mirror_alignment
 from . import mctracer_bridge
 from . import flatten
 from . import tools
-from . import run
 from sys import platform
 if platform == "win32":
 	from . import SAP2000_bridge
+	from . import run
 from .HomTra import HomTra
 from . import tension_ring
