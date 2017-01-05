@@ -112,3 +112,13 @@ def plot_image(image):
     ax = plt.gca()
     add2ax_image(ax, image)
     plt.show()
+
+
+def stddev_of_point_spread_function(sensor_response):
+    """
+    Returns the optical quality parameter of a point spread function found in a 
+    sensor response.
+    """
+    x_stddev = sensor_response['x'].std()
+    y_stddev = sensor_response['y'].std()
+    return np.hypot(x_stddev, y_stddev)
