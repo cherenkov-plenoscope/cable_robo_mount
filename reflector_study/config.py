@@ -97,8 +97,8 @@ example = {
     'star_light_analysis': {
         'photons_per_square_meter': 1000,
         'sensor': {
-            'bin_width_deg': 0.001,
-            'region_of_interest_deg': 1
+            'bin_width_deg': 0.0005,
+            'region_of_interest_deg': 0.5
             },
         'ground': {
             'bin_width_m': 0.1
