@@ -112,16 +112,3 @@ def plot_image(image):
     ax = plt.gca()
     add2ax_image(ax, image)
     plt.show()
-
-
-def full_width_half_mean(image):
-    hist = image['histogram']
-    bin_width = (image['bins'][-1] - image['bins'][0])/image['bins'].shape[0]
-    max_intensity = hist.max()
-    above_half_intensity = hist > 0.5*max_intensity
-    number_of_pixels_above_half_intensity = above_half_intensity.sum()
-
-    area_above_half_intensity = number_of_pixels_above_half_intensity*bin_width*bin_width
-
-    diameter_of_disc_like_area_above_half_intensity = 2.0*np.sqrt(area_above_half_intensity/np.pi)
-    return diameter_of_disc_like_area_above_half_intensity
