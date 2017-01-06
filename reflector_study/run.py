@@ -106,6 +106,7 @@ def run(var_vector, working_directory, template_config=config.example):
     mct = mctracer_bridge.RayTracingMachine(cfg)
     mct_run_path = cfg['system']['mctracer']['run_path_linux']
     mctracer_propagate_path = cfg['system']['mctracer']['ray_tracer_propagation_path_linux']
+    mct.execute('rm -rf '+mct_run_path)
     mct.execute('mkdir '+mct_run_path)
 
     mct_cfg_path = os.path.join(output_path, 'mct_config.xml')
@@ -132,7 +133,6 @@ def run(var_vector, working_directory, template_config=config.example):
 
     mct_ground_response_path = os.path.join(output_path, 'ground_response.bin')
     mct.get(mct_run_path+'/'+'out1_1', mct_ground_response_path)
-    mct.execute('rm -r '+mct_run_path)
 
     camera_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_camera_response_path)
     ground_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_ground_response_path)
