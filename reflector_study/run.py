@@ -91,6 +91,37 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     return stddev_of_psf
 
 
+def estimate_deformed_nodes(structural, dish, load_combination_name):
+    sap2k = Bridge(structural)
+    #sap2k._SapObject.Hide()
+    #sap2k._SapObject.Unhide()
+
+    sap2k.save_model_in_working_directory()
+    TextFilesBridge.JointsCreate(dish['nodes'], structural)
+    TextFilesBridge.FramesCreate(dish['bars_reflector'], dish['bars_tension_ring'], structural)
+    sap2k._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
+
+    sap2k._cables_definition(dish['cables'])
+    sap2k._restraints_definition(dish['cable_supports'])
+
+    sap2k.load_scenario_dead()
+    sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
+    sap2k.load_scenario_wind(dish['mirror_tripods'], dish['nodes'])
+
+    sap2k.load_combination_2LP_definition(structural)
+    sap2k.load_combination_3LP_definition(structural)
+
+    sap2k._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
+    sap2k._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
+
+    sap2k.run_analysis()
+
+    return sap2k.get_total_absolute_deformations_for_load_combination(
+        nodes=dish['nodes'],
+        load_combination_name=load_combination_name,
+        group_name="ALL")
+
+
 def run(var_vector, working_directory, template_config=config.example):
 
     run_number = current_run_number(working_directory)
@@ -102,69 +133,68 @@ def run(var_vector, working_directory, template_config=config.example):
 
     # SET UP REFLECTOR GEOMETRY
     geometry = Geometry(cfg)
-    dish = generate_reflector_with_tension_ring_and_cables(geometry)
-    alignment = mirror_alignment.ideal_alignment(dish)
-    nodes = dish["nodes"]
-    bars_reflector = dish["bars_reflector"]
-    bars_tension_ring = dish["bars_tension_ring"]
-    cables = dish["cables"]
-    elastic_supports = dish["elastic_supports"]
-    cable_supports = dish["cable_supports"]
-    mirror_tripods = dish["mirror_tripods"]
-    fixtures = dish["elastic_supports"]
+    initial_dish = generate_reflector_with_tension_ring_and_cables(geometry)
+    structural = Structural(cfg)
+
+    zenith_dish = initial_dish.copy()
+    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish, 'dead+live')
+
+    alignment = mirror_alignment.ideal_alignment(zenith_dish)
 
     # DISH ROTATION
     homogenous_transformation = HomTra()
     homogenous_transformation.set_translation(geometry.translational_vector_xyz)
-    homogenous_transformation.set_rotation_tait_bryan_angles(geometry.tait_bryan_angle_Rx, geometry.tait_bryan_angle_Ry, geometry.tait_bryan_angle_Rz)
-    nodes_rotated = get_nodes_moved_position(dish["nodes"], dish["cable_supports"], homogenous_transformation)
+    homogenous_transformation.set_rotation_tait_bryan_angles(
+        geometry.tait_bryan_angle_Rx,
+        geometry.tait_bryan_angle_Ry,
+        geometry.tait_bryan_angle_Rz)
 
-    # RUN SAP
-    structural = Structural(cfg)
-    sap2k = Bridge(structural)
-    #sap2k._SapObject.Hide()
-    #sap2k._SapObject.Unhide()
+    transformed_dish = initial_dish.copy()
+    transformed_dish['nodes'] = get_nodes_moved_position(
+        initial_dish["nodes"],
+        initial_dish["cable_supports"],
+        homogenous_transformation)
 
-    sap2k.save_model_in_working_directory()
-    TextFilesBridge.JointsCreate(nodes_rotated, structural.SAP_2000_working_directory)
-    TextFilesBridge.FramesCreate(bars_reflector, bars_tension_ring, structural)
-    sap2k._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
+    deformed_transformed_dish = transformed_dish.copy()
+    deformed_transformed_dish['nodes'] = estimate_deformed_nodes(
+        structural,
+        deformed_transformed_dish,
+        'dead+live')
 
-    sap2k._cables_definition(cables)
-    sap2k._restraints_definition(cable_supports)
-
-    sap2k.load_scenario_dead()
-    sap2k.load_scenario_facet_weight(mirror_tripods)
-    sap2k.load_scenario_wind(mirror_tripods, nodes_rotated)
-
-    sap2k.load_combination_3LP_definition(structural)
-
-    """
-    run analysis and take Results
-    """
-    sap2k._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
-    sap2k._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
-
-    sap2k.run_analysis()
-
-    nodes_deformed_rotated= sap2k.get_total_absolute_deformations_for_load_combination(nodes= nodes_rotated, load_combination_name= "dead+live+wind", group_name= "ALL")
-    nodes_deformed = get_nodes_zenith_position(nodes_deformed_rotated, cable_supports, homogenous_transformation)
-
-    dish_deformed = dish.copy()
-    dish_deformed['nodes'] = nodes_deformed
+    deformed_dish = deformed_transformed_dish.copy()
+    deformed_dish['nodes'] = get_nodes_zenith_position(
+        deformed_transformed_dish['nodes'],
+        deformed_transformed_dish["cable_supports"],
+        homogenous_transformation)
 
     stddev_of_psf = estimate_optical_performance(
         cfg=cfg,
-        dish=dish_deformed,
+        dish=deformed_dish,
         alignment=alignment,
         output_path=output_path)
 
+    intermediate_results = {
+        'stddev_of_psf': float(stddev_of_psf)}
+    intermediate_results_path = os.path.join(output_path, 'intermediate_results.json')
+    config.write(intermediate_results, intermediate_results_path)
+
     return stddev_of_psf
 
-def PSO():
-    lb = [0.0081, 0.0121, 0]
-    ub = [0.05, 0.1, 0.000314]
+
+def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run_test'):
+    lb = [0.0081, 0.0121, 0.0001]
+    ub = [0.1, 0.15, 0.000314]
     xopt, fopt, p, fp = pyswarm.pso(
-        run, lb, ub, swarmsize = 5, maxiter = 10, debug = True, particle_output= True,
-        kwargs={'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run_test'})
+        run, lb, ub, swarmsize = 3, maxiter = 3, debug = True, particle_output= True,
+        kwargs={'working_directory': working_directory})
+
+    pso_results = {
+        'xopt': xopt.tolist(),
+        'fopt': float(fopt),
+        'p': p.tolist(),
+        'fp': fp.tolist()}
+
+    results_path = os.path.join(working_directory, 'results.json')
+    config.write(pso_results, results_path)
+
     return xopt, fopt, p, fp

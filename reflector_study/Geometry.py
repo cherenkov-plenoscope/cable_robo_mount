@@ -48,12 +48,16 @@ class Geometry(object):
 
     def _set_up_translational_vector_from_dish_orientation_2D(self):
         #create BC arrays for the creation of the line
-        x = np.array([-self.max_outer_radius/25*23.6, 0, self.max_outer_radius/25*23.6])
-        y = np.array([self.max_outer_radius/25*18.5, 0, self.max_outer_radius/25*18.5])
+        x_range = self.max_outer_radius/25*23.6
+        y_range = self.max_outer_radius/25*18.5
+        x = np.array([-x_range, 0, x_range])
+        y = np.array([y_range, 0, y_range])
         #find the actual line equation(2nd order polynomial/parabolic trajectory)
         z = np.polyfit(x, y, 2)
         p = np.poly1d(z)
-        self.translational_vector_xyz = [np.rad2deg(self.tait_bryan_angle_Ry)/45*x[2], 0, p(x[2])]
+        max_rotation_angle = 45
+        x_for_current_rotation = np.rad2deg(self.tait_bryan_angle_Ry)/max_rotation_angle*x_range
+        self.translational_vector_xyz = [x_for_current_rotation, 0, p(x_for_current_rotation)]
 
     def __repr__(self):
         info = 'Geometry'

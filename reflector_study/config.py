@@ -16,7 +16,7 @@ example = {
         },
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
-        'rotational_vector_Rx_Ry_Rz': [0.0, 0.0, 0.0]
+        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
         },
     'reflector': {
         'main': {

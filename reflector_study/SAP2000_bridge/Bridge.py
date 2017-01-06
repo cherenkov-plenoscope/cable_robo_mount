@@ -260,6 +260,13 @@ class Bridge(object):
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
         self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName3, structural.wind_load_scenario_security_factor)
 
+    def load_combination_2LP_definition(self, structural, CName1= "dead_load", CName2= "facets_live_load", load_combination_name= "dead+live"):
+        self._SapModel.RespCombo.Add(
+            Name= load_combination_name,
+            ComboType= 0)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName1, structural.dead_load_scenario_security_factor)
+        self._SapModel.RespCombo.SetCaseList(load_combination_name, 0, CName2, structural.live_load_scenario_security_factor)
+
     def save_model_in_working_directory(self):
         self._SapModel.File.Save(self.structural.SAP_2000_working_directory)
 
