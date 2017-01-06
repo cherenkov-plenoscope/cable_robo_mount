@@ -41,6 +41,56 @@ def current_run_number(working_directory):
     return  max_run_number + 1
 
 
+def estimate_optical_performance(cfg, dish, alignment, output_path):
+    mct = mctracer_bridge.RayTracingMachine(cfg)
+    mct_run_path = cfg['system']['mctracer']['run_path_linux']
+    mctracer_propagate_path = cfg['system']['mctracer']['ray_tracer_propagation_path_linux']
+    mct.execute('rm -rf '+mct_run_path)
+    mct.execute('mkdir '+mct_run_path)
+
+    mct_cfg_path = os.path.join(output_path, 'mct_config.xml')
+    mctracer_bridge.write_propagation_config_xml(mct_cfg_path)
+    mct_light_path = os.path.join(output_path, 'light.xml')
+    mctracer_bridge.write_star_light_xml(reflector=dish, path=mct_light_path)
+    mct_scenery_path = os.path.join(output_path, 'scenery.xml')
+    mctracer_bridge.write_reflector_xml(reflector=dish, alignment=alignment, path=mct_scenery_path)
+
+    mct.put(mct_cfg_path, mct_run_path+'/'+'config.xml')
+    mct.put(mct_light_path, mct_run_path+'/'+'light.xml')
+    mct.put(mct_scenery_path, mct_run_path+'/'+'scenery.xml')
+    mct.execute(
+        command=mctracer_propagate_path+
+            ' -s '+mct_run_path+'/'+'scenery.xml'+
+            ' -c '+mct_run_path+'/'+'config.xml'+
+            ' -i '+mct_run_path+'/'+'light.xml'+
+            ' -o '+mct_run_path+'/'+'out'+
+            ' -b',
+        out_path='mct_call')
+
+    mct_camera_response_path = os.path.join(output_path, 'camera_response.bin')
+    mct.get(mct_run_path+'/'+'out1_0', mct_camera_response_path)
+
+    mct_ground_response_path = os.path.join(output_path, 'ground_response.bin')
+    mct.get(mct_run_path+'/'+'out1_1', mct_ground_response_path)
+
+    camera_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_camera_response_path)
+    ground_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_ground_response_path)
+    stddev_of_psf = mctracer_bridge.star_light_analysis.stddev_of_point_spread_function(camera_res)
+    image = mctracer_bridge.star_light_analysis.make_image_from_sensor_response(
+        dish,
+        camera_res,
+        cfg['star_light_analysis'])
+    ground_image = mctracer_bridge.star_light_analysis.make_image_from_ground_response(
+        dish,
+        ground_res,
+        cfg['star_light_analysis'])
+
+    mctracer_bridge.star_light_analysis.save_image(image, os.path.join(output_path, 'camera_image.png'))
+    mctracer_bridge.star_light_analysis.save_image(ground_image, os.path.join(output_path, 'ground_image.png'))
+
+    return stddev_of_psf
+
+
 def run(var_vector, working_directory, template_config=config.example):
 
     run_number = current_run_number(working_directory)
@@ -103,51 +153,11 @@ def run(var_vector, working_directory, template_config=config.example):
     dish_deformed = dish.copy()
     dish_deformed['nodes'] = nodes_deformed
 
-    mct = mctracer_bridge.RayTracingMachine(cfg)
-    mct_run_path = cfg['system']['mctracer']['run_path_linux']
-    mctracer_propagate_path = cfg['system']['mctracer']['ray_tracer_propagation_path_linux']
-    mct.execute('rm -rf '+mct_run_path)
-    mct.execute('mkdir '+mct_run_path)
-
-    mct_cfg_path = os.path.join(output_path, 'mct_config.xml')
-    mctracer_bridge.write_propagation_config_xml(mct_cfg_path)
-    mct_light_path = os.path.join(output_path, 'light.xml')
-    mctracer_bridge.write_star_light_xml(reflector=dish_deformed, path=mct_light_path)
-    mct_scenery_path = os.path.join(output_path, 'scenery.xml')
-    mctracer_bridge.write_reflector_xml(reflector=dish_deformed, alignment=alignment, path=mct_scenery_path)
-
-    mct.put(mct_cfg_path, mct_run_path+'/'+'config.xml')
-    mct.put(mct_light_path, mct_run_path+'/'+'light.xml')
-    mct.put(mct_scenery_path, mct_run_path+'/'+'scenery.xml')
-    mct.execute(
-        command=mctracer_propagate_path+
-            ' -s '+mct_run_path+'/'+'scenery.xml'+
-            ' -c '+mct_run_path+'/'+'config.xml'+
-            ' -i '+mct_run_path+'/'+'light.xml'+
-            ' -o '+mct_run_path+'/'+'out'+
-            ' -b',
-        out_path='mct_call')
-
-    mct_camera_response_path = os.path.join(output_path, 'camera_response.bin')
-    mct.get(mct_run_path+'/'+'out1_0', mct_camera_response_path)
-
-    mct_ground_response_path = os.path.join(output_path, 'ground_response.bin')
-    mct.get(mct_run_path+'/'+'out1_1', mct_ground_response_path)
-
-    camera_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_camera_response_path)
-    ground_res = mctracer_bridge.star_light_analysis.read_binary_response(mct_ground_response_path)
-    stddev_of_psf = mctracer_bridge.star_light_analysis.stddev_of_point_spread_function(camera_res)
-    image = mctracer_bridge.star_light_analysis.make_image_from_sensor_response(
-        dish,
-        camera_res,
-        cfg['star_light_analysis'])
-    ground_image = mctracer_bridge.star_light_analysis.make_image_from_ground_response(
-        dish,
-        ground_res,
-        cfg['star_light_analysis'])
-
-    mctracer_bridge.star_light_analysis.save_image(image, os.path.join(output_path, 'camera_image.png'))
-    mctracer_bridge.star_light_analysis.save_image(ground_image, os.path.join(output_path, 'ground_image.png'))
+    stddev_of_psf = estimate_optical_performance(
+        cfg=cfg,
+        dish=dish_deformed,
+        alignment=alignment,
+        output_path=output_path)
 
     return stddev_of_psf
 
