@@ -177,7 +177,7 @@ def benchmark_scenery(reflector, alignment):
     xml+= color(name='grey', rgb=np.array([64,64,64]))
     xml+= color(name='grass_green', rgb=np.array([22,91,49]))
     xml+= facets2mctracer(reflector=reflector, alignment=alignment)
-    xml+= bars2mctracer(reflector=reflector)
+    #xml+= bars2mctracer(reflector=reflector)
     xml+= image_sensor(
         focal_length=reflector['geometry'].focal_length,
         PAP_offset=alignment['principal_aperture_plane_offset'],
