@@ -1,8 +1,9 @@
 import numpy as np
 
 class JointsCreate(object):
-    def __init__(self, nodes, path):
-        self.file_path= path+".$2k"
+    def __init__(self, nodes, structural):
+        self.structural = structural
+        self.file_path= structural.SAP_2000_working_directory+".$2k"
         self.s2k_contents = self.text_file_to_list(self.file_path)
         self.table_joint_coordinates = self.create_table_nodes(nodes)
         self.final_s2k = self.import_table_to_text_file(self.table_joint_coordinates, self.s2k_contents)
