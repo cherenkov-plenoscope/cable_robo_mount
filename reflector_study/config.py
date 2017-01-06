@@ -20,14 +20,14 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 10.0,
+            'max_outer_radius': 5.0,
             'min_inner_radius': 1.0,
             'number_of_layers': 3,
             'x_over_z_ratio': 1.2,
             'security_distance_from_ground': 2.6
             },
         'optics': {
-            'focal_length': 75.0,
+            'focal_length': 15.0,
             'davies_cotton_over_parabola_ratio': 0.0
             },
         'facet': {
