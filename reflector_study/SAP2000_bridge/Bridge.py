@@ -140,6 +140,20 @@ class Bridge(object):
             U= 0.3,
             A= 1.170e-05)
 
+        self._SapModel.PropMaterial.SetOSteel_1(
+            Name= property_name,
+            FY= self.structural.cables_yielding_point,
+            Fu= self.structural.cables_ultimate_point,
+            EFy= self.structural.cables_yielding_point, #effective yield strength
+            EFu= self.structural.cables_ultimate_point, #effective ultimate strength
+            SSType= 1, #Stress-Strain curve type. 1 if Parametric-Simple, 0 if User-defined
+            SSHysType= 2, #Stress-Strain hysteresis type. 0 Elastic, 1 Kinematic, 2 Takeda
+            StrainAtHardening= 0.02, #Applies only for parametric Stress-Strain curves, value of SSType 0.
+            StrainAtMaxStress= 0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
+            StrainAtRupture= 0.2, #Applies only for parametric Stress-Strain curves, value of SSType 0.
+            FinalSlope= -0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
+            Temp= 25) #
+
         self._SapModel.PropCable.SetProp(
             Name= property_name,
             MatProp= property_name,
@@ -147,7 +161,7 @@ class Bridge(object):
             Color= -1,
             Notes= "cables 1860Mpa")
 
-        CSarea_mass_weight_modifiers = [1,1,1]
+        CSarea_mass_weight_modifiers = [1,1.1,1.1] #density of normal steel=7850kg/m3. density of wire rope(Bridon 8620kg/m3. 8620/7850=1.1)
         self._SapModel.PropCable.SetModifiers(
             Name= property_name,
             Value= CSarea_mass_weight_modifiers)
