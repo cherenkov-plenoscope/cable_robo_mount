@@ -26,15 +26,19 @@ class Structural(object):
         self.facet_actuator_weight = config_dict['reflector']['facet']['actuator_weight']
         self.facet_inner_hex_radius = config_dict['reflector']['facet']['inner_hex_radius']
 
-        self._set_up_loading()
+        self._set_up_help_values()
         self._set_up_loading_scenarios(config_dict)
 
-    def _set_up_loading(self):
+    def _set_up_help_values(self):
+        #mainly help values for wind loading/shell load assignment
         self.facet_perimeter = 4*np.sqrt(3)*self.facet_inner_hex_radius
         self.facet_surface_area = 0.5*self.facet_inner_hex_radius*self.facet_perimeter
         self.total_facet_surface_weight = self.facet_surface_weight / 100 #in kN/m**2
         self.total_facet_weight = self.total_facet_surface_weight * self.facet_surface_area #in kN
         self.tripod_nodes_weight = self.total_facet_weight / 3 + self.facet_actuator_weight / 100 #in kN
+        #help values for weight calculation
+        self.bars_reflector_cs_area = np.pi/4*(self.reflector_bar_outer_diameter**2-(self.reflector_bar_outer_diameter-2*self.reflector_bar_thickness)**2)
+        self.bars_tension_ring_cs_area = np.pi/4*(self.tension_ring_bar_outer_diameter**2-(self.tension_ring_bar_outer_diameter-2*self.tension_ring_bar_thickness)**2) 
 
     def _set_up_loading_scenarios(self, config_dict):
         self.wind_direction= config_dict["load_scenario"]["wind"]["direction"]
