@@ -44,7 +44,7 @@ example = {
             },
         'bars': {
             'outer_diameter': 0.0889,
-            'thickness': 0.005,
+            'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -60,7 +60,7 @@ example = {
             },
         'bars': {
             'outer_diameter': 0.0824,
-            'thickness': 0.01,
+            'thickness': 0.016,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -72,7 +72,7 @@ example = {
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 0.0000785
+        'cross_section_area': 0.0000581
     },
     'load_scenario': {
         'security_factor': {
