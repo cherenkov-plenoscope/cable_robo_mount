@@ -16,18 +16,18 @@ example = {
         },
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
-        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
+        'rotational_vector_Rx_Ry_Rz': [0.0, 10.0, 0.0]
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 7.5,
+            'max_outer_radius': 15,
             'min_inner_radius': 1.0,
             'number_of_layers': 3,
             'x_over_z_ratio': 1.2,
             'security_distance_from_ground': 2.6
             },
         'optics': {
-            'focal_length': 15.0,
+            'focal_length': 45,
             'davies_cotton_over_parabola_ratio': 0.0
             },
         'facet': {
@@ -43,8 +43,8 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.0424,
-            'thickness': 0.004,
+            'outer_diameter': 0.0889,
+            'thickness': 0.005,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -60,25 +60,25 @@ example = {
             },
         'bars': {
             'outer_diameter': 0.0824,
-            'thickness': 0.006,
+            'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
         },
     'cables':{
         'material': {
-            'e_modul': 210e6,
-            'yielding_point': 1860000.0,
-            'ultimate_point': 2160000.0,
+            'e_modul': 73.9e6, #according to Bridon Endurance Dyform 34LR PI
+            'yielding_point': 1671000.0,
+            'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 200
+        'cross_section_area': 0.0000785
     },
     'load_scenario': {
         'security_factor': {
-            'dead': 1.35,
-            'live': 1.35,
-            'wind': 1.5
+            'dead': 1.00,
+            'live': 1.00,
+            'wind': 1.00
             },
         'wind': {
             'direction': 0.0, #OK
