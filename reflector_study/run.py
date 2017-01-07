@@ -11,13 +11,15 @@ from .HomTra import HomTra
 from . import mctracer_bridge
 from . import mirror_alignment
 import numpy as np
+from .tools import tools
 
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
-    run_config['reflector']['bars']['outer_diameter'] = var_vector[0]
-    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
-    run_config['cables']['cross_section_area'] = var_vector[2]
+    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[0]
+    run_config['reflector']['bars']['thickness'] = var_vector[1]
+    run_config['tension_ring']['width'] = var_vector[2]
+
     return run_config
 
 
@@ -94,7 +96,6 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
 def estimate_deformed_nodes(structural, dish, load_combination_name):
     sap2k = Bridge(structural)
     #sap2k._SapObject.Hide()
-    #sap2k._SapObject.Unhide()
 
     sap2k.save_model_in_working_directory()
     TextFilesBridge.JointsCreate(dish['nodes'], structural)
@@ -174,21 +175,28 @@ def run(var_vector, working_directory, template_config=config.example):
         output_path=output_path)
 
     intermediate_results = {
-        'stddev_of_psf': float(stddev_of_psf)}
+        'stddev_of_psf': float(stddev_of_psf),
+        'reflector_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum()),
+        'tension_ring_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()),
+        'reflector_weight': float(7.85*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum())),
+        'tension_ring_weight': float(7.85*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()))
+        }
     intermediate_results_path = os.path.join(output_path, 'intermediate_results.json')
     config.write(intermediate_results, intermediate_results_path)
 
     return stddev_of_psf
 
 
-def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run_test'):
-    lb = [0.0081, 0.0121, 0.0001]
-    ub = [0.1, 0.15, 0.000314]
+def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run\\test'):
+    lb = [0.127, 0.005, 1]
+    ub = [0.1778, 0.01, 2]
     xopt, fopt, p, fp = pyswarm.pso(
-        run, lb, ub, swarmsize = 3, maxiter = 3, debug = True, particle_output= True,
+        run, lb, ub, swarmsize = 1, maxiter = 1, debug = True, particle_output= True,
         kwargs={'working_directory': working_directory})
 
     pso_results = {
+        'lower_bounds': lb,
+        'upper_bounds': ub,
         'xopt': xopt.tolist(),
         'fopt': float(fopt),
         'p': p.tolist(),
