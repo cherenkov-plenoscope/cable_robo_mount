@@ -16,12 +16,12 @@ from .tools import tools
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
-    run_config['reflector']['bars']['outer_diameter'] = var_vector[0]
-    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
-    run_config['tension_ring']['width'] = var_vector[2]
-    run_config['cables']['cross_section_area'] = var_vector[3]
+    run_config['cables']['cross_section_area'] = var_vector[0]
+    run_config['reflector']['main']['x_over_z_ratio'] = var_vector[1]
+    run_config['reflector']['facet']['inner_hex_radius'] = var_vector[2]
 
-    return run_config
+    return {'run_config': run_config,
+            'var_vector': var_vector}
 
 
 def current_run_number(working_directory):
@@ -129,9 +129,12 @@ def run(var_vector, working_directory, template_config=config.example):
     run_number = current_run_number(working_directory)
     output_path = os.path.join(working_directory, str(run_number))
     os.mkdir(output_path)
-    cfg = make_run_config(var_vector, template_config)
+    cfg = make_run_config(var_vector, template_config)["run_config"]
     cfg_path = os.path.join(output_path, 'config.json')
     config.write(cfg, cfg_path)
+    variables_vector = make_run_config(var_vector, template_config)["var_vector"]
+    variables_vector_path = os.path.join(output_path, 'variables_vector.json')
+    config.write(variables_vector.tolist(), variables_vector_path)
 
     # SET UP REFLECTOR GEOMETRY
     geometry = Geometry(cfg)
@@ -188,11 +191,11 @@ def run(var_vector, working_directory, template_config=config.example):
     return stddev_of_psf
 
 
-def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run\\dish30_ang10_barr_bartr_trwidth_cablecs'):
-    lb = [0.038, 0.1143, 1, 0.0000837]
-    ub = [0.07, 0.159, 2, 0.000232]
+def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run\\dish30_ang10_tr13_CHS51_10_127_16_cablecs_xoz_fctrad'):
+    lb = [0.000119, 1.0, 0.6]
+    ub = [0.000232, 2.0, 0.9]
     xopt, fopt, p, fp = pyswarm.pso(
-        run, lb, ub, swarmsize = 20, maxiter = 20, debug = True, particle_output= True,
+        run, lb, ub, swarmsize = 10, maxiter = 20, debug = True, particle_output= True,
         kwargs={'working_directory': working_directory})
 
     pso_results = {

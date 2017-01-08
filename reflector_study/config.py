@@ -43,14 +43,14 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.0889,
+            'outer_diameter': 0.051,
             'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
         },
     'tension_ring':{
-        'width': 1,
+        'width': 1.3,
         'support_position': 10,
         'material': {
             'e_modul': 210e6,
@@ -59,7 +59,7 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.0824,
+            'outer_diameter': 0.127,
             'thickness': 0.016,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
