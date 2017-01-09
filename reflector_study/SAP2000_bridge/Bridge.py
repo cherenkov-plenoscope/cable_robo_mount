@@ -38,15 +38,24 @@ class Bridge(object):
             material_name = "Steel_S"+str(self.structural.reflector_yielding_point/1000)+"SpaceFrameBars"
             yielding_point = self.structural.reflector_yielding_point
             ultimate_point = self.structural.reflector_ultimate_point
+            e_modul = self.structural.reflector_material_e_modul
+            specific_weight = self.structural.reflector_material_specific_weight
         elif part_of_structure_as_string == "tension_ring":
             material_name = "Steel_S"+str(self.structural.tension_ring_yielding_point/1000)+"TensionRingBars"
             yielding_point = self.structural.tension_ring_yielding_point
             ultimate_point = self.structural.tension_ring_ultimate_point
+            e_modul = self.structural.tension_ring_material_e_modul
+            specific_weight = self.structural.tension_ring_material_specific_weight
         self._SapModel.PropMaterial.SetMaterial(
             Name= material_name,
             MatType= 1,
             Color= -1,
             Notes= "custom-made")
+        self._SapModel.PropMaterial.SetMPIsotropic(
+            Name= material_name,
+            E= e_modul,
+            U= 0.3,
+            A= 1.170e-05)
         self._SapModel.PropMaterial.SetOSteel_1(
             Name= material_name,
             FY= yielding_point,
@@ -60,6 +69,10 @@ class Bridge(object):
             StrainAtRupture= 0.2, #Applies only for parametric Stress-Strain curves, value of SSType 0.
             FinalSlope= -0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
             Temp= 25) #
+        self._SapModel.PropMaterial.SetWeightAndMass(
+            Name= material_name,
+            MyOption= 1,
+            Value= specific_weight)
 
     def pipe_cross_section_definition(self, part_of_structure_as_string):
         if part_of_structure_as_string == "reflector":
@@ -154,14 +167,19 @@ class Bridge(object):
             FinalSlope= -0.1, #Applies only for parametric Stress-Strain curves, value of SSType 0.
             Temp= 25) #
 
+        self._SapModel.PropMaterial.SetWeightAndMass(
+            Name= property_name,
+            MyOption= 1,
+            Value= self.structural.cables_material_specific_weight)
+
         self._SapModel.PropCable.SetProp(
             Name= property_name,
             MatProp= property_name,
             Area= self.structural.cables_cs_area,
             Color= -1,
-            Notes= "cables 1860Mpa")
+            Notes= "steel, flexible, non-free rotating wire ropes with steel core")
 
-        CSarea_mass_weight_modifiers = [1,1.1,1.1] #density of normal steel=7850kg/m3. density of wire rope(Bridon 8620kg/m3. 8620/7850=1.1)
+        CSarea_mass_weight_modifiers = [1,1,1]
         self._SapModel.PropCable.SetModifiers(
             Name= property_name,
             Value= CSarea_mass_weight_modifiers)

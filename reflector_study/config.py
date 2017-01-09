@@ -37,6 +37,7 @@ example = {
             'actuator_weight': 5.0
             },
         'material': {
+            'specific_weight': 78.5,
             'e_modul': 210e6,
             'yielding_point': 460000.0,
             'ultimate_point': 360000.0,
@@ -50,9 +51,10 @@ example = {
             }
         },
     'tension_ring':{
-        'width': 1.3,
+        'width': 1.8,
         'support_position': 10,
         'material': {
+            'specific_weight': 78.5,
             'e_modul': 210e6,
             'yielding_point': 460000.0,
             'ultimate_point': 360000.0,
@@ -68,6 +70,7 @@ example = {
     'cables':{
         'material': {
             'e_modul': 73.9e6, #according to Bridon Endurance Dyform 34LR PI
+            'specific_weight': 86.2, #according to Bridon Endurance Dyform 34LR PI
             'yielding_point': 1671000.0,
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
