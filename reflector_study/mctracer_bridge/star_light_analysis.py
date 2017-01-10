@@ -46,8 +46,8 @@ def make_image_from_sensor_response(reflector, sensor_response, analysis_config)
     number_of_bins = int(roi/bin_width)
     roi = bin_width*number_of_bins
     bins = np.linspace(
-        -1*roi,
-        +1*roi,
+        -8*roi,
+        +8*roi,
         number_of_bins)
     image = np.histogram2d(
         x=theta_x,
