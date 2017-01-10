@@ -20,7 +20,7 @@ def brute_force():
         'start_value': float(0), ###change here
         'fin_value': float(45), ###change here
         'step': float(1), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BFangle045_tr18_xoz12_fct06_cablescs_bartr_barr_CARBON65'} ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BFangle045_tr18_xoz12_fct06_cablescsX2_bartr_barr_CARBON65'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
