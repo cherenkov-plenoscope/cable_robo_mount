@@ -25,7 +25,6 @@ def brute_force():
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
 
-    results = np.zeros(int(brute_force_specs['fin_value']))
     for i in range(int(brute_force_specs['start_value']), int(brute_force_specs['fin_value'])+1, int(brute_force_specs['step'])):
         cfg['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = float(i) ###change here
 
@@ -42,6 +41,46 @@ def brute_force():
         print(results['stddev_of_psf'])
         print(results['max_final_deformation'])
         config.write(results, results_path)
+
+
+def brute_force2():
+    cfg = config.example.copy()
+    brute_force_specs = {  ###change here
+        'examined_value1': 'tait bryan angle Ry', ###change here
+        'examined_value2': 'dish_diameter', ###change here
+        'start_value1': float(0), ###change here
+        'fin_value1': float(450), ###change here
+        'step1': float(25), ###change here
+        'start_value2': float(100), ###change here
+        'fin_value2': float(225), ###change here
+        'step2': float(25), ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\comparative_study_rotation_diameter_NOCABLES'} ###change here
+
+    brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
+    config.write(brute_force_specs, brute_force_specs_path)
+
+    for i in range(int(brute_force_specs['start_value1']), (int(brute_force_specs['fin_value1'])+int(brute_force_specs['step1'])), int(brute_force_specs['step1'])):
+        for j in range(int(brute_force_specs['start_value2']), (int(brute_force_specs['fin_value2'])+int(brute_force_specs['step2'])), int(brute_force_specs['step2'])):
+            cfg['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = float(i)/10 ###change here
+            cfg['reflector']['main']['max_outer_radius'] = float(j)/10 ###change here
+
+            run_number = current_run_number(brute_force_specs['working_directory'])
+            output_path = os.path.join(brute_force_specs['working_directory'], str(run_number))
+            os.mkdir(output_path)
+
+            cfg_path = os.path.join(output_path, 'config.json')
+            config.write(cfg, cfg_path)
+
+            variables_vector = {'Rotation': float(i)/10, 'Dish_diameter': float(j)/5}
+            variables_vector_path = os.path.join(output_path, 'variables_vector.json')
+            config.write(variables_vector, variables_vector_path)
+
+            results_path = os.path.join(output_path, 'intermediate_results.json')
+            results = run(working_directory=brute_force_specs['working_directory'], cfg=cfg, output_path=output_path)
+
+            print(results['stddev_of_psf'])
+            print(results['max_final_deformation'])
+            config.write(results, results_path)
 
 
 def current_run_number(working_directory):
@@ -123,8 +162,9 @@ def estimate_deformed_nodes(structural, dish, load_combination_name):
     TextFilesBridge.FramesCreate(dish['bars_reflector'], dish['bars_tension_ring'], structural)
     sap2k._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
-    sap2k._cables_definition(dish['cables'])
-    sap2k._restraints_definition(dish['cable_supports'])
+    #sap2k._cables_definition(dish['cables'])
+    #sap2k._restraints_definition(dish['cable_supports'])
+    sap2k._restraints_definition(dish['elastic_supports'])
 
     sap2k.load_scenario_dead()
     sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
