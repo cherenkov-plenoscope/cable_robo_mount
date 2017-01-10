@@ -13,12 +13,38 @@ from . import mirror_alignment
 import numpy as np
 from .tools import tools
 
+def PSO():
+    pso_specs = {
+        'lower_bounds': [0.0000581, 0.0889, 0.0635],
+        'upper_bounds': [0.000823, 0.159, 0.0889],
+        'swarmsize': float(1),
+        'maxiter': float(1),
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}
+
+    pso_specs_path = os.path.join(pso_specs['working_directory'], 'pso_specs.json')
+    config.write(pso_specs, pso_specs_path)
+
+    xopt, fopt, p, fp = pyswarm.pso(
+        run, lb=pso_specs['lower_bounds'], ub=pso_specs['upper_bounds'],
+        swarmsize=int(pso_specs['swarmsize']), maxiter=int(pso_specs['maxiter']), debug = True,
+        particle_output= True, kwargs={'working_directory': pso_specs['working_directory']})
+
+    pso_results = {
+        'xopt': xopt.tolist(),
+        'fopt': float(fopt),
+        'p': p.tolist(),
+        'fp': fp.tolist()}
+
+    results_path = os.path.join(pso_specs['working_directory'], 'results.json')
+    config.write(pso_results, results_path)
+
+    return xopt, fopt, p, fp
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
     run_config['cables']['cross_section_area'] = var_vector[0]
-    run_config['reflector']['main']['x_over_z_ratio'] = var_vector[1]
-    run_config['reflector']['facet']['inner_hex_radius'] = var_vector[2]
+    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
+    run_config['reflector']['bars']['outer_diameter'] = var_vector[2]
 
     return {'run_config': run_config,
             'var_vector': var_vector}
@@ -108,10 +134,10 @@ def estimate_deformed_nodes(structural, dish, load_combination_name):
 
     sap2k.load_scenario_dead()
     sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
-    sap2k.load_scenario_wind(dish['mirror_tripods'], dish['nodes'])
+    #sap2k.load_scenario_wind(dish['mirror_tripods'], dish['nodes'])
 
     sap2k.load_combination_2LP_definition(structural)
-    sap2k.load_combination_3LP_definition(structural)
+    #sap2k.load_combination_3LP_definition(structural)
 
     sap2k._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
     sap2k._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
@@ -182,31 +208,12 @@ def run(var_vector, working_directory, template_config=config.example):
         'stddev_of_psf': float(stddev_of_psf),
         'reflector_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum()),
         'tension_ring_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()),
-        'reflector_weight': float(7.85*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum())),
-        'tension_ring_weight': float(7.85*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()))
+        'reflector_weight': float(structural.reflector_material_specific_weight/10*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum())),
+        'tension_ring_weight': float(structural.tension_ring_material_specific_weight/10*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum())),
+        'max_intial_deformation': np.linalg.norm(zenith_dish['nodes'] - initial_dish['nodes'], axis=1).max(),
+        'max_final_deformation': np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max()
         }
     intermediate_results_path = os.path.join(output_path, 'intermediate_results.json')
     config.write(intermediate_results, intermediate_results_path)
 
     return stddev_of_psf
-
-
-def PSO(working_directory='C:\\Users\\Spiros Daglas\\Desktop\\run\\dish30_ang10_tr13_CHS51_10_127_16_cablecs_xoz_fctrad'):
-    lb = [0.000119, 1.0, 0.6]
-    ub = [0.000232, 2.0, 0.9]
-    xopt, fopt, p, fp = pyswarm.pso(
-        run, lb, ub, swarmsize = 10, maxiter = 20, debug = True, particle_output= True,
-        kwargs={'working_directory': working_directory})
-
-    pso_results = {
-        'lower_bounds': lb,
-        'upper_bounds': ub,
-        'xopt': xopt.tolist(),
-        'fopt': float(fopt),
-        'p': p.tolist(),
-        'fp': fp.tolist()}
-
-    results_path = os.path.join(working_directory, 'results.json')
-    config.write(pso_results, results_path)
-
-    return xopt, fopt, p, fp
