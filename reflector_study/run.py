@@ -215,7 +215,8 @@ def run(var_vector, working_directory, template_config=config.example):
         'reflector_weight': float(structural.reflector_material_specific_weight/10*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum())),
         'tension_ring_weight': float(structural.tension_ring_material_specific_weight/10*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum())),
         'max_intial_deformation': np.linalg.norm(zenith_dish['nodes'] - initial_dish['nodes'], axis=1).max(),
-        'max_final_deformation': np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max()
+        'max_final_deformation': np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max(),
+        'max_in_plane_final_deformation': np.linalg.norm((deformed_dish['nodes'] - initial_dish['nodes'])[:, [0,1]], axis=1).max()
         }
     intermediate_results_path = os.path.join(output_path, 'intermediate_results.json')
     config.write(intermediate_results, intermediate_results_path)
