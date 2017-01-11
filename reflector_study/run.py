@@ -12,13 +12,15 @@ from . import mctracer_bridge
 from . import mirror_alignment
 import numpy as np
 from .tools import tools
+import time
 
 def PSO():
+    s = time.time()
     pso_specs = {
-        'lower_bounds': [0.0000581, 0.0889, 0.0635],
-        'upper_bounds': [0.000823, 0.159, 0.0889],
+        'lower_bounds': [44.9999, 0.12000, 0.035000],
+        'upper_bounds': [45.0001, 0.12001, 0.035001],
         'swarmsize': float(1),
-        'maxiter': float(1),
+        'maxiter': float(0),
         'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}
 
     pso_specs_path = os.path.join(pso_specs['working_directory'], 'pso_specs.json')
@@ -37,12 +39,13 @@ def PSO():
 
     results_path = os.path.join(pso_specs['working_directory'], 'results.json')
     config.write(pso_results, results_path)
-
+    e = time.time()
+    print(e-s)
     return xopt, fopt, p, fp
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
-    run_config['cables']['cross_section_area'] = var_vector[0]
+    run_config['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = var_vector[0]
     run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
     run_config['reflector']['bars']['outer_diameter'] = var_vector[2]
 
@@ -131,13 +134,14 @@ def estimate_deformed_nodes(structural, dish, load_combination_name):
 
     sap2k._cables_definition(dish['cables'])
     sap2k._restraints_definition(dish['cable_supports'])
-
     sap2k.load_scenario_dead()
     sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
-    #sap2k.load_scenario_wind(dish['mirror_tripods'], dish['nodes'])
+    sap2k.non_linearity()
 
-    sap2k.load_combination_2LP_definition(structural)
-    #sap2k.load_combination_3LP_definition(structural)
+    #sap2k._restraints_definition(dish['elastic_supports'])
+    #sap2k.load_scenario_dead()
+    #sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
+    #sap2k.load_combination_2LP_definition(structural)
 
     sap2k._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
     sap2k._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
@@ -146,7 +150,7 @@ def estimate_deformed_nodes(structural, dish, load_combination_name):
 
     return sap2k.get_total_absolute_deformations_for_load_combination(
         nodes=dish['nodes'],
-        load_combination_name=load_combination_name,
+        load_combination_name=sap2k.load_combination_name,
         group_name="ALL")
 
 
