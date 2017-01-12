@@ -16,25 +16,25 @@ example = {
         },
     'structure_spatial_position': {
         'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
-        'rotational_vector_Rx_Ry_Rz': [0.0, 10.0, 0.0]
+        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 15,
-            'min_inner_radius': 1.0,
+            'max_outer_radius': 25,
+            'min_inner_radius': 0.0,
             'number_of_layers': 3,
-            'x_over_z_ratio': 1.2,
+            'x_over_z_ratio': 1.8,
             'security_distance_from_ground': 2.6
             },
         'optics': {
-            'focal_length': 45,
+            'focal_length': 75,
             'davies_cotton_over_parabola_ratio': 0.0
             },
         'facet': {
             'gap_in_between': 0.02,
-            'inner_hex_radius': 0.6,
+            'inner_hex_radius': 0.9,
             'surface_weight': 25.0,
-            'actuator_weight': 5.0
+            'actuator_weight': 0.0
             },
         'material': {
             'specific_weight': 78.5,
@@ -44,14 +44,14 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.051,
+            'outer_diameter': 0.035,
             'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
         },
     'tension_ring':{
-        'width': 1.8,
+        'width': 1.1,
         'support_position': 10,
         'material': {
             'specific_weight': 78.5,
@@ -61,8 +61,8 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.127,
-            'thickness': 0.016,
+            'outer_diameter': 0.12,
+            'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -75,7 +75,7 @@ example = {
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 0.0000581
+        'cross_section_area': 0.00065
     },
     'load_scenario': {
         'security_factor': {

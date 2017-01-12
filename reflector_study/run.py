@@ -17,11 +17,11 @@ import time
 def PSO():
     s = time.time()
     pso_specs = {
-        'lower_bounds': [44.9999, 0.12000, 0.035000],
-        'upper_bounds': [45.0001, 0.12001, 0.035001],
-        'swarmsize': float(1),
-        'maxiter': float(0),
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}
+        'lower_bounds': [2.7, 1.7, 1.1, 0.00999, 0.00999],  ###change here
+        'upper_bounds': [2.700001, 1.70001, 1.11111, 0.01, 0.01],  ###change here
+        'swarmsize': float(1),  ###change here
+        'maxiter': float(0),  ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}  ###change here
 
     pso_specs_path = os.path.join(pso_specs['working_directory'], 'pso_specs.json')
     config.write(pso_specs, pso_specs_path)
@@ -45,9 +45,11 @@ def PSO():
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
-    run_config['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = var_vector[0]
-    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]
-    run_config['reflector']['bars']['outer_diameter'] = var_vector[2]
+    run_config['reflector']['main']['x_over_z_ratio'] = var_vector[0]  ###change here
+    run_config['reflector']['facet']['inner_hex_radius'] = var_vector[1]  ###change here
+    run_config['tension_ring']['width'] = var_vector[2]  ###change here
+    run_config['reflector']['bars']['thickness'] = var_vector[3]  ###change here
+    run_config['tension_ring']['bars']['thickness'] = var_vector[4]  ###change here
 
     return {'run_config': run_config,
             'var_vector': var_vector}
@@ -123,9 +125,9 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     return stddev_of_psf
 
 
-def estimate_deformed_nodes(structural, dish, load_combination_name):
+def estimate_deformed_nodes(structural, dish):
     sap2k = Bridge(structural)
-    sap2k._SapObject.Hide()
+    sap2k._SapObject.Unhide()
 
     sap2k.save_model_in_working_directory()
     TextFilesBridge.JointsCreate(dish['nodes'], structural)
@@ -172,7 +174,7 @@ def run(var_vector, working_directory, template_config=config.example):
     structural = Structural(cfg)
 
     zenith_dish = initial_dish.copy()
-    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish, 'dead+live')
+    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish)
 
     alignment = mirror_alignment.ideal_alignment(zenith_dish)
 
@@ -193,8 +195,7 @@ def run(var_vector, working_directory, template_config=config.example):
     deformed_transformed_dish = transformed_dish.copy()
     deformed_transformed_dish['nodes'] = estimate_deformed_nodes(
         structural,
-        deformed_transformed_dish,
-        'dead+live')
+        deformed_transformed_dish)
 
     deformed_dish = deformed_transformed_dish.copy()
     deformed_dish['nodes'] = get_nodes_zenith_position(

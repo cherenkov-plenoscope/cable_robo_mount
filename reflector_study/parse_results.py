@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import *
 
-directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BFangle045_tr18_xoz12_fct06_cablescs_bartr_barr_CARBON65'
+directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_ang45_xozVShex_rad'
 
 def results_for_case(directory):
     particles = dirs = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d))]
@@ -30,7 +30,8 @@ def create_history_of_data(directory=directory, file_name='intermediate_results.
     min_dict_data=dict_data.min()
     iter_number_of_min_dict_data = np.argmin(dict_data)
     plt.bar(left=np.arange(len(dict_data)), height=dict_data, width=1.0, color='green')
-    plt.xlabel('Iteration count')
+    #plt.bar(left=np.arange(10, 1260, 50), height=dict_data, width=30.0, color='green')
+    plt.xlabel('Iteration number')
     plt.ylabel(str(dict_key))
     plt.title('Progress of PSO. Best iteration:'+str(iter_number_of_min_dict_data)+' with '+dict_key+': '+str(min_dict_data))
     plt.xlim(xmin=0)
@@ -95,4 +96,5 @@ def plot_pareto_surface(paretoPoints, dominatedPoints):
 
 def make_bar_graph_from_array(array):
     plt.bar(left=np.arange(len(array)), height=array, width=1.0, color='green')
+    plt.ylim(ymax=2)
     plt.show()

@@ -16,17 +16,17 @@ from .tools import tools
 def brute_force():
     cfg = config.example.copy()
     brute_force_specs = {  ###change here
-        'examined_value': 'tait bryan angle Ry', ###change here
-        'start_value': float(0), ###change here
-        'fin_value': float(45), ###change here
-        'step': float(1), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BFangle045_tr18_xoz12_fct06_cablescsX2_bartr_barr_CARBON65'} ###change here
+        'examined_value': 'cables cs area', ###change here
+        'start_value': float(860), ###change here
+        'fin_value': float(1260), ###change here
+        'step': float(50), ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish30_BF_angle45_cablescs'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
 
     for i in range(int(brute_force_specs['start_value']), int(brute_force_specs['fin_value'])+1, int(brute_force_specs['step'])):
-        cfg['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = float(i) ###change here
+        cfg['cables']['cross_section_area'] = float(i)*0.000001 ###change here
 
         run_number = current_run_number(brute_force_specs['working_directory'])
         output_path = os.path.join(brute_force_specs['working_directory'], str(run_number))
@@ -40,54 +40,55 @@ def brute_force():
         results = run(working_directory=brute_force_specs['working_directory'], cfg=cfg, output_path=output_path)
         print(results['stddev_of_psf'])
         print(results['max_final_deformation'])
+        print(results['max_in_plane_final_deformation'])
         config.write(results, results_path)
 
 
 def brute_force2():
     cfg = config.example.copy()
-    brute_force_specs = {  ###change here
-        'examined_value1': 'tait bryan angle Ry', ###change here
-        'examined_value2': 'reflector_bars_outer_diameter', ###change here
-        'examined_value3': 'tension_ring_bars_outer_diameter', ###change here
-        'start_value1': float(0), ###change here
+    brute_force_specs = {
+        'examined_value1': 'x_over_z_ratio', ###change here
+        'examined_value2': 'inner_hex_radius', ###change here
+        #'examined_value3': 'tension_ring_bars_outer_diameter', ###change here
+        'start_value1': float(180), ###change here
         'fin_value1': float(450), ###change here
-        'step1': float(150), ###change here
-        'start_value2': float(210), ###change here
-        'fin_value2': float(810), ###change here
-        'step2': float(150), ###change here
-        'start_value3': float(600), ###change here
-        'fin_value3': float(1200), ###change here
-        'step3': float(150), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_angle045_refdiam218115_trdiam61215'} ###change here
+        'step1': float(90), ###change here
+        'start_value2': float(90), ###change here
+        'fin_value2': float(210), ###change here
+        'step2': float(40), ###change here
+        #'start_value3': float(600), ###change here
+        #'fin_value3': float(1200), ###change here
+        #'step3': float(150), ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_ang45_xozVShex_rad'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
 
     for i in range(int(brute_force_specs['start_value1']), (int(brute_force_specs['fin_value1'])+int(brute_force_specs['step1'])), int(brute_force_specs['step1'])):
         for j in range(int(brute_force_specs['start_value2']), (int(brute_force_specs['fin_value2'])+int(brute_force_specs['step2'])), int(brute_force_specs['step2'])):
-            for k in range(int(brute_force_specs['start_value3']), (int(brute_force_specs['fin_value3'])+int(brute_force_specs['step3'])), int(brute_force_specs['step3'])):
+            #for k in range(int(brute_force_specs['start_value3']), (int(brute_force_specs['fin_value3'])+int(brute_force_specs['step3'])), int(brute_force_specs['step3'])):
 
-                cfg['structure_spatial_position']['rotational_vector_Rx_Ry_Rz'][1] = float(i)/10 ###change here
-                cfg['reflector']['bars']['outer_diameter'] = float(j)*0.0001 ###change here
-                cfg['tension_ring']['bars']['outer_diameter'] = float(k)*0.0001 ###change here
+            cfg['reflector']['main']['x_over_z_ratio'] = float(i)/100 ###change here
+            cfg['reflector']['facet']['inner_hex_radius'] = float(j)/100 ###change here
+            #cfg['tension_ring']['bars']['outer_diameter'] = float(k)*0.0001 ###change here
 
-                run_number = current_run_number(brute_force_specs['working_directory'])
-                output_path = os.path.join(brute_force_specs['working_directory'], str(run_number))
-                os.mkdir(output_path)
+            run_number = current_run_number(brute_force_specs['working_directory'])
+            output_path = os.path.join(brute_force_specs['working_directory'], str(run_number))
+            os.mkdir(output_path)
 
-                cfg_path = os.path.join(output_path, 'config.json')
-                config.write(cfg, cfg_path)
+            cfg_path = os.path.join(output_path, 'config.json')
+            config.write(cfg, cfg_path)
 
-                variables_vector = {'rotation': float(i)/10, 'reflector_bars_outer_diameter': float(j)*0.0001, 'tension_ring_bars_outer_diameter': float(k)*0.0001}
-                variables_vector_path = os.path.join(output_path, 'variables_vector.json')
-                config.write(variables_vector, variables_vector_path)
+            variables_vector = {'x_over_z_ratio': float(i)/100, 'inner_hex_radius': float(j)/100}  ###change here
+            variables_vector_path = os.path.join(output_path, 'variables_vector.json')
+            config.write(variables_vector, variables_vector_path)
 
-                results_path = os.path.join(output_path, 'intermediate_results.json')
-                results = run(working_directory=brute_force_specs['working_directory'], cfg=cfg, output_path=output_path)
+            results_path = os.path.join(output_path, 'intermediate_results.json')
+            results = run(working_directory=brute_force_specs['working_directory'], cfg=cfg, output_path=output_path)
 
-                print(results['stddev_of_psf'])
-                print(results['max_final_deformation'])
-                config.write(results, results_path)
+            print(results['stddev_of_psf'])
+            print(results['max_final_deformation'])
+            config.write(results, results_path)
 
 
 def current_run_number(working_directory):
@@ -160,7 +161,7 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     return stddev_of_psf
 
 
-def estimate_deformed_nodes(structural, dish, load_combination_name):
+def estimate_deformed_nodes(structural, dish):
     sap2k = Bridge(structural)
     sap2k._SapObject.Hide()
 
@@ -199,7 +200,7 @@ def run(working_directory, cfg, output_path):
     structural = Structural(cfg)
 
     zenith_dish = initial_dish.copy()
-    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish, 'dead+live')
+    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish)
 
     alignment = mirror_alignment.ideal_alignment(zenith_dish)
 
@@ -220,8 +221,7 @@ def run(working_directory, cfg, output_path):
     deformed_transformed_dish = transformed_dish.copy()
     deformed_transformed_dish['nodes'] = estimate_deformed_nodes(
         structural,
-        deformed_transformed_dish,
-        'dead+live')
+        deformed_transformed_dish)
 
     deformed_dish = deformed_transformed_dish.copy()
     deformed_dish['nodes'] = get_nodes_zenith_position(
