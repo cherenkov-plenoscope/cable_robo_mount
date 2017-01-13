@@ -50,16 +50,16 @@ def brute_force2():
         'examined_value1': 'x_over_z_ratio', ###change here
         'examined_value2': 'inner_hex_radius', ###change here
         #'examined_value3': 'tension_ring_bars_outer_diameter', ###change here
-        'start_value1': float(180), ###change here
-        'fin_value1': float(450), ###change here
-        'step1': float(90), ###change here
-        'start_value2': float(90), ###change here
-        'fin_value2': float(210), ###change here
-        'step2': float(40), ###change here
+        'start_value1': float(136), ###change here
+        'fin_value1': float(226), ###change here
+        'step1': float(10), ###change here
+        'start_value2': float(60), ###change here
+        'fin_value2': float(180), ###change here
+        'step2': float(10), ###change here
         #'start_value3': float(600), ###change here
         #'fin_value3': float(1200), ###change here
         #'step3': float(150), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_ang45_xozVShex_rad'} ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_ang45_refxoz_reffac'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)

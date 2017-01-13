@@ -23,7 +23,7 @@ example = {
             'max_outer_radius': 25,
             'min_inner_radius': 0.0,
             'number_of_layers': 3,
-            'x_over_z_ratio': 1.8,
+            'x_over_z_ratio': 2.26, ##for truss function always keep it between 1.36 and 2.26
             'security_distance_from_ground': 2.6
             },
         'optics': {
@@ -32,8 +32,8 @@ example = {
             },
         'facet': {
             'gap_in_between': 0.02,
-            'inner_hex_radius': 0.9,
-            'surface_weight': 25.0,
+            'inner_hex_radius': 0.75,
+            'surface_weight': 20.0,
             'actuator_weight': 0.0
             },
         'material': {
@@ -44,8 +44,8 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.035,
-            'thickness': 0.01,
+            'outer_diameter': 0.051,
+            'thickness': 0.005,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -61,7 +61,7 @@ example = {
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.12,
+            'outer_diameter': 0.133,
             'thickness': 0.01,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
@@ -69,13 +69,13 @@ example = {
         },
     'cables':{
         'material': {
-            'e_modul': 73.9e6, #according to Bridon Endurance Dyform 34LR PI
-            'specific_weight': 86.2, #according to Bridon Endurance Dyform 34LR PI
+            'e_modul': 95e6, #according to Bridon Endurance Dyform 18 PI
+            'specific_weight': 89.9, #according to Bridon Endurance Dyform 18 PI
             'yielding_point': 1671000.0,
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 0.00065
+        'cross_section_area': 0.000223
     },
     'load_scenario': {
         'security_factor': {

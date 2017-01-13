@@ -17,8 +17,8 @@ import time
 def PSO():
     s = time.time()
     pso_specs = {
-        'lower_bounds': [2.7, 1.7, 1.1, 0.00999, 0.00999],  ###change here
-        'upper_bounds': [2.700001, 1.70001, 1.11111, 0.01, 0.01],  ###change here
+        'lower_bounds': [1.66, 0.75],  ###change here
+        'upper_bounds': [1.66001, 0.75001],  ###change here
         'swarmsize': float(1),  ###change here
         'maxiter': float(0),  ###change here
         'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}  ###change here
@@ -47,9 +47,6 @@ def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
     run_config['reflector']['main']['x_over_z_ratio'] = var_vector[0]  ###change here
     run_config['reflector']['facet']['inner_hex_radius'] = var_vector[1]  ###change here
-    run_config['tension_ring']['width'] = var_vector[2]  ###change here
-    run_config['reflector']['bars']['thickness'] = var_vector[3]  ###change here
-    run_config['tension_ring']['bars']['thickness'] = var_vector[4]  ###change here
 
     return {'run_config': run_config,
             'var_vector': var_vector}
@@ -127,7 +124,7 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
 
 def estimate_deformed_nodes(structural, dish):
     sap2k = Bridge(structural)
-    sap2k._SapObject.Unhide()
+    sap2k._SapObject.Hide()
 
     sap2k.save_model_in_working_directory()
     TextFilesBridge.JointsCreate(dish['nodes'], structural)

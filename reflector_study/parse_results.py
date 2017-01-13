@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import *
 
-directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_ang45_xozVShex_rad'
+directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_ang45_refxoz_reffac_trwid_refbarthick_tr_barthick'
 
 def results_for_case(directory):
     particles = dirs = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d))]
@@ -25,7 +25,7 @@ def collect_data(directory, file_name, dict_key):
             pass
     return np.array(dict_data)
 
-def create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight'):
+def create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf'):
     dict_data=collect_data(directory, file_name, dict_key)
     min_dict_data=dict_data.min()
     iter_number_of_min_dict_data = np.argmin(dict_data)
@@ -72,8 +72,8 @@ def simple_cull(pts, dominates):
 def dominates(row, rowCandidate):
     return all(r <= rc for r, rc in zip(row, rowCandidate))
 
-#inputPoints = collect_pareto_points(directory)[:,:3].tolist()
-#paretoPoints, dominatedPoints = simple_cull(inputPoints, dominates)
+inputPoints = collect_pareto_points(directory)[:,:3].tolist()
+paretoPoints, dominatedPoints = simple_cull(inputPoints, dominates)
 
 def plot_pareto_surface(paretoPoints, dominatedPoints):
     fig = plt.figure()
