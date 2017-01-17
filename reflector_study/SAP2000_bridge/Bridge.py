@@ -389,10 +389,35 @@ class Bridge(object):
                     P, V2, V3, T, M2, M3)
         return forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
 
-    def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, group_name= "ALL"):
+    def get_forces_for_group_of_bars_for_selected_load_combination(self, load_combination_name, dish, part_of_structure):
+        if part_of_structure=='reflector':
+            self._SapModel.GroupDef.SetGroup(part_of_structure)
+            bars=dish['bars_reflector']
+            for i in range(bars.shape[0]):
+                self._SapModel.FrameObj.SetGroupAssign(
+                    Name='bar_'+str(i),
+                    GroupName=part_of_structure)
+            group_name=part_of_structure
+        elif part_of_structure=='tension_ring':
+            self._SapModel.GroupDef.SetGroup(part_of_structure)
+            bars=dish['bars_tension_ring']
+            for i in range(dish['bars_reflector'], dish['bars_reflector']+bars.shape[0]):
+                self._SapModel.FrameObj.SetGroupAssign(
+                    Name='bar_'+str(i),
+                    GroupName=part_of_structure)
+            group_name=part_of_structure
+        elif part_of_structure=='cables':
+            self._SapModel.GroupDef.SetGroup(part_of_structure)
+            bars=dish['cables']
+            for i in range(bars.shape[0]):
+                self._SapModel.CableObj.SetGroupAssign(
+                    Name='cable_'+str(i),
+                    GroupName=part_of_structure)
+            group_name=part_of_structure
+
+
         self._SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
         self._SapModel.Results.Setup.SetComboSelectedForOutput(load_combination_name)
-
         Name = group_name
         ItemTypeElm = 2
         NumberResults = 0
@@ -408,18 +433,24 @@ class Bridge(object):
                     Obj, ObjSta, Elm, ElmSta,
                     LoadCase, StepType, StepNum,
                     P, V2, V3, T, M2, M3)
-        return self.forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3)
+        return self.forces_arrange(NumberResults, Obj, P, V2, V3, T, M2, M3, part_of_structure)
 
-    def forces_arrange(self, NumberResults, Obj, P, V2, V3, T, M2, M3):
+    def forces_arrange(self, NumberResults, Obj, P, V2, V3, T, M2, M3, part_of_structure):
         forces = []
         for i in range(NumberResults-1):
             if Obj[i] != Obj[i+1]:
-                points= self._SapModel.FrameObj.GetPoints(Obj[i])
+                if part_of_structure=="cables":
+                    points= self._SapModel.CableObj.GetPoints(Obj[i])
+                else:
+                    points= self._SapModel.FrameObj.GetPoints(Obj[i])
                 coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
                 coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
                 length= np.linalg.norm(coord_1 - coord_2)
                 forces.append([Obj[i], length, P[i], V2[i], V3[i], T[i], M2[i], M3[i]])
-        points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
+        if part_of_structure=="cables":
+            points= self._SapModel.CableObj.GetPoints(Obj[NumberResults-1])
+        else:
+            points= self._SapModel.FrameObj.GetPoints(Obj[NumberResults-1])
         coord_1= np.array(self._SapModel.PointObj.GetCoordCartesian(points[0]))
         coord_2= np.array(self._SapModel.PointObj.GetCoordCartesian(points[1]))
         length= np.linalg.norm(coord_1 - coord_2)

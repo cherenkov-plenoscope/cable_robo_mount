@@ -1,21 +1,43 @@
 import numpy as np
+from .Bridge import Bridge
+from .Structural import Structural
+from . import TextFilesBridge
 
 class Knicknachweis(object):
 
-    def __init__(self, config_dict, forces):
-        self.forces = forces
-        self.buckling_length_factor = config_dict["reflector"]["bars"]["buckling_length_factor"]
-        self.imperfection_factor = config_dict["reflector"]["bars"]["imperfection_factor"]
-        self.bar_outer_diameter = config_dict["reflector"]["bars"]["outer_diameter"]
-        self.bar_thickness = config_dict["reflector"]["bars"]["thickness"]
-        self.e_modul = config_dict["reflector"]["material"]["e_modul"]
-        self.yielding_point = config_dict["reflector"]["material"]["yielding_point"]
-        self.security_factor = config_dict["reflector"]["material"]["security_factor"]
+    def __init__(self, config_dict, dish, part_of_structure):
 
+        if part_of_structure=='reflector':
+            self.forces = self.get_forces(dish=dish, structural=Structural(config_dict), part_of_structure=part_of_structure)
+            self.buckling_length_factor = config_dict["reflector"]["bars"]["buckling_length_factor"]
+            self.imperfection_factor = config_dict["reflector"]["bars"]["imperfection_factor"]
+            self.bar_outer_diameter = config_dict["reflector"]["bars"]["outer_diameter"]
+            self.bar_thickness = config_dict["reflector"]["bars"]["thickness"]
+            self.e_modul = config_dict["reflector"]["material"]["e_modul"]
+            self.yielding_point = config_dict["reflector"]["material"]["yielding_point"]
+            self.security_factor = config_dict["reflector"]["material"]["security_factor"]
+            self.buckling_control()
+
+        elif part_of_structure=='tension_ring':
+            self.forces = self.get_forces(dish=dish, structural=Structural(config_dict), part_of_structure=part_of_structure)
+            self.buckling_length_factor = config_dict["tension_ring"]["bars"]["buckling_length_factor"]
+            self.imperfection_factor = config_dict["tension_ring"]["bars"]["imperfection_factor"]
+            self.bar_outer_diameter = config_dict["tension_ring"]["bars"]["outer_diameter"]
+            self.bar_thickness = config_dict["tension_ring"]["bars"]["thickness"]
+            self.e_modul = config_dict["tension_ring"]["material"]["e_modul"]
+            self.yielding_point = config_dict["tension_ring"]["material"]["yielding_point"]
+            self.security_factor = config_dict["tension_ring"]["material"]["security_factor"]
+            self.buckling_control()
+
+        elif part_of_structure=='cables':
+            self.forces = self.get_forces(dish=dish, structural=Structural(config_dict), part_of_structure=part_of_structure)
+
+
+    def buckling_control(self):
         self._set_up_material_and_cross_section_factors()
 
         self.log = []
-        for i in range(len(forces)):
+        for i in range(len(self.forces)):
             bar_id= self.forces[i][0]
             bar_length= self.forces[i][1]
             axial_force= self.forces[i][2]
@@ -38,6 +60,36 @@ class Knicknachweis(object):
             print("Ultimate limit state exceeded")
         else:
             print("Ultimate limit state not exceeded")
+
+    def get_forces(self, dish, structural, part_of_structure):
+        sap2k = Bridge(structural)
+        sap2k._SapObject.Unhide()
+
+        sap2k.save_model_in_working_directory()
+        TextFilesBridge.JointsCreate(dish['nodes'], structural)
+        TextFilesBridge.FramesCreate(dish['bars_reflector'], dish['bars_tension_ring'], structural)
+        sap2k._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
+
+        sap2k._cables_definition(dish['cables'])
+        sap2k._restraints_definition(dish['cable_supports'])
+        sap2k.load_scenario_dead()
+        sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
+        sap2k.non_linearity()
+
+        #sap2k._restraints_definition(dish['elastic_supports'])
+        #sap2k.load_scenario_dead()
+        #sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
+        #sap2k.load_combination_2LP_definition(structural)
+
+        sap2k._SapModel.Analyze.SetRunCaseFlag("DEAD", False, False)
+        sap2k._SapModel.Analyze.SetRunCaseFlag("MODAL", False, False)
+
+        sap2k.run_analysis()
+
+        return sap2k.get_forces_for_group_of_bars_for_selected_load_combination(
+            load_combination_name= sap2k.load_combination_name,
+            dish=dish,
+            part_of_structure=part_of_structure)
 
     def _set_up_material_and_cross_section_factors(self):
         self.profil_area = np.pi*(self.bar_outer_diameter**2/4-(self.bar_outer_diameter-2*self.bar_thickness)**2/4)
