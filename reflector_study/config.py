@@ -20,31 +20,31 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 25,
+            'max_outer_radius': 15,
             'min_inner_radius': 0.0,
             'number_of_layers': 3,
-            'x_over_z_ratio': 2.26, ##for truss function always keep it between 1.36 and 2.26
+            'x_over_z_ratio': 1.66, ##for truss function always keep it between 1.36 and 2.26
             'security_distance_from_ground': 2.6
             },
         'optics': {
-            'focal_length': 75,
+            'focal_length': 45,
             'davies_cotton_over_parabola_ratio': 0.0
             },
         'facet': {
             'gap_in_between': 0.02,
-            'inner_hex_radius': 0.75,
+            'inner_hex_radius': 1.0,
             'surface_weight': 20.0,
             'actuator_weight': 0.0
             },
         'material': {
-            'specific_weight': 78.5,
-            'e_modul': 210e6,
-            'yielding_point': 460000.0,
-            'ultimate_point': 360000.0,
+            'specific_weight': 19,
+            'e_modul': 41.4e6,
+            'yielding_point': 1460000.0,
+            'ultimate_point': 1360000.0,
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.051,
+            'outer_diameter': 0.0269,
             'thickness': 0.005,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
@@ -54,15 +54,15 @@ example = {
         'width': 1.1,
         'support_position': 10,
         'material': {
-            'specific_weight': 78.5,
-            'e_modul': 210e6,
-            'yielding_point': 460000.0,
-            'ultimate_point': 360000.0,
+            'specific_weight': 19,
+            'e_modul': 41.4e6,
+            'yielding_point': 1460000.0,
+            'ultimate_point': 1360000.0,
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.133,
-            'thickness': 0.01,
+            'outer_diameter': 0.051,
+            'thickness': 0.002,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -75,7 +75,7 @@ example = {
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 0.000223
+        'cross_section_area': 0.000121
     },
     'load_scenario': {
         'security_factor': {

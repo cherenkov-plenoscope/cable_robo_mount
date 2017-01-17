@@ -47,19 +47,19 @@ def brute_force():
 def brute_force2():
     cfg = config.example.copy()
     brute_force_specs = {
-        'examined_value1': 'x_over_z_ratio', ###change here
-        'examined_value2': 'inner_hex_radius', ###change here
+        'examined_value1': 'reflector_bars_thickness', ###change here
+        'examined_value2': 'tension_ring_bars_thickness', ###change here
         #'examined_value3': 'tension_ring_bars_outer_diameter', ###change here
-        'start_value1': float(136), ###change here
-        'fin_value1': float(226), ###change here
-        'step1': float(10), ###change here
-        'start_value2': float(60), ###change here
-        'fin_value2': float(180), ###change here
-        'step2': float(10), ###change here
+        'start_value1': float(2), ###change here
+        'fin_value1': float(5), ###change here
+        'step1': float(1), ###change here
+        'start_value2': float(2), ###change here
+        'fin_value2': float(10), ###change here
+        'step2': float(1), ###change here
         #'start_value3': float(600), ###change here
         #'fin_value3': float(1200), ###change here
         #'step3': float(150), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_ang45_refxoz_reffac'} ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_BF_ang45_barsthickness'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
@@ -68,8 +68,8 @@ def brute_force2():
         for j in range(int(brute_force_specs['start_value2']), (int(brute_force_specs['fin_value2'])+int(brute_force_specs['step2'])), int(brute_force_specs['step2'])):
             #for k in range(int(brute_force_specs['start_value3']), (int(brute_force_specs['fin_value3'])+int(brute_force_specs['step3'])), int(brute_force_specs['step3'])):
 
-            cfg['reflector']['main']['x_over_z_ratio'] = float(i)/100 ###change here
-            cfg['reflector']['facet']['inner_hex_radius'] = float(j)/100 ###change here
+            cfg['reflector']['bars']['thickness'] = float(i)/1000 ###change here
+            cfg['tension_ring']['bars']['thickness'] = float(j)/1000 ###change here
             #cfg['tension_ring']['bars']['outer_diameter'] = float(k)*0.0001 ###change here
 
             run_number = current_run_number(brute_force_specs['working_directory'])
@@ -79,7 +79,7 @@ def brute_force2():
             cfg_path = os.path.join(output_path, 'config.json')
             config.write(cfg, cfg_path)
 
-            variables_vector = {'x_over_z_ratio': float(i)/100, 'inner_hex_radius': float(j)/100}  ###change here
+            variables_vector = {'x_over_z_ratio': float(i)/1000, 'inner_hex_radius': float(j)/1000}  ###change here
             variables_vector_path = os.path.join(output_path, 'variables_vector.json')
             config.write(variables_vector, variables_vector_path)
 

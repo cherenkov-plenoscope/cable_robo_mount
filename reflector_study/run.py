@@ -17,11 +17,11 @@ import time
 def PSO():
     s = time.time()
     pso_specs = {
-        'lower_bounds': [1.66, 0.75],  ###change here
-        'upper_bounds': [1.66001, 0.75001],  ###change here
-        'swarmsize': float(1),  ###change here
-        'maxiter': float(0),  ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\test'}  ###change here
+        'lower_bounds': [0.0269, 0.0269, 0.000121, 0.002, 0.002, 1.36, 0.9, 0.6],  ###change here
+        'upper_bounds': [0.081, 0.133, 0.000822, 0.01, 0.013, 2.26, 1.5, 1.2], ###change here
+        'swarmsize': float(15),  ###change here
+        'maxiter': float(35),  ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_3L_fitness_carbon'}  ###change here
 
     pso_specs_path = os.path.join(pso_specs['working_directory'], 'pso_specs.json')
     config.write(pso_specs, pso_specs_path)
@@ -45,8 +45,14 @@ def PSO():
 
 def make_run_config(var_vector, template_config):
     run_config = template_config.copy()
-    run_config['reflector']['main']['x_over_z_ratio'] = var_vector[0]  ###change here
-    run_config['reflector']['facet']['inner_hex_radius'] = var_vector[1]  ###change here
+    run_config['reflector']['bars']['outer_diameter'] = var_vector[0]  ###change here
+    run_config['tension_ring']['bars']['outer_diameter'] = var_vector[1]  ###change here
+    run_config['cables']['cross_section_area'] = var_vector[2]  ###change here
+    run_config['reflector']['bars']['thickness'] = var_vector[3]  ###change here
+    run_config['tension_ring']['bars']['thickness'] = var_vector[4]  ###change here
+    run_config['reflector']['main']['x_over_z_ratio'] = var_vector[5]  ###change here
+    run_config['tension_ring']['width'] = var_vector[6]  ###change here
+    run_config['reflector']['facet']['inner_hex_radius'] = var_vector[7]  ###change here
 
     return {'run_config': run_config,
             'var_vector': var_vector}
@@ -206,17 +212,24 @@ def run(var_vector, working_directory, template_config=config.example):
         alignment=alignment,
         output_path=output_path)
 
+    reflector_weight=float(structural.reflector_material_specific_weight/10*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum()))
+    tension_ring_weight=float(structural.tension_ring_material_specific_weight/10*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()))
+    max_final_deformation=np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max()
+
+    fitness_function=stddev_of_psf/0.1+reflector_weight/65+tension_ring_weight/29+max_final_deformation/0.4  ###change here
+
     intermediate_results = {
+        'fitness_function': fitness_function,
         'stddev_of_psf': float(stddev_of_psf),
         'reflector_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum()),
         'tension_ring_bars_length': float(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()),
-        'reflector_weight': float(structural.reflector_material_specific_weight/10*structural.bars_reflector_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_reflector"]).sum())),
-        'tension_ring_weight': float(structural.tension_ring_material_specific_weight/10*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum())),
+        'reflector_weight': reflector_weight,
+        'tension_ring_weight': tension_ring_weight,
         'max_intial_deformation': np.linalg.norm(zenith_dish['nodes'] - initial_dish['nodes'], axis=1).max(),
-        'max_final_deformation': np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max(),
+        'max_final_deformation': max_final_deformation,
         'max_in_plane_final_deformation': np.linalg.norm((deformed_dish['nodes'] - initial_dish['nodes'])[:, [0,1]], axis=1).max()
         }
     intermediate_results_path = os.path.join(output_path, 'intermediate_results.json')
     config.write(intermediate_results, intermediate_results_path)
 
-    return stddev_of_psf
+    return fitness_function
