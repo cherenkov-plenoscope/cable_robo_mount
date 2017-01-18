@@ -17,11 +17,11 @@ import time
 def PSO():
     s = time.time()
     pso_specs = {
-        'lower_bounds': [0.0269, 0.0269, 0.000121, 0.002, 0.002, 1.36, 0.9, 0.6],  ###change here
-        'upper_bounds': [0.081, 0.133, 0.000822, 0.01, 0.013, 2.26, 1.5, 1.2], ###change here
-        'swarmsize': float(15),  ###change here
+        'lower_bounds': [0.0213, 0.0213, 0.000121, 0.002, 0.002, 1.36, 0.9, 0.6],  ###change here
+        'upper_bounds': [0.081, 0.133, 0.000822, 0.01, 0.0105, 2.26, 1.5, 1.2], ###change here
+        'swarmsize': float(20),  ###change here
         'maxiter': float(35),  ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_3L_fitness_carbon'}  ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\FitnessFunction\\dish50_5L_fitness_steel4xstddv'}  ###change here
 
     pso_specs_path = os.path.join(pso_specs['working_directory'], 'pso_specs.json')
     config.write(pso_specs, pso_specs_path)
@@ -128,7 +128,7 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     return stddev_of_psf
 
 
-def estimate_deformed_nodes(structural, dish):
+def estimate_deformed_nodes(structural, dish, windBOOL):
     sap2k = Bridge(structural)
     sap2k._SapObject.Hide()
 
@@ -142,6 +142,8 @@ def estimate_deformed_nodes(structural, dish):
     sap2k.load_scenario_dead()
     sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
     sap2k.non_linearity()
+    if windBOOL==True:
+        sap2k.non_linearity_wind(dish['mirror_tripods'], dish['nodes'])
 
     #sap2k._restraints_definition(dish['elastic_supports'])
     #sap2k.load_scenario_dead()
@@ -177,7 +179,7 @@ def run(var_vector, working_directory, template_config=config.example):
     structural = Structural(cfg)
 
     zenith_dish = initial_dish.copy()
-    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish)
+    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish, False)
 
     alignment = mirror_alignment.ideal_alignment(zenith_dish)
 
@@ -198,7 +200,8 @@ def run(var_vector, working_directory, template_config=config.example):
     deformed_transformed_dish = transformed_dish.copy()
     deformed_transformed_dish['nodes'] = estimate_deformed_nodes(
         structural,
-        deformed_transformed_dish)
+        deformed_transformed_dish,
+        True)
 
     deformed_dish = deformed_transformed_dish.copy()
     deformed_dish['nodes'] = get_nodes_zenith_position(
@@ -216,7 +219,7 @@ def run(var_vector, working_directory, template_config=config.example):
     tension_ring_weight=float(structural.tension_ring_material_specific_weight/10*structural.bars_tension_ring_cs_area*(tools.bars_length(initial_dish["nodes"], initial_dish["bars_tension_ring"]).sum()))
     max_final_deformation=np.linalg.norm(deformed_dish['nodes'] - initial_dish['nodes'], axis=1).max()
 
-    fitness_function=stddev_of_psf/0.1+reflector_weight/65+tension_ring_weight/29+max_final_deformation/0.4  ###change here
+    fitness_function=10*stddev_of_psf/0.25+reflector_weight/950+tension_ring_weight/250+max_final_deformation/0.7  ###change here
 
     intermediate_results = {
         'fitness_function': fitness_function,

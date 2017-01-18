@@ -20,14 +20,14 @@ example = {
         },
     'reflector': {
         'main': {
-            'max_outer_radius': 15,
+            'max_outer_radius': 25,
             'min_inner_radius': 0.0,
-            'number_of_layers': 3,
+            'number_of_layers': 5,
             'x_over_z_ratio': 1.66, ##for truss function always keep it between 1.36 and 2.26
             'security_distance_from_ground': 2.6
             },
         'optics': {
-            'focal_length': 45,
+            'focal_length': 75,
             'davies_cotton_over_parabola_ratio': 0.0
             },
         'facet': {
@@ -37,8 +37,8 @@ example = {
             'actuator_weight': 0.0
             },
         'material': {
-            'specific_weight': 19,
-            'e_modul': 41.4e6,
+            'specific_weight': 78.5,
+            'e_modul': 210e6,
             'yielding_point': 1460000.0,
             'ultimate_point': 1360000.0,
             'security_factor': 1.05
@@ -54,15 +54,15 @@ example = {
         'width': 1.1,
         'support_position': 10,
         'material': {
-            'specific_weight': 19,
-            'e_modul': 41.4e6,
+            'specific_weight': 78.5,
+            'e_modul': 210e6,
             'yielding_point': 1460000.0,
             'ultimate_point': 1360000.0,
             'security_factor': 1.05
             },
         'bars': {
-            'outer_diameter': 0.051,
-            'thickness': 0.002,
+            'outer_diameter': 0.081,
+            'thickness': 0.005,
             'imperfection_factor': 0.49,
             'buckling_length_factor': 0.9
             }
@@ -75,7 +75,7 @@ example = {
             'ultimate_point': 1671000.0,
             'security_factor': 1.05
             },
-        'cross_section_area': 0.000121
+        'cross_section_area': 0.000221
     },
     'load_scenario': {
         'security_factor': {

@@ -16,17 +16,17 @@ from .tools import tools
 def brute_force():
     cfg = config.example.copy()
     brute_force_specs = {  ###change here
-        'examined_value': 'cables cs area', ###change here
-        'start_value': float(860), ###change here
-        'fin_value': float(1260), ###change here
-        'step': float(50), ###change here
-        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish30_BF_angle45_cablescs'} ###change here
+        'examined_value': 'cable_number', ###change here
+        'start_value': float(5), ###change here
+        'fin_value': float(15), ###change here
+        'step': float(1), ###change here
+        'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\run\\number_of_cables'} ###change here
 
     brute_force_specs_path = os.path.join(brute_force_specs['working_directory'], 'brute_force_specs.json')
     config.write(brute_force_specs, brute_force_specs_path)
 
     for i in range(int(brute_force_specs['start_value']), int(brute_force_specs['fin_value'])+1, int(brute_force_specs['step'])):
-        cfg['cables']['cross_section_area'] = float(i)*0.000001 ###change here
+        cfg['tension_ring']['support_position'] = float(i) ###change here
 
         run_number = current_run_number(brute_force_specs['working_directory'])
         output_path = os.path.join(brute_force_specs['working_directory'], str(run_number))
@@ -161,7 +161,7 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     return stddev_of_psf
 
 
-def estimate_deformed_nodes(structural, dish):
+def estimate_deformed_nodes(structural, dish, windBOOL):
     sap2k = Bridge(structural)
     sap2k._SapObject.Hide()
 
@@ -175,6 +175,8 @@ def estimate_deformed_nodes(structural, dish):
     sap2k.load_scenario_dead()
     sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
     sap2k.non_linearity()
+    if windBOOL==True:
+        sap2k.non_linearity_wind(dish['mirror_tripods'], dish['nodes'])
 
     #sap2k._restraints_definition(dish['elastic_supports'])
     #sap2k.load_scenario_dead()
@@ -200,7 +202,7 @@ def run(working_directory, cfg, output_path):
     structural = Structural(cfg)
 
     zenith_dish = initial_dish.copy()
-    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish)
+    zenith_dish['nodes'] = estimate_deformed_nodes(structural, initial_dish, False)
 
     alignment = mirror_alignment.ideal_alignment(zenith_dish)
 
@@ -221,7 +223,8 @@ def run(working_directory, cfg, output_path):
     deformed_transformed_dish = transformed_dish.copy()
     deformed_transformed_dish['nodes'] = estimate_deformed_nodes(
         structural,
-        deformed_transformed_dish)
+        deformed_transformed_dish,
+        True)
 
     deformed_dish = deformed_transformed_dish.copy()
     deformed_dish['nodes'] = get_nodes_zenith_position(

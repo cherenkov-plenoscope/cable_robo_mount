@@ -3,8 +3,9 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import *
+from scipy.optimize import curve_fit
 
-directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\dish50_3L_fitness_carbon'
+directory = 'C:\\Users\\Spiros Daglas\\Desktop\\run\\FitnessFunction\\dish50_5L_fitness_steel4xstddv'
 
 def results_for_case(directory):
     particles = dirs = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d))]
@@ -26,20 +27,17 @@ def collect_data(directory, file_name, dict_key):
     return np.array(dict_data)
 
 def save_int_res():
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf')
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation')
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='max_intial_deformation')
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='max_in_plane_final_deformation')
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight')
-    create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='tension_ring_weight')
+    for dict_key in ['stddev_of_psf', 'max_final_deformation', 'max_intial_deformation',
+                    'max_in_plane_final_deformation', 'reflector_weight', 'tension_ring_weight']:
+        create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key=dict_key)
 
 
 def create_fitness_history_of_data():
     fitness_function = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='fitness_function')
-    stddev_of_psf = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf') / 1
-    reflector_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight') / 450
-    tension_ring_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='tension_ring_weight') / 187
-    max_final_deformation = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation') / 0.6
+    stddev_of_psf = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf') / 0.25 / 4
+    reflector_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight') / 950
+    tension_ring_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='tension_ring_weight') / 300
+    max_final_deformation = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation') / 0.95
     plt.ion()
     g1=plt.plot(np.arange(len(fitness_function)), fitness_function, color="black", linewidth= 2.0)[0]
     g2=plt.plot(np.arange(len(stddev_of_psf)), stddev_of_psf, color= "r")[0]
@@ -50,10 +48,10 @@ def create_fitness_history_of_data():
 
     while True:
         fitness_function = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='fitness_function')
-        stddev_of_psf = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf') / 1
-        reflector_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight') / 450
-        tension_ring_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='tension_ring_weight') / 187
-        max_final_deformation = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation') / 0.6
+        stddev_of_psf = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf') / 0.25 / 4
+        reflector_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='reflector_weight') / 950
+        tension_ring_weight = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='tension_ring_weight') / 300
+        max_final_deformation = collect_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation') / 0.95
         g1.set_ydata(fitness_function)
         g1.set_xdata(range(len(fitness_function)))
         g2.set_ydata(stddev_of_psf)
@@ -70,7 +68,21 @@ def create_fitness_history_of_data():
         plt.pause(60)
 
 
-def create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='stddev_of_psf'):
+def fit_curve_to_data(data):
+    def fitFunc(t, a, b, c):
+        return a*np.exp(-b*t) + c
+    x=np.linspace(0,4,data.shape[0])
+    y=data/100 ##change
+    fitParams, fitCovariances = curve_fit(fitFunc, x, y)
+    sigma = [fitCovariances[0,0],
+            fitCovariances[1,1],
+            fitCovariances[2,2]]
+    plt.plot(x*data.shape[0]/4, fitFunc(x, fitParams[0], fitParams[1], fitParams[2])*100, ##change
+            x*data.shape[0]/4, fitFunc(x, fitParams[0] + sigma[0], fitParams[1] - sigma[1], fitParams[2] + sigma[2])*100, ##change
+            x*data.shape[0]/4, fitFunc(x, fitParams[0] - sigma[0], fitParams[1] + sigma[1], fitParams[2] - sigma[2])*100) ##change
+    plt.show()
+
+def create_history_of_data(directory=directory, file_name='intermediate_results.json', dict_key='max_final_deformation'):
     dict_data=collect_data(directory, file_name, dict_key)
     min_dict_data=dict_data.min()
     iter_number_of_min_dict_data = np.argmin(dict_data)

@@ -314,6 +314,16 @@ class Bridge(object):
         self._SapModel.RespCombo.SetCaseList("nonlinear_incorporation_combo", 0, "nonlinear_incorporation", 1.0)
         self.load_combination_name = "nonlinear_incorporation_combo"
 
+    def non_linearity_wind(self, mirror_tripods, nodes):
+        self.load_scenario_wind(mirror_tripods, nodes, load_pattern_name= "wind")
+        self._SapModel.LoadCases.StaticNonLinear.SetCase("wind")
+        self._SapModel.LoadCases.StaticNonlinear.SetGeometricNonlinearity("wind", 2)
+        self._SapModel.LoadCases.StaticNonLinear.SetLoads("wind", 1, ["Load"], ["wind"], [1.0])
+        self._SapModel.LoadCases.StaticNonlinear.SetInitialCase("wind", "nonlinear_incorporation")
+        self._SapModel.RespCombo.Add(Name= "wind_combo", ComboType= 0)
+        self._SapModel.RespCombo.SetCaseList("wind_combo", 0, "wind", 1.0)
+        self.load_combination_name = "wind_combo"
+
     def save_model_in_working_directory(self):
         self._SapModel.File.Save(self.structural.SAP_2000_working_directory)
 
