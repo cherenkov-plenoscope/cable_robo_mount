@@ -83,18 +83,40 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
 
 def bars2mctracer(reflector):
     nodes = reflector['nodes']
-    bars = reflector['bars_reflector']
-    bar_radius = reflector['geometry'].bar_outer_diameter/2
+    bars_reflector = reflector['bars_reflector']
+    bars_tension_ring = reflector['bars_tension_ring']
+    cables = reflector['cables']
+    reflector_bar_radius = reflector['geometry'].bar_outer_diameter/2
+    tension_ring_bar_radius = reflector['geometry'].bar_outer_diameter
+    cables_radius = 0.02
     xml = ''
-    for i, bar in enumerate(bars):
+    for i, bar in enumerate(bars_reflector):
         start_pos = nodes[bar[0]]
         end_pos = nodes[bar[1]]
         xml += cylinder(
             name='bar_'+str(i),
             start_pos=start_pos,
             end_pos=end_pos,
-            radius=bar_radius,
-            color='bar_color')
+            radius=reflector_bar_radius,
+            color='reflector_bar_color')
+    for i, bar in enumerate(bars_tension_ring):
+        start_pos = nodes[bar[0]]
+        end_pos = nodes[bar[1]]
+        xml += cylinder(
+            name='bar_'+str(i),
+            start_pos=start_pos,
+            end_pos=end_pos,
+            radius=tension_ring_bar_radius,
+            color='tension_ring_bar_color')
+    for i, bar in enumerate(cables):
+        start_pos = nodes[bar[0]]
+        end_pos = nodes[bar[1]]
+        xml += cylinder(
+            name='bar_'+str(i),
+            start_pos=start_pos,
+            end_pos=end_pos,
+            radius=cables_radius,
+            color='cable_color')
     return xml
 
 
@@ -172,12 +194,14 @@ def benchmark_scenery(reflector, alignment):
     xml+= constant_function(name='reflection_vs_wavelength', value=0.9)
     xml+= constant_function(name='zero', value=0.0)
     xml+= color(name='facet_color', rgb=np.array([75,75,75]))
-    xml+= color(name='bar_color', rgb=np.array([255,91,49]))
+    xml+= color(name='reflector_bar_color', rgb=np.array([255,91,49]))
+    xml+= color(name='tension_ring_bar_color', rgb=np.array([178,34,34]))
+    xml+= color(name='cable_color', rgb=np.array([255,255,255]))
     xml+= color(name='green', rgb=np.array([25,255,57]))
     xml+= color(name='grey', rgb=np.array([64,64,64]))
     xml+= color(name='grass_green', rgb=np.array([22,91,49]))
     xml+= facets2mctracer(reflector=reflector, alignment=alignment)
-    #xml+= bars2mctracer(reflector=reflector)
+    xml+= bars2mctracer(reflector=reflector)
     xml+= image_sensor(
         focal_length=reflector['geometry'].focal_length,
         PAP_offset=alignment['principal_aperture_plane_offset'],
