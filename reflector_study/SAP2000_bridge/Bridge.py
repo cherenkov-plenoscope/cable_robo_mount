@@ -411,7 +411,7 @@ class Bridge(object):
         elif part_of_structure=='tension_ring':
             self._SapModel.GroupDef.SetGroup(part_of_structure)
             bars=dish['bars_tension_ring']
-            for i in range(dish['bars_reflector'], dish['bars_reflector']+bars.shape[0]):
+            for i in range(dish['bars_reflector'].shape[0], dish['bars_reflector'].shape[0]+bars.shape[0]):
                 self._SapModel.FrameObj.SetGroupAssign(
                     Name='bar_'+str(i),
                     GroupName=part_of_structure)

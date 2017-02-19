@@ -1,11 +1,16 @@
 import numpy as np
 from .Bridge import Bridge
 from .Structural import Structural
+from ..HomTra import HomTra
+from ..Geometry import Geometry
+from .HomTra_bridge_tools import get_nodes_moved_position
 from . import TextFilesBridge
 
 class Knicknachweis(object):
 
     def __init__(self, config_dict, dish, part_of_structure):
+
+        self.geometry = Geometry(config_dict)
 
         if part_of_structure=='reflector':
             self.forces = self.get_forces(dish=dish, structural=Structural(config_dict), part_of_structure=part_of_structure)
@@ -37,6 +42,9 @@ class Knicknachweis(object):
         self._set_up_material_and_cross_section_factors()
 
         self.log = []
+        self.ratio_to_axial_resistance = []
+        self.ratio_axial_force_to_max_moment = []
+        self.ratio_axial_force_to_max_shear = []
         for i in range(len(self.forces)):
             bar_id= self.forces[i][0]
             bar_length= self.forces[i][1]
@@ -51,30 +59,51 @@ class Knicknachweis(object):
             self.normalkraftwiderstand = self._normalkraftwiderstand(self.yielding_point, self.profil_area, self.security_factor)
             self.knickwiderstand = self._knickwiderstand(self.normalkraftwiderstand, self.abminderungsfaktor)
 
-            if axial_force <= self.knickwiderstand:
-                self.log.append([bar_id, "Nachweis erfüllt.", "Ratio_to_axial_resistance="+str(axial_force/self.knickwiderstand), "Ratio_axial_force_to_max_moment="+str(max_moment/axial_force), "Ratio_axial_force_to_max_shear="+str(max_shear/axial_force)])
+            self.ratio_to_axial_resistance.append(abs(axial_force/self.knickwiderstand))
+            self.ratio_axial_force_to_max_moment.append(abs(axial_force/max_moment))
+            self.ratio_axial_force_to_max_shear.append(abs(axial_force/max_shear))
+            if abs(axial_force) <= self.knickwiderstand:
+                self.log.append([bar_id, "Nachweis erfüllt.", "axial_force="+str(axial_force)])#"Ratio_to_axial_resistance="+str(self.ratio_to_axial_resistance), "Ratio_axial_force_to_max_moment="+str(self.ratio_axial_force_to_max_moment), "Ratio_axial_force_to_max_shear="+str(self.ratio_axial_force_to_max_shear)])
             else:
-                self.log.append([bar_id, "Nachweis nicht erfüllt.", "Ratio_to_axial_resistance="+str(axial_force/self.knickwiderstand), "Ratio_axial_force_to_max_moment="+str(max_moment/axial_force), "Ratio_axial_force_to_max_shear="+str(max_shear/axial_force)])
-        message = "Nachweis nicht erfüllt."
-        if message in self.log:
+                self.log.append([bar_id, "Nachweis nicht erfüllt.", "axial_force="+str(axial_force)])#"Ratio_to_axial_resistance="+str(self.ratio_to_axial_resistance), "Ratio_axial_force_to_max_moment="+str(self.ratio_axial_force_to_max_moment), "Ratio_axial_force_to_max_shear="+str(self.ratio_axial_force_to_max_shear)])
+
+        if "Nachweis nicht erfüllt." in self.log:
             print("Ultimate limit state exceeded")
+            print('Max_ratio_to_axial_resistance='+str(max(self.ratio_to_axial_resistance)))
+            print('Min_ratio_axial_force_to_max_moment='+str(min(self.ratio_axial_force_to_max_moment)))
+            print('Min_ratio_axial_force_to_max_shear='+str(min(self.ratio_axial_force_to_max_shear)))
         else:
             print("Ultimate limit state not exceeded")
+            print('Max_ratio_to_axial_resistance='+str(max(self.ratio_to_axial_resistance)))
+            print('Min_ratio_axial_force_to_max_moment='+str(min(self.ratio_axial_force_to_max_moment)))
+            print('Min_ratio_axial_force_to_max_shear='+str(min(self.ratio_axial_force_to_max_shear)))
 
     def get_forces(self, dish, structural, part_of_structure):
         sap2k = Bridge(structural)
         sap2k._SapObject.Unhide()
 
+        homogenous_transformation = HomTra()
+        homogenous_transformation.set_translation(self.geometry.translational_vector_xyz)
+        homogenous_transformation.set_rotation_tait_bryan_angles(
+                self.geometry.tait_bryan_angle_Rx,
+                self.geometry.tait_bryan_angle_Ry,
+                self.geometry.tait_bryan_angle_Rz)
+        transformed_dish=dish.copy()
+        transformed_dish['nodes'] = get_nodes_moved_position(
+            dish["nodes"],
+            dish["cable_supports"],
+            homogenous_transformation)
+
         sap2k.save_model_in_working_directory()
-        TextFilesBridge.JointsCreate(dish['nodes'], structural)
-        TextFilesBridge.FramesCreate(dish['bars_reflector'], dish['bars_tension_ring'], structural)
+        TextFilesBridge.JointsCreate(transformed_dish['nodes'], structural)
+        TextFilesBridge.FramesCreate(transformed_dish['bars_reflector'], transformed_dish['bars_tension_ring'], structural)
         sap2k._SapModel.File.OpenFile(structural.SAP_2000_working_directory+".$2k")
 
-        sap2k._cables_definition(dish['cables'])
-        sap2k._restraints_definition(dish['cable_supports'])
+        sap2k._cables_definition(transformed_dish['cables'])
+        sap2k._restraints_definition(transformed_dish['cable_supports'])
         sap2k.load_scenario_dead()
-        sap2k.load_scenario_facet_weight(dish['mirror_tripods'])
-        sap2k.non_linearity()
+        sap2k.load_scenario_facet_weight(transformed_dish['mirror_tripods'])
+        sap2k.non_linearity_wind(transformed_dish['mirror_tripods'], transformed_dish['nodes'])
 
         #sap2k._restraints_definition(dish['elastic_supports'])
         #sap2k.load_scenario_dead()
@@ -88,7 +117,7 @@ class Knicknachweis(object):
 
         return sap2k.get_forces_for_group_of_bars_for_selected_load_combination(
             load_combination_name= sap2k.load_combination_name,
-            dish=dish,
+            dish=transformed_dish,
             part_of_structure=part_of_structure)
 
     def _set_up_material_and_cross_section_factors(self):
