@@ -286,3 +286,21 @@ def write_propagation_config_xml(path, mutlithread=True):
     xml+= '    use_multithread_when_possible="'+parallel+'"\n'
     xml+= '/>\n'
     write_xml(xml, path)
+
+
+def write_camera_tower_xml(tower_nodes_and_bars, name, pos, rot, color='white'):
+    xml = '<frame>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    
+    for i, bar in enumerate(tower_nodes_and_bars['bars']):
+        start_pos = tower_nodes_and_bars['nodes'][bar[0]]
+        end_pos = tower_nodes_and_bars['nodes'][bar[1]]
+        xml += cylinder(
+            name='bar_'+str(i),
+            start_pos=start_pos,
+            end_pos=end_pos,
+            radius=tower_nodes_and_bars['bar_radius'],
+            color=color)
+
+    xml+= '</frame>\n'
+    return xml

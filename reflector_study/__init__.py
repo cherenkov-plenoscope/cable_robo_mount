@@ -15,3 +15,4 @@ if platform == "win32":
 	from . import brute_force_run
 from .HomTra import HomTra
 from . import tension_ring
+from . import camera
