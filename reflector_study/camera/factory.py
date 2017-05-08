@@ -1,6 +1,84 @@
 import numpy as np
 
-def generate_camera_space_frame(geometry):
+
+def generate_camera_space_frame_quint(
+    light_field_sensor_radius=5.0, 
+    camera_housing_hight=1.0):
+    """
+    Adopted from 
+    http://robohub.org/cable-driven-parallel-robots-motion-simulation-in-a-new-dimension/
+    """
+
+    r = light_field_sensor_radius
+    fc = np.pi*2
+    chh = camera_housing_hight
+
+    nodes = np.array([
+        # lower layer
+        [ r*np.cos(fc*0.0), r*np.sin(fc*0.0), chh], # 0
+        [ r*np.cos(fc*0.2), r*np.sin(fc*0.2), chh], # 1
+        [ r*np.cos(fc*0.4), r*np.sin(fc*0.4), chh], # 2
+        [ r*np.cos(fc*0.6), r*np.sin(fc*0.6), chh], # 3
+        [ r*np.cos(fc*0.8), r*np.sin(fc*0.8), chh], # 4
+
+        # upper layer
+        [ r*np.cos(fc*0.1), r*np.sin(fc*0.1), chh+r], # 5
+        [ r*np.cos(fc*0.3), r*np.sin(fc*0.3), chh+r], # 6
+        [ r*np.cos(fc*0.5), r*np.sin(fc*0.5), chh+r], # 7
+        [ r*np.cos(fc*0.7), r*np.sin(fc*0.7), chh+r], # 8
+        [ r*np.cos(fc*0.9), r*np.sin(fc*0.9), chh+r], # 9
+
+        # central node
+        [              0,              0, chh+r+0.5*r], # 10
+    ])
+
+    bars = np.array([
+        # lower layer
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,4],
+        [4,0],
+
+        # upper layer
+        [5,6],
+        [6,7],
+        [7,8],
+        [8,9],
+        [9,5],
+
+        # upper pyramide
+        [5,10],
+        [6,10],
+        [7,10],
+        [8,10],
+        [9,10],  
+
+        # between layer 1
+        [0,5],
+        [1,6],
+        [2,7],
+        [3,8],
+        [4,9],
+
+        # between layer 1
+        [0,9],
+        [1,5],
+        [2,6],
+        [3,7],
+        [4,8],
+    ])
+
+    cable_supports = np.array([])
+
+    return {
+        'nodes': nodes,
+        'bars': bars,
+        'cable_supports': cable_supports,
+    }
+
+
+def generate_camera_space_frame(light_field_sensor_radius=5.0, camera_housing_hight=1.0):
     """
     The space frame of the camera to be hang in the Cable-Robo-Mount.
 
@@ -9,10 +87,10 @@ def generate_camera_space_frame(geometry):
     telescopes, Semester Project Report Spring 2016'
     Figure 104.
     """
-    camera_housing_hight = 1.0
     chh = camera_housing_hight
-    plenoptic_sensor_radius = 5.0
-    psr = plenoptic_sensor_radius
+    psr = light_field_sensor_radius
+
+    cube_hight = psr*np.sqrt(2)
 
     nodes = np.array([
         # lower layer
@@ -21,18 +99,18 @@ def generate_camera_space_frame(geometry):
         [-psr,   0, chh], # 2
         [   0,-psr, chh], # 3
         # upper layer
-        [ psr,   0, chh + 2*psr], # 4
-        [   0, psr, chh + 2*psr], # 5
-        [-psr,   0, chh + 2*psr], # 6
-        [   0,-psr, chh + 2*psr], # 7
+        [ psr,   0, chh + cube_hight], # 4
+        [   0, psr, chh + cube_hight], # 5
+        [-psr,   0, chh + cube_hight], # 6
+        [   0,-psr, chh + cube_hight], # 7
         # center nodes
-        [ psr/np.sqrt(2), psr/np.sqrt(2), chh + psr], # 8
-        [-psr/np.sqrt(2), psr/np.sqrt(2), chh + psr], # 9
-        [-psr/np.sqrt(2),-psr/np.sqrt(2), chh + psr], # 10
-        [ psr/np.sqrt(2),-psr/np.sqrt(2), chh + psr], # 11
-        [              0,              0, chh + psr + np.sqrt(2)*psr], # 12
+        [ psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2], # 8
+        [-psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2], # 9
+        [-psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2], # 10
+        [ psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2], # 11
+        [              0,              0, chh + cube_hight + psr/(2*np.sqrt(2))], # 12
         # central node
-        [              0,              0, chh + psr], # 13
+        [              0,              0, chh + cube_hight/2], # 13
     ])
 
     bars = np.array([

@@ -1,5 +1,7 @@
 import numpy as np
 from .. import mirror_alignment
+from .. import camera 
+from ..HomTra import HomTra
 
 def float2str(numeric_value):
     return "{:.9f}".format(numeric_value)
@@ -23,9 +25,9 @@ def color(name, rgb):
 
 
 def constant_function(name, value):
-    xml = '<function name="'+name+'">'
-    xml+= '    <constant value="'+float2str(value)+'" lower_limit="200e-9" upper_limit="1200e-9"/>'
-    xml+= '</function>'
+    xml = '<function name="'+name+'">\n'
+    xml+= '    <constant value="'+float2str(value)+'" lower_limit="200e-9" upper_limit="1200e-9"/>\n'
+    xml+= '</function>\n'
     return xml
 
 
@@ -303,4 +305,100 @@ def write_camera_tower_xml(tower_nodes_and_bars, name, pos, rot, color='white'):
             color=color)
 
     xml+= '</frame>\n'
+    return xml
+
+
+def visual_scenery(reflector):
+
+    ideal_alignment = mirror_alignment.ideal_alignment(reflector)
+
+    trafo = HomTra()
+    trafo.set_translation([0.0,0.0,reflector['geometry'].reflector_security_distance_from_ground])
+    reflector['nodes'] = transform_nodes(reflector['nodes'], trafo)
+
+    xml = scenery_header()
+    xml+= constant_function('zero', value=0.0)
+    xml+= constant_function(name='reflection_vs_wavelength', value=0.9)
+    xml+= color('desert_sand', [102,51,0])
+    xml+= color(name='facet_color', rgb=np.array([75,75,75]))
+    xml+= color(name='pale_blue_white', rgb=np.array([225,255,255]))
+    xml+= disc('ground', pos=[0,0,0], rot=[0,0,0], radius=10e3, color='desert_sand', refl='zero')
+
+    # Reflector dish
+    # --------------
+    xml+= facets2mctracer(reflector=reflector, alignment=ideal_alignment)
+    xml+= bars2xml(
+        nodes=reflector['nodes'],
+        bars=reflector['bars'],
+        radius=reflector['geometry'].bar_outer_diameter/2,
+        color='pale_blue_white')
+
+    # Camera masts
+    # ------------
+    f = reflector['geometry'].max_outer_radius*2
+    camera_tower = camera.factory.generate_camera_tower(
+        hight=f*2.277, 
+        top_width=f*0.0594,
+        base_width=f*0.27722, 
+        bar_radius=(f*0.0594)/33)
+
+    tower_positions = [
+        [2.37*f,0.0,0.0],
+        [0.0,2.37*f,0.0],
+        [-2.37*f,0.0,0.0],
+        [0.0,-2.37*f,0.0],
+    ]
+
+    for tower_position in tower_positions:
+        trafo = HomTra()
+        trafo.set_translation(tower_position)
+        xml+= bars2xml(
+            nodes=transform_nodes(camera_tower['nodes'], trafo), 
+            bars=camera_tower['bars'],
+            radius=camera_tower['bar_radius'],
+            color='pale_blue_white')
+
+    # Camera case
+    # -----------
+    f = reflector['geometry'].focal_length
+    lfs_radius = f*np.arctan(np.deg2rad(6.5/2.0))
+    camera_structure = camera.factory.generate_camera_space_frame_quint(
+        light_field_sensor_radius=lfs_radius, 
+        camera_housing_hight=0.2*lfs_radius)
+
+    trafo = HomTra()
+    trafo.set_translation([
+        0.0,
+        0.0,
+        (reflector['geometry'].reflector_security_distance_from_ground + f)
+    ])
+
+    xml+= bars2xml(
+        nodes=transform_nodes(camera_structure['nodes'], trafo), 
+        bars=camera_structure['bars'],
+        radius=camera_tower['bar_radius'],
+        color='pale_blue_white')
+
+    # Camera cables
+
+    xml+= scenery_end()
+    return xml
+
+def transform_nodes(nodes, trafo):
+    nodes_t = np.zeros(shape=nodes.shape)
+    for i, node in enumerate(nodes):
+        nodes_t[i] = trafo.transformed_position(node)
+    return nodes_t
+
+def bars2xml(nodes, bars, radius=0.05, color='white', prefix='bar'):
+    xml = ''
+    for i, bar in enumerate(bars):
+            start_pos = nodes[bar[0]]
+            end_pos = nodes[bar[1]]
+            xml += cylinder(
+                name=prefix+'_'+str(i),
+                start_pos=start_pos,
+                end_pos=end_pos,
+                radius=radius,
+                color=color)
     return xml
