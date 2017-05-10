@@ -1,35 +1,32 @@
 import numpy as np
 
 
-def generate_camera_space_frame_quint(
-    light_field_sensor_radius=5.0, 
-    camera_housing_hight=1.0):
+def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
     """
     Adopted from 
     http://robohub.org/cable-driven-parallel-robots-motion-simulation-in-a-new-dimension/
     """
+    number_of_edges = 5
+    inner_radius = light_field_sensor_radius
+    outer_radius = inner_radius/(np.cos(np.pi/number_of_edges))
 
-    r = light_field_sensor_radius
-    fc = np.pi*2
-    chh = camera_housing_hight
-
+    off = +np.pi/4
+    r = outer_radius
     nodes = np.array([
         # lower layer
-        [ r*np.cos(fc*0.0), r*np.sin(fc*0.0), chh], # 0
-        [ r*np.cos(fc*0.2), r*np.sin(fc*0.2), chh], # 1
-        [ r*np.cos(fc*0.4), r*np.sin(fc*0.4), chh], # 2
-        [ r*np.cos(fc*0.6), r*np.sin(fc*0.6), chh], # 3
-        [ r*np.cos(fc*0.8), r*np.sin(fc*0.8), chh], # 4
-
+        [ r*np.cos(2*np.pi*0.0+off), r*np.sin(2*np.pi*0.0+off), 0], # 0
+        [ r*np.cos(2*np.pi*0.2+off), r*np.sin(2*np.pi*0.2+off), 0], # 1
+        [ r*np.cos(2*np.pi*0.4+off), r*np.sin(2*np.pi*0.4+off), 0], # 2
+        [ r*np.cos(2*np.pi*0.6+off), r*np.sin(2*np.pi*0.6+off), 0], # 3
+        [ r*np.cos(2*np.pi*0.8+off), r*np.sin(2*np.pi*0.8+off), 0], # 4
         # upper layer
-        [ r*np.cos(fc*0.1), r*np.sin(fc*0.1), chh+r], # 5
-        [ r*np.cos(fc*0.3), r*np.sin(fc*0.3), chh+r], # 6
-        [ r*np.cos(fc*0.5), r*np.sin(fc*0.5), chh+r], # 7
-        [ r*np.cos(fc*0.7), r*np.sin(fc*0.7), chh+r], # 8
-        [ r*np.cos(fc*0.9), r*np.sin(fc*0.9), chh+r], # 9
-
+        [ r*np.cos(2*np.pi*0.1+off), r*np.sin(2*np.pi*0.1+off), r], # 5
+        [ r*np.cos(2*np.pi*0.3+off), r*np.sin(2*np.pi*0.3+off), r], # 6
+        [ r*np.cos(2*np.pi*0.5+off), r*np.sin(2*np.pi*0.5+off), r], # 7
+        [ r*np.cos(2*np.pi*0.7+off), r*np.sin(2*np.pi*0.7+off), r], # 8
+        [ r*np.cos(2*np.pi*0.9+off), r*np.sin(2*np.pi*0.9+off), r], # 9
         # central node
-        [              0,              0, chh+r+0.5*r], # 10
+        [                     0,                     0, 1.5*r], # 10
     ])
 
     bars = np.array([
@@ -39,28 +36,24 @@ def generate_camera_space_frame_quint(
         [2,3],
         [3,4],
         [4,0],
-
         # upper layer
         [5,6],
         [6,7],
         [7,8],
         [8,9],
         [9,5],
-
         # upper pyramide
         [5,10],
         [6,10],
         [7,10],
         [8,10],
         [9,10],  
-
         # between layer 1
         [0,5],
         [1,6],
         [2,7],
         [3,8],
         [4,9],
-
         # between layer 1
         [0,9],
         [1,5],
@@ -69,12 +62,13 @@ def generate_camera_space_frame_quint(
         [4,8],
     ])
 
-    cable_supports = np.array([])
-
     return {
         'nodes': nodes,
         'bars': bars,
-        'cable_supports': cable_supports,
+        'cable_supports': {
+            'lower': [1,2,3,4],
+            'upper': [5,6,8,9],
+        }
     }
 
 
@@ -910,4 +904,10 @@ def generate_camera_tower(hight=161, top_width=4.2 ,base_width=19.6, bar_radius=
         'nodes': nodes,
         'bars': bars,
         'bar_radius': bar_radius
-    } 
+    }
+
+
+def generate_camera_cables(reflector):
+    f = reflector['geometry'].focal_length
+    D = reflector['geometry'].max_outer_radius*2
+    Az = 0.0

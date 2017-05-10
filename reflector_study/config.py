@@ -1,22 +1,20 @@
 import json
 #everything in kN, m
 example = {
-    'system': {
-        'mctracer': {
-            'hostname': '192.168.56.101',
-            'username': 'spiros',
-            'key_path': 'C:\\Users\\Spiros Daglas\\Desktop\\ssh\\spiros',
-            'run_path_linux': '/home/spiros/Desktop/run',
-            'ray_tracer_propagation_path_linux': '/home/spiros/Desktop/build/mctPropagate'
-            },
-        'sap2000': {
-            'path': 'C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe',
-            'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\SAP2000_working_directory\\example_1'
-            }
+    'pointing': {
+        'azimuth': 0.0,
+        'zenith_distance': 45,
         },
-    'structure_spatial_position': {
-        'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
-        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
+    'camera': {
+        'expected_imaging_system_focal_length': 75,
+        'expected_imaging_system_aperture_radius': 25,
+        'max_FoV_diameter_deg': 6.5,
+        'hex_pixel_FoV_flat2flat_deg': 0.083333,
+        'housing_overhead': 1.1,
+        'number_of_paxel_on_pixel_diagonal': 9,
+        'sensor_distance_to_principal_aperture_plane': 75,
+        'offset_position': [0,0,0],
+        'offset_rotation_tait_bryan': [0,0,0],
         },
     'reflector': {
         'main': {
@@ -106,7 +104,24 @@ example = {
         'ground': {
             'bin_width_m': 0.1
             }
-        }
+        },
+    'structure_spatial_position': {
+        'translational_vector_xyz': [0.0, 0.0, 0.0], #not used anymore. created from the tait bryan angle Ry
+        'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
+        },
+    'system': {
+        'mctracer': {
+            'hostname': '192.168.56.101',
+            'username': 'spiros',
+            'key_path': 'C:\\Users\\Spiros Daglas\\Desktop\\ssh\\spiros',
+            'run_path_linux': '/home/spiros/Desktop/run',
+            'ray_tracer_propagation_path_linux': '/home/spiros/Desktop/build/mctPropagate'
+            },
+        'sap2000': {
+            'path': 'C:\Program Files\Computers and Structures\SAP2000 19\sap2000.exe',
+            'working_directory': 'C:\\Users\\Spiros Daglas\\Desktop\\SAP2000_working_directory\\example_1'
+            }
+        },
     }
 
 def write(config, path):

@@ -55,10 +55,10 @@ def hexagonal_imaging_mirror_facet(
     return xml
 
 
-def cylinder(name, start_pos, end_pos, radius, color):
+def cylinder(name, start_pos, end_pos, radius, color, refl='zero'):
     xml = '<cylinder>\n'
     xml+= '    <set_frame name="'+name+'" pos="[0,0,0]" rot="[0,0,0]"/>\n'
-    xml+= '    <set_surface reflection_vs_wavelength="zero" color="'+color+'"/>\n'
+    xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
     xml+= '    <set_cylinder radius="'+float2str(radius)+'" start_pos="'+tuple3(start_pos)+'" end_pos="'+tuple3(end_pos)+'"/>\n'
     xml+= '</cylinder>\n'
     return xml
@@ -81,6 +81,96 @@ def sphere(name, pos, radius, color, reflection_vs_wavelength):
     xml+= '    <set_surface reflection_vs_wavelength="'+reflection_vs_wavelength+'" color="'+color+'"/>\n'
     xml+= '    <set_sphere radius="'+float2str(radius)+'"/>\n'
     xml+= '</sphere>\n'
+    return xml
+
+
+def cylinder_mount_xml(name, pos, rot, hight, radius, color, refl):
+    xml = '<frame>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    xml+= '    '+disc(
+        name=name+'_top', 
+        pos=[0,0,hight], 
+        rot=[0,0,0], 
+        radius=radius, 
+        color=color, 
+        refl=refl)
+    xml+= '    '+cylinder(
+        name=name+'_body', 
+        start_pos=[0,0,0], 
+        end_pos=[0,0,hight], 
+        radius=radius, 
+        color=color,
+        refl=refl)
+    xml+= '</frame>\n'
+    return xml
+
+
+def plane_xml(name, pos, rot, x_width, y_width, color, refl):
+    xml = '<plane>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
+    xml+= '    <set_plane x_width="'+float2str(x_width)+'" y_width="'+float2str(y_width)+'"/>\n'
+    xml+= '</plane>\n'
+    return xml    
+
+def triangle_xml(name, pos, rot, Ax, Ay, Bx, By, Cx, Cy, color, refl):
+    xml = '<triangle>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    xml+= '    <set_surface reflection_vs_wavelength="'+refl+'" color="'+color+'"/>\n'
+    xml+= '    <set_triangle '
+    xml+= 'Ax="'+float2str(Ax)+'" '
+    xml+= 'Ay="'+float2str(Ay)+'" '
+    xml+= 'Bx="'+float2str(Bx)+'" '
+    xml+= 'By="'+float2str(By)+'" '
+    xml+= 'Cx="'+float2str(Cx)+'" '
+    xml+= 'Cy="'+float2str(Cy)+'" />\n'
+    xml+= '</triangle>\n'
+    return xml
+
+def dish_support_concrete_pillar_xml(name, pos, rot, height, width, color, refl):
+    xml = '<frame>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    xml+= plane_xml(
+        name=name+'_top', 
+        pos=[0,0,height], 
+        rot=[0,0,0], 
+        x_width=width, 
+        y_width=width, 
+        color=color, 
+        refl=refl)
+    xml+= plane_xml(
+        name=name+'_left_side', 
+        pos=[0,width/2,height/2], 
+        rot=[np.deg2rad(90),0,0], 
+        x_width=width, 
+        y_width=height, 
+        color=color, 
+        refl=refl)
+    xml+= plane_xml(
+        name=name+'_right_side', 
+        pos=[0,-width/2,height/2], 
+        rot=[-np.deg2rad(90),0,0], 
+        x_width=width, 
+        y_width=height, 
+        color=color, 
+        refl=refl)
+    xml+= plane_xml(
+        name=name+'_front_side', 
+        pos=[width/2,0,height/2], 
+        rot=[np.deg2rad(90),0,np.deg2rad(90)], 
+        x_width=width, 
+        y_width=height, 
+        color=color, 
+        refl=refl)
+    xml+= plane_xml(
+        name=name+'_rear_side', 
+        pos=[-width/2,0,height/2], 
+        rot=[-np.deg2rad(90),0,np.deg2rad(90)], 
+        x_width=width, 
+        y_width=height, 
+        color=color, 
+        refl=refl)
+    xml+= '</frame>\n'
     return xml
 
 def bars2mctracer(reflector):
@@ -310,11 +400,11 @@ def write_camera_tower_xml(tower_nodes_and_bars, name, pos, rot, color='white'):
 
 def visual_scenery(reflector):
 
+    geometry = reflector['geometry']
+
     ideal_alignment = mirror_alignment.ideal_alignment(reflector)
 
-    trafo = HomTra()
-    trafo.set_translation([0.0,0.0,reflector['geometry'].reflector_security_distance_from_ground])
-    reflector['nodes'] = transform_nodes(reflector['nodes'], trafo)
+    reflector['nodes'] = transform_nodes(reflector['nodes'], geometry.root2dish)
 
     xml = scenery_header()
     xml+= constant_function('zero', value=0.0)
@@ -322,6 +412,8 @@ def visual_scenery(reflector):
     xml+= color('desert_sand', [102,51,0])
     xml+= color(name='facet_color', rgb=np.array([75,75,75]))
     xml+= color(name='pale_blue_white', rgb=np.array([225,255,255]))
+    xml+= color(name='red', rgb=np.array([225,0,0]))
+    xml+= color(name='concrete_grey', rgb=np.array([128,128,128]))
     xml+= disc('ground', pos=[0,0,0], rot=[0,0,0], radius=10e3, color='desert_sand', refl='zero')
 
     # Reflector dish
@@ -330,23 +422,97 @@ def visual_scenery(reflector):
     xml+= bars2xml(
         nodes=reflector['nodes'],
         bars=reflector['bars'],
-        radius=reflector['geometry'].bar_outer_diameter/2,
+        radius=geometry.bar_outer_diameter/2,
         color='pale_blue_white')
+
+    # Reflector dish mount
+    # --------------------
+    dish_radius = geometry.max_outer_radius
+    number_of_dish_pillars = 12
+    dish_pillar_circle_radius = 0.9*geometry.max_outer_radius*2
+    dish_pillar_height = dish_pillar_circle_radius
+    dish_pillar_width = 1/20*geometry.max_outer_radius*2
+    dish_pillar_az_angles = np.linspace(0,2*np.pi,number_of_dish_pillars)
+
+    for phi in dish_pillar_az_angles:
+
+        dish_pillar_positions = [
+            dish_pillar_circle_radius*np.cos(phi),
+            dish_pillar_circle_radius*np.sin(phi),
+            0.0]
+
+        xml+= dish_support_concrete_pillar_xml(
+            name='dish_pillar_', 
+            pos=dish_pillar_positions, 
+            rot=[0,0,-phi], 
+            height=dish_pillar_height, 
+            width=dish_pillar_width, 
+            color='concrete_grey', 
+            refl='zero')
+
+    # Reflector dish cables
+    # ---------------------
+    cable_radius = 0.1
+    cables_per_pillar = 3
+    azimuth_cable_az_angles = np.linspace(
+        0, 2*np.pi, 
+        cables_per_pillar*number_of_dish_pillars)
+
+    for pillar in range(number_of_dish_pillars):
+        phi = dish_pillar_az_angles[pillar]
+        pillar_node = np.array([
+            dish_pillar_circle_radius*np.cos(phi),
+            dish_pillar_circle_radius*np.sin(phi),
+            dish_pillar_height])
+
+        for cable in range(cables_per_pillar):
+            theta = azimuth_cable_az_angles[pillar*cables_per_pillar+cable]
+            cable_dish_node = np.array([
+                dish_radius*np.cos(theta),
+                dish_radius*np.sin(theta),
+                0.0])
+
+            cable_dish_node = geometry.root2dish.transformed_position(cable_dish_node)
+            nodes = np.array([pillar_node, cable_dish_node])
+            bars = np.array([[0,1]])
+            xml+= bars2xml(
+                nodes=nodes, 
+                bars=bars, 
+                radius=cable_radius, 
+                color='red', 
+                prefix='dish_cable')
+
+
+    # Floor platform
+    # --------------
+    platfrom_hight = 0.05*geometry.reflector_security_distance_from_ground
+    platform_radius = 1.25*geometry.max_outer_radius
+    xml+= cylinder_mount_xml(
+        name='dish_platform', 
+        pos=[0,0,0], 
+        rot=[0,0,0], 
+        hight=platfrom_hight, 
+        radius=platform_radius, 
+        color='concrete_grey', 
+        refl='zero')
 
     # Camera masts
     # ------------
-    f = reflector['geometry'].max_outer_radius*2
+
+    dish_d = geometry.max_outer_radius*2
+    tower_base_width = dish_d*0.27722
+    tower_hight = dish_d*2.277
     camera_tower = camera.factory.generate_camera_tower(
-        hight=f*2.277, 
-        top_width=f*0.0594,
-        base_width=f*0.27722, 
-        bar_radius=(f*0.0594)/33)
+        hight=tower_hight, 
+        top_width=dish_d*0.0594,
+        base_width=tower_base_width, 
+        bar_radius=(dish_d*0.0594)/33)
 
     tower_positions = [
-        [2.37*f,0.0,0.0],
-        [0.0,2.37*f,0.0],
-        [-2.37*f,0.0,0.0],
-        [0.0,-2.37*f,0.0],
+        [2.37*dish_d,0.0,0.0],
+        [0.0,2.37*dish_d,0.0],
+        [-2.37*dish_d,0.0,0.0],
+        [0.0,-2.37*dish_d,0.0],
     ]
 
     for tower_position in tower_positions:
@@ -358,28 +524,72 @@ def visual_scenery(reflector):
             radius=camera_tower['bar_radius'],
             color='pale_blue_white')
 
+        base_positions = [
+            [+tower_base_width/2,+tower_base_width/2,0],
+            [+tower_base_width/2,-tower_base_width/2,0],
+            [-tower_base_width/2,+tower_base_width/2,0],
+            [-tower_base_width/2,-tower_base_width/2,0],
+        ]
+
+        for base_position in base_positions:
+            absolute_base_position = np.array(base_position) + np.array(tower_position)
+            xml += cylinder_mount_xml(
+                name='tower_base', 
+                pos=absolute_base_position, 
+                rot=[0,0,0], 
+                hight=tower_base_width/16, 
+                radius=tower_base_width/6, 
+                color='concrete_grey', 
+                refl='zero')
+
     # Camera case
     # -----------
-    f = reflector['geometry'].focal_length
+    f = geometry.focal_length
     lfs_radius = f*np.arctan(np.deg2rad(6.5/2.0))
     camera_structure = camera.factory.generate_camera_space_frame_quint(
-        light_field_sensor_radius=lfs_radius, 
-        camera_housing_hight=0.2*lfs_radius)
-
-    trafo = HomTra()
-    trafo.set_translation([
-        0.0,
-        0.0,
-        (reflector['geometry'].reflector_security_distance_from_ground + f)
-    ])
+        light_field_sensor_radius=lfs_radius)
+    camera_nodes_in_root_frame = transform_nodes(
+        nodes=camera_structure['nodes'], 
+        trafo=geometry.root2camera)
 
     xml+= bars2xml(
-        nodes=transform_nodes(camera_structure['nodes'], trafo), 
+        nodes=camera_nodes_in_root_frame, 
         bars=camera_structure['bars'],
         radius=camera_tower['bar_radius'],
         color='pale_blue_white')
 
     # Camera cables
+    # -------------
+    for i, tower_position in enumerate(tower_positions):
+
+        upper_tower_cable_node = np.array(tower_position) + np.array([0,0,tower_hight])
+        lower_tower_cable_node = np.array(tower_position) + np.array([0,0,tower_hight*0.45])
+
+        upper_camera_cable_node = camera_nodes_in_root_frame[
+            camera_structure['cable_supports']['upper'][i - 1]
+        ]
+
+        lower_camera_cable_node = camera_nodes_in_root_frame[
+            camera_structure['cable_supports']['lower'][i - 1]
+        ]
+
+        nodes = np.array([upper_tower_cable_node, lower_camera_cable_node]) 
+        bars = np.array([[0,1]])
+        xml+= bars2xml(
+            nodes=nodes, 
+            bars=bars, 
+            radius=cable_radius, 
+            color='red', 
+            prefix='camera_cable')
+
+        nodes = np.array([lower_tower_cable_node, upper_camera_cable_node])
+        bars = np.array([[0,1]])
+        xml+= bars2xml(
+            nodes=nodes, 
+            bars=bars, 
+            radius=cable_radius, 
+            color='red', 
+            prefix='camera_cable')
 
     xml+= scenery_end()
     return xml
@@ -402,3 +612,39 @@ def bars2xml(nodes, bars, radius=0.05, color='white', prefix='bar'):
                 radius=radius,
                 color=color)
     return xml
+
+
+def cable_mountings(reflector, margin=0.1, sections=12):
+
+    raw_dish_fixtures = []
+    for fixture in reflector['fixtures']:
+        if fixture > -1:
+            raw_dish_fixtures.append(fixture)
+    dish_fixtures = np.array(raw_dish_fixtures)
+
+    positions = []
+    for fixture in dish_fixtures:
+        positions.append(reflector['nodes'][fixture])
+    positions = np.array(positions)
+
+    min_z_position = np.min(positions[:,2])
+    max_z_position = np.max(positions[:,2])
+
+    azimuth_bin_edges = np.linspace(0,2*np.pi,sections)
+    azimuth_sections = []
+    for sec in range(sections):
+        azimuth_sections.append({
+            'upper': [],
+            'lower': [],
+        })
+
+    for fixture in dish_fixtures:
+        pos = reflector['nodes'][fixture]
+        azimuth = np.arctan2(pos[0],pos[1])
+        az_bin = np.digitize(azimuth + np.pi, bins=azimuth_bin_edges)        
+        if np.abs(pos[2] - max_z_position) < margin:
+            azimuth_sections[az_bin]['upper'].append(fixture)
+        if np.abs(pos[2] - min_z_position) < margin:
+            azimuth_sections[az_bin]['lower'].append(fixture)
+
+    return azimuth_sections
