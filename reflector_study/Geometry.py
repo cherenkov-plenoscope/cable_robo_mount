@@ -82,7 +82,9 @@ class Geometry(object):
             dish_translation_from_pointing(
                 azimuth=np.deg2rad(cfg['pointing']['azimuth']), 
                 zenith_distance=np.deg2rad(cfg['pointing']['zenith_distance']), 
-                dish_radius=cfg['reflector']['main']['max_outer_radius']))
+                dish_radius=cfg['reflector']['main']['max_outer_radius']) + 
+                np.array([0,0,cfg['reflector']['main']['security_distance_from_ground']])
+            )
 
         # dish -> camera
         # --------------
@@ -124,9 +126,13 @@ def dish_translation_from_pointing(azimuth, zenith_distance, dish_radius):
     MAX_ZENITH_DISTANCE = np.deg2rad(45)
     translation_axis_xy = dish_translation_axis(azimuth)
     radial_translation = zenith_distance/MAX_ZENITH_DISTANCE*RADIAL_RANGE
-    r = np.array([-RADIAL_RANGE, 0, RADIAL_RANGE])
-    z = np.array([HIGHT_RANGE, 0, HIGHT_RANGE])
-    parabola_poly = np.polyfit(r, z, 2)
-    parabola = np.poly1d(parabola_poly)
     return -radial_translation*translation_axis_xy + np.array(
-        [0,0,parabola(radial_translation)])
+        [
+            0,
+            0,
+            HIGHT_RANGE*dish_hight_trajectory(radial_translation/RADIAL_RANGE)
+        ])
+
+
+def dish_hight_trajectory(radial_displacement):
+    return np.abs(np.sin(radial_displacement*np.pi/2))
