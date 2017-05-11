@@ -2,6 +2,7 @@ import numpy as np
 from .. import mirror_alignment
 from .. import camera 
 from ..HomTra import HomTra
+from .. import optical_geometry 
 
 def float2str(numeric_value):
     return "{:.9f}".format(numeric_value)
@@ -398,7 +399,7 @@ def write_camera_tower_xml(tower_nodes_and_bars, name, pos, rot, color='white'):
     return xml
 
 
-def visual_scenery(reflector):
+def visual_scenery(reflector, number_of_dish_pillars=9):
 
     geometry = reflector['geometry']
 
@@ -428,17 +429,17 @@ def visual_scenery(reflector):
     # Reflector dish mount
     # --------------------
     dish_radius = geometry.max_outer_radius
-    number_of_dish_pillars = 12
     dish_pillar_circle_radius = 0.9*geometry.max_outer_radius*2
     dish_pillar_height = dish_pillar_circle_radius
     dish_pillar_width = 1/20*geometry.max_outer_radius*2
-    dish_pillar_az_angles = np.linspace(0,2*np.pi,number_of_dish_pillars)
+    dish_pillar_az_angles = np.linspace(0,2*np.pi,number_of_dish_pillars, endpoint=False)
 
     for phi in dish_pillar_az_angles:
 
+        r = dish_pillar_width/2+dish_pillar_circle_radius
         dish_pillar_positions = [
-            dish_pillar_circle_radius*np.cos(phi),
-            dish_pillar_circle_radius*np.sin(phi),
+            r*np.cos(phi),
+            r*np.sin(phi),
             0.0]
 
         xml+= dish_support_concrete_pillar_xml(
@@ -453,10 +454,15 @@ def visual_scenery(reflector):
     # Reflector dish cables
     # ---------------------
     cable_radius = 0.1
-    cables_per_pillar = 3
+    cables_per_pillar = 2
     azimuth_cable_az_angles = np.linspace(
         0, 2*np.pi, 
-        cables_per_pillar*number_of_dish_pillars)
+        cables_per_pillar*number_of_dish_pillars, endpoint=False)
+    azimuth_cable_az_angle_step = (2*np.pi)/(cables_per_pillar*number_of_dish_pillars)
+    upper_dish_node_z = optical_geometry.z_hybrid(
+        distance_to_z_axis=geometry.max_outer_radius, 
+        focal_length=geometry.focal_length, 
+        dc_over_pa=geometry.davies_cotton_over_parabola_ratio)
 
     for pillar in range(number_of_dish_pillars):
         phi = dish_pillar_az_angles[pillar]
@@ -465,12 +471,19 @@ def visual_scenery(reflector):
             dish_pillar_circle_radius*np.sin(phi),
             dish_pillar_height])
 
+        lower_pillar_node = np.array([
+            dish_pillar_circle_radius*np.cos(phi),
+            dish_pillar_circle_radius*np.sin(phi),
+            0.0])
+
+
         for cable in range(cables_per_pillar):
-            theta = azimuth_cable_az_angles[pillar*cables_per_pillar+cable]
+            theta = azimuth_cable_az_angles[pillar*cables_per_pillar+cable] 
+            theta -= azimuth_cable_az_angle_step/2
             cable_dish_node = np.array([
                 dish_radius*np.cos(theta),
                 dish_radius*np.sin(theta),
-                0.0])
+                upper_dish_node_z])
 
             cable_dish_node = geometry.root2dish.transformed_position(cable_dish_node)
             nodes = np.array([pillar_node, cable_dish_node])
@@ -481,6 +494,15 @@ def visual_scenery(reflector):
                 radius=cable_radius, 
                 color='red', 
                 prefix='dish_cable')
+
+            nodes = np.array([lower_pillar_node, cable_dish_node])
+            bars = np.array([[0,1]])
+            xml+= bars2xml(
+                nodes=nodes, 
+                bars=bars, 
+                radius=cable_radius, 
+                color='red', 
+                prefix='lower_dish_cable')            
 
 
     # Floor platform
@@ -612,39 +634,3 @@ def bars2xml(nodes, bars, radius=0.05, color='white', prefix='bar'):
                 radius=radius,
                 color=color)
     return xml
-
-
-def cable_mountings(reflector, margin=0.1, sections=12):
-
-    raw_dish_fixtures = []
-    for fixture in reflector['fixtures']:
-        if fixture > -1:
-            raw_dish_fixtures.append(fixture)
-    dish_fixtures = np.array(raw_dish_fixtures)
-
-    positions = []
-    for fixture in dish_fixtures:
-        positions.append(reflector['nodes'][fixture])
-    positions = np.array(positions)
-
-    min_z_position = np.min(positions[:,2])
-    max_z_position = np.max(positions[:,2])
-
-    azimuth_bin_edges = np.linspace(0,2*np.pi,sections)
-    azimuth_sections = []
-    for sec in range(sections):
-        azimuth_sections.append({
-            'upper': [],
-            'lower': [],
-        })
-
-    for fixture in dish_fixtures:
-        pos = reflector['nodes'][fixture]
-        azimuth = np.arctan2(pos[0],pos[1])
-        az_bin = np.digitize(azimuth + np.pi, bins=azimuth_bin_edges)        
-        if np.abs(pos[2] - max_z_position) < margin:
-            azimuth_sections[az_bin]['upper'].append(fixture)
-        if np.abs(pos[2] - min_z_position) < margin:
-            azimuth_sections[az_bin]['lower'].append(fixture)
-
-    return azimuth_sections
