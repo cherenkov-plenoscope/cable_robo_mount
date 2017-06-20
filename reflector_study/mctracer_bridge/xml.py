@@ -171,6 +171,13 @@ def dish_support_concrete_pillar_xml(name, pos, rot, height, width, color, refl)
         y_width=height, 
         color=color, 
         refl=refl)
+
+    xml+= write_ladder_xml(
+        name=name+'_ladder', 
+        pos=[width/4+0.05,0,0], 
+        rot=[0,0,0], 
+        hight=height)
+
     xml+= '</frame>\n'
     return xml
 
@@ -397,6 +404,50 @@ def write_camera_tower_xml(tower_nodes_and_bars, name, pos, rot, color='white'):
 
     xml+= '</frame>\n'
     return xml
+
+
+def write_ladder_xml(name, pos, rot, hight, color='pale_blue_white'):
+    pos = np.array(pos)
+    rot = np.array(rot)
+    STEP_WIDTH = 0.35
+    STEP_PITCH = 0.28
+    STEP_RADIUS = 0.016
+    PILLAR_RADIUS = 2*STEP_RADIUS
+    xml = '<frame>\n'
+    xml+= '    <set_frame name="'+name+'" pos="'+tuple3(pos)+'" rot="'+tuple3(rot)+'"/>\n'
+    
+    xml += cylinder(
+        name='left_pillar',
+        start_pos=pos + np.array([0,STEP_WIDTH/2,0]),
+        end_pos=pos + np.array([0,STEP_WIDTH/2,hight]),
+        radius=PILLAR_RADIUS,
+        color=color
+    )
+
+    xml += cylinder(
+        name='right_pillar',
+        start_pos=pos + np.array([0,-STEP_WIDTH/2,0]),
+        end_pos=pos + np.array([0,-STEP_WIDTH/2,hight]),
+        radius=PILLAR_RADIUS,
+        color=color
+    )
+
+    number_of_sprosses = int(np.floor(hight/STEP_PITCH))
+
+    for i in range(number_of_sprosses):
+        j = i + 1
+        step_hight = j*STEP_PITCH
+        start_pos = pos + np.array([0,STEP_WIDTH/2,step_hight])
+        end_pos = pos + np.array([0,-STEP_WIDTH/2,step_hight])
+        
+        xml += cylinder(
+            name='step_'+str(i),
+            start_pos=start_pos,
+            end_pos=end_pos,
+            radius=STEP_RADIUS,
+            color=color)
+    xml+= '</frame>\n'
+    return xml       
 
 
 def visual_scenery(reflector, number_of_dish_pillars=9):
