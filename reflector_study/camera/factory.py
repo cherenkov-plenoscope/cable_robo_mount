@@ -60,7 +60,7 @@ def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
         [2,6],
         [3,7],
         [4,8],
-    ])
+    ], dtype=np.uint64)
 
     return {
         'nodes': nodes,
@@ -167,7 +167,7 @@ def generate_camera_space_frame(light_field_sensor_radius=5.0, camera_housing_hi
         [13, 5],
         [13, 6],
         [13, 7],
-    ])
+    ], dtype=np.uint64)
 
     cable_supports = np.array([])
 
@@ -623,7 +623,7 @@ def generate_tower_section_type_A(hight, base_width, top_width):
         [49,45],
         [50,46],
         [51,47],
-    ])
+    ], dtype=np.uint64)
 
     nodes = apply_shrinkink(
         nodes=nodes, 
@@ -804,7 +804,7 @@ def generate_tower_section_type_B(hight, base_width, top_width):
         [17,18],
         [18,19],
         [19,16],
-    ])
+    ], dtype=np.uint64)
 
     nodes = apply_shrinkink(
         nodes=nodes, 
