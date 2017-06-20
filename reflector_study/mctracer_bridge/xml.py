@@ -613,6 +613,46 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
             color='red', 
             prefix='camera_cable')
 
+        # static cables
+        upper_tower_cable_anchor = 2*np.array(tower_position)
+        lower_tower_cable_anchor = 1.4*np.array(tower_position)
+
+        nodes = np.array([upper_tower_cable_anchor, upper_tower_cable_node])
+        bars = np.array([[0,1]])
+        xml+= bars2xml(
+            nodes=nodes, 
+            bars=bars, 
+            radius=cable_radius, 
+            color='red', 
+            prefix='camera_cable')
+
+        xml += cylinder_mount_xml(
+            name='upper_tower_cable_anchor', 
+            pos=upper_tower_cable_anchor, 
+            rot=[0,0,0], 
+            hight=tower_base_width/16, 
+            radius=tower_base_width/6, 
+            color='concrete_grey', 
+            refl='zero')
+
+        nodes = np.array([lower_tower_cable_anchor, lower_tower_cable_node])
+        bars = np.array([[0,1]])
+        xml+= bars2xml(
+            nodes=nodes, 
+            bars=bars, 
+            radius=cable_radius, 
+            color='red', 
+            prefix='camera_cable')
+
+        xml += cylinder_mount_xml(
+            name='lower_tower_cable_anchor', 
+            pos=lower_tower_cable_anchor, 
+            rot=[0,0,0], 
+            hight=tower_base_width/16, 
+            radius=tower_base_width/6, 
+            color='concrete_grey', 
+            refl='zero')
+
     xml+= scenery_end()
     return xml
 
