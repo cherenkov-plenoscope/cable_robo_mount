@@ -372,7 +372,7 @@ def write_xml(xml, path):
 
 def write_reflector_xml(reflector, alignment, path):
     """
-    Writes the benchmark scenery into an mctracer xml file
+    Writes the benchmark scenery into an merlict xml file
 
     Parameter
     ---------
@@ -380,7 +380,7 @@ def write_reflector_xml(reflector, alignment, path):
 
     alignment       The alignment dictionary
 
-    path            Path to the output mctracer xml file
+    path            Path to the output merlict xml file
     """
     write_xml(
         benchmark_scenery(reflector, alignment),
@@ -389,7 +389,7 @@ def write_reflector_xml(reflector, alignment, path):
 
 def write_star_light_xml(reflector, path, number_of_photons=1e6):
     """
-    Writes a steering input xml for the mctracer to simulate parallel
+    Writes a steering input xml for the merlict to simulate parallel
     star light
 
     Parameter
@@ -410,7 +410,7 @@ def write_star_light_xml(reflector, path, number_of_photons=1e6):
 
 def write_propagation_config_xml(path, mutlithread=True):
     """
-    Writes the mctracer propagation config xml.
+    Writes the merlict propagation config xml.
 
     Parameter
     ---------
