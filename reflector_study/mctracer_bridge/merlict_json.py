@@ -5,6 +5,9 @@ from .. import camera
 from ..HomTra import HomTra
 from .. import optical_geometry
 
+def list_f8(l):
+    return [float(l[0]), float(l[1]), float(l[2])]
+
 
 def hexagonal_imaging_mirror_facet(
     name,
@@ -18,8 +21,8 @@ def hexagonal_imaging_mirror_facet(
     return {
         "type": "SphereCapWithHexagonalBound",
         "name": name,
-        "pos": list(position),
-        "rot_axis": list(rotation[0]),
+        "pos": list_f8(position),
+        "rot_axis": list_f8(rotation[0]),
         "rot_angle": float(rotation[1]),
         "outer_radius": float(outer_radius),
         "curvature_radius": float(curvature_radius),
@@ -34,9 +37,9 @@ def cylinder(name, start_pos, end_pos, radius, color, refl='zero'):
     return {
         "type": "Cylinder",
         "name": name,
-        "start_pos": list(start_pos),
-        "end_pos": list(end_pos),
-        "radius": radius,
+        "start_pos": list_f8(start_pos),
+        "end_pos": list_f8(end_pos),
+        "radius": float(radius),
         "surface": {
             "outer_color": color,
             "outer_reflection": refl},
@@ -48,8 +51,8 @@ def disc(name, pos, rot, radius, color, refl):
     return {
         "type": "Disc",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "radius": float(radius),
         "surface": {
             "outer_color": color,
@@ -62,8 +65,8 @@ def sphere(name, pos, radius, color, refl):
     return {
         "type": "Sphere",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "radius": float(radius),
         "surface": {
             "outer_color": color,
@@ -82,8 +85,8 @@ def light_field_sensor_portal(
     return {
         "type": "LightFieldSensor",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "expected_imaging_system_focal_length": 106.5,
         "expected_imaging_system_aperture_radius": 35.5,
         "max_FoV_diameter_deg": 6.5,
@@ -100,8 +103,8 @@ def cylinder_mount(name, pos, rot, hight, radius, color, refl):
     return {
         "type": "Frame",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "children": [
             disc(
                 name=name+'_top',
@@ -124,13 +127,14 @@ def plane(name, pos, rot, x_width, y_width, color, refl):
     return {
         "type": "Plane",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "x_width": float(x_width),
         "y_width": float(y_width),
         "surface": {
             "outer_color": color,
             "outer_reflection": refl},
+        "children": [],
     }
 
 
@@ -146,8 +150,8 @@ def dish_support_concrete_pillar(
     return {
         "type": "Frame",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "children": [
             plane(
                 name=name+'_top',
@@ -287,12 +291,12 @@ def image_sensor(focal_length, PAP_offset, field_of_view):
             sensor_id=0))
     imse.append(
         disc(
-        name='sensor_housing',
-        pos=housing_pos,
-        rot=rot,
-        radius=housing_radius,
-        color='grey',
-        refl='zero'))
+            name='sensor_housing',
+            pos=housing_pos,
+            rot=rot,
+            radius=housing_radius,
+            color='grey',
+            refl='zero'))
     return imse
 
 
@@ -336,8 +340,11 @@ def benchmark_scenery(reflector, alignment):
             PAP_offset=alignment['principal_aperture_plane_offset'],
             field_of_view=np.deg2rad(6.5)),
         bars_to_merlict(reflector=reflector),
-        facets_to_merlict(reflector=reflector, alignment=alignment)
     ]
+    tmp_facets = facets_to_merlict(reflector=reflector, alignment=alignment)
+    for tmp_facet in tmp_facets:
+        sc['children'].append(tmp_facet)
+
     return sc
 
 
@@ -346,13 +353,13 @@ def star_light(radius, pos, number_of_photons):
         "parallel_disc": {
             "disc_radius": float(radius),
             "num_photons": float(number_of_photons)},
-        "pos": list(pos),
+        "pos": list_f8(pos),
         "rot": [0, 1.5705, 0]}
 
 
 def write_json(scenery, path):
     with open(path, 'wt') as fout:
-        fout.write(json.dumps(scenery))
+        fout.write(json.dumps(scenery, indent=4))
 
 
 def write_reflector(reflector, alignment, path):
@@ -431,8 +438,8 @@ def write_camera_tower(
     return {
         "type": "Frame",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "children": children
     }
 
@@ -475,8 +482,8 @@ def make_ladder(name, pos, rot, hight, color='pale_blue_white'):
     return {
         "type": "Frame",
         "name": name,
-        "pos": list(pos),
-        "rot": list(rot),
+        "pos": list_f8(pos),
+        "rot": list_f8(rot),
         "children": children
     }
 
@@ -526,16 +533,19 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
 
     # Reflector dish
     # --------------
-    sc['children'].append(
-        facets_to_merlict(
-            reflector=reflector,
-            alignment=ideal_alignment))
-    sc['children'].append(
-        bars_to_merlict_2(
-            nodes=reflector['nodes'],
-            bars=reflector['bars'],
-            radius=geometry.bar_outer_diameter/2,
-            color='pale_blue_white'))
+    tmp_facets = facets_to_merlict(
+        reflector=reflector,
+        alignment=ideal_alignment)
+    for tmp_facet in tmp_facets:
+        sc['children'].append(tmp_facet)
+
+    tmp_bars = bars_to_merlict_2(
+        nodes=reflector['nodes'],
+        bars=reflector['bars'],
+        radius=geometry.bar_outer_diameter/2,
+        color='pale_blue_white')
+    for tmp_bar in tmp_bars:
+        sc['children'].append(tmp_bar)
 
     # Reflector dish mount
     # --------------------
@@ -606,23 +616,26 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
                 cable_dish_node)
             nodes = np.array([pillar_node, cable_dish_node])
             bars = np.array([[0, 1]])
-            sc['children'].append(
-                bars_to_merlict_2(
-                    nodes=nodes,
-                    bars=bars,
-                    radius=cable_radius,
-                    color='cable_color',
-                    prefix='dish_cable'))
+
+            tmp_dish_cables = bars_to_merlict_2(
+                nodes=nodes,
+                bars=bars,
+                radius=cable_radius,
+                color='cable_color',
+                prefix='dish_cable')
+            for tmp_dish_cable in tmp_dish_cables:
+                sc['children'].append(tmp_dish_cable)
 
             nodes = np.array([lower_pillar_node, cable_dish_node])
             bars = np.array([[0, 1]])
-            sc['children'].append(
-                bars_to_merlict_2(
-                    nodes=nodes,
-                    bars=bars,
-                    radius=cable_radius,
-                    color='cable_color',
-                    prefix='lower_dish_cable'))
+            tmp_dish_cables = bars_to_merlict_2(
+                nodes=nodes,
+                bars=bars,
+                radius=cable_radius,
+                color='cable_color',
+                prefix='lower_dish_cable')
+            for tmp_dish_cable in tmp_dish_cables:
+                sc['children'].append(tmp_dish_cable)
 
     # Floor platform
     # --------------
@@ -660,12 +673,13 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
     for tower_position in tower_positions:
         trafo = HomTra()
         trafo.set_translation(tower_position)
-        sc['children'].append(
-            bars_to_merlict_2(
-                nodes=transform_nodes(camera_tower['nodes'], trafo),
-                bars=camera_tower['bars'],
-                radius=camera_tower['bar_radius'],
-                color='pale_blue_white'))
+        tmp_tower_bars = bars_to_merlict_2(
+            nodes=transform_nodes(camera_tower['nodes'], trafo),
+            bars=camera_tower['bars'],
+            radius=camera_tower['bar_radius'],
+            color='pale_blue_white')
+        for tmp_tower_bar in tmp_tower_bars:
+            sc['children'].append(tmp_tower_bar)
 
         base_positions = [
             [+tower_base_width/2, +tower_base_width/2, 0],
@@ -698,17 +712,22 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
         nodes=camera_structure['nodes'],
         trafo=geometry.root2camera)
 
-    sc['children'].append(
-        bars_to_merlict_2(
-            nodes=camera_nodes_in_root_frame,
-            bars=camera_structure['bars'],
-            radius=camera_tower['bar_radius'],
-            color='pale_blue_white'))
+    tmp_case_bars = bars_to_merlict_2(
+        nodes=camera_nodes_in_root_frame,
+        bars=camera_structure['bars'],
+        radius=camera_tower['bar_radius'],
+        color='pale_blue_white')
+    for tmp_case_bar in tmp_case_bars:
+        sc['children'].append(tmp_case_bar)
 
     z_root2camera = geometry.root2camera.transformed_orientation([0, 0, 1])
     pointing_az = np.arctan2(z_root2camera[1], z_root2camera[0])
     pointing_zd = np.arccos(z_root2camera[2])
-    print('pointing_az', np.rad2deg(pointing_az), 'pointing_zd', np.rad2deg(pointing_zd))
+    print(
+        'pointing_az',
+        np.rad2deg(pointing_az),
+        'pointing_zd',
+        np.rad2deg(pointing_zd))
     sc['children'].append(
         light_field_sensor_portal(
             name='sensor',
@@ -738,23 +757,27 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
 
         nodes = np.array([upper_tower_cable_node, lower_camera_cable_node])
         bars = np.array([[0, 1]])
-        sc['children'].append(
-            bars_to_merlict_2(
-                nodes=nodes,
-                bars=bars,
-                radius=cable_radius,
-                color='cable_color',
-                prefix='camera_cable'))
+
+        tmp_camera_cables = bars_to_merlict_2(
+            nodes=nodes,
+            bars=bars,
+            radius=cable_radius,
+            color='cable_color',
+            prefix='camera_cable')
+        for tmp_camera_cable in tmp_camera_cables:
+            sc['children'].append(tmp_camera_cable)
 
         nodes = np.array([lower_tower_cable_node, upper_camera_cable_node])
         bars = np.array([[0, 1]])
-        sc['children'].append(
-            bars_to_merlict_2(
-                nodes=nodes,
-                bars=bars,
-                radius=cable_radius,
-                color='cable_color',
-                prefix='camera_cable'))
+
+        tmp_camera_cables = bars_to_merlict_2(
+            nodes=nodes,
+            bars=bars,
+            radius=cable_radius,
+            color='cable_color',
+            prefix='camera_cable')
+        for tmp_camera_cable in tmp_camera_cables:
+            sc['children'].append(tmp_camera_cable)
 
         # static cables
         upper_tower_cable_anchor = 2*np.array(tower_position)
@@ -762,13 +785,14 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
 
         nodes = np.array([upper_tower_cable_anchor, upper_tower_cable_node])
         bars = np.array([[0, 1]])
-        sc['children'].append(
-            bars_to_merlict_2(
-                nodes=nodes,
-                bars=bars,
-                radius=cable_radius,
-                color='cable_color',
-                prefix='camera_cable'))
+        tmp_camera_cables = bars_to_merlict_2(
+            nodes=nodes,
+            bars=bars,
+            radius=cable_radius,
+            color='cable_color',
+            prefix='camera_cable')
+        for tmp_camera_cable in tmp_camera_cables:
+            sc['children'].append(tmp_camera_cable)
 
         sc['children'].append(
             cylinder_mount(
@@ -782,13 +806,16 @@ def visual_scenery(reflector, number_of_dish_pillars=9):
 
         nodes = np.array([lower_tower_cable_anchor, lower_tower_cable_node])
         bars = np.array([[0, 1]])
-        sc['children'].append(
-            bars_to_merlict_2(
-                nodes=nodes,
-                bars=bars,
-                radius=cable_radius,
-                color='cable_color',
-                prefix='camera_cable'))
+
+        tmp_bars = bars_to_merlict_2(
+            nodes=nodes,
+            bars=bars,
+            radius=cable_radius,
+            color='cable_color',
+            prefix='camera_cable')
+
+        for tmp_bar in tmp_bars:
+            sc['children'].append(tmp_bar)
 
         sc['children'].append(
             cylinder_mount(
