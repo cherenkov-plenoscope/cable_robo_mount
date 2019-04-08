@@ -77,8 +77,8 @@ initialize ssh connection
 alignment = rs.mirror_alignment.ideal_alignment(reflector)
 
 mctracer_server = rs.mctracer_bridge.RayTracingMachine(rs.config.example)
-run_path = rs.config.example['system']['mctracer']['run_path_linux']
-mctracer_propagate_path = rs.config.example['system']['mctracer']['ray_tracer_propagation_path_linux']
+run_path = rs.config.example['system']['merlict']['run_path_linux']
+mctracer_propagate_path = rs.config.example['system']['merlict']['ray_tracer_propagation_path_linux']
 mctracer_server.execute('mkdir '+run_path)
 
 """

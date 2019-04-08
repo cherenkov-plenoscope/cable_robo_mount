@@ -110,7 +110,7 @@ example = {
         'rotational_vector_Rx_Ry_Rz': [0.0, 45.0, 0.0]
         },
     'system': {
-        'mctracer': {
+        'merlict': {
             'hostname': '192.168.56.101',
             'username': 'spiros',
             'key_path': 'C:\\Users\\Spiros Daglas\\Desktop\\ssh\\spiros',

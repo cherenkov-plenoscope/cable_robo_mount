@@ -18,9 +18,9 @@ class RayTracingMachine(object):
         key_path    The path to the private SSH RSA key of the client
     """
     def __init__(self, config_dict):
-        self._hostname = config_dict['system']['mctracer']['hostname']
-        self._username = config_dict['system']['mctracer']['username']
-        self._key_path = config_dict['system']['mctracer']['key_path']
+        self._hostname = config_dict['system']['merlict']['hostname']
+        self._username = config_dict['system']['merlict']['username']
+        self._key_path = config_dict['system']['merlict']['key_path']
         self._ssh = self._make_ssh_client()
         self._sftp = self._ssh.open_sftp()
 

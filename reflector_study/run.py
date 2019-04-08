@@ -82,8 +82,8 @@ def current_run_number(working_directory):
 
 def estimate_optical_performance(cfg, dish, alignment, output_path):
     mct = mctracer_bridge.RayTracingMachine(cfg)
-    mct_run_path = cfg['system']['mctracer']['run_path_linux']
-    mctracer_propagate_path = cfg['system']['mctracer']['ray_tracer_propagation_path_linux']
+    mct_run_path = cfg['system']['merlict']['run_path_linux']
+    mctracer_propagate_path = cfg['system']['merlict']['ray_tracer_propagation_path_linux']
     mct.execute('rm -rf '+mct_run_path)
     mct.execute('mkdir '+mct_run_path)
 
