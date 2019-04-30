@@ -122,15 +122,15 @@ def estimate_optical_performance(cfg, dish, alignment, output_path):
     mctracer_bridge.write_propagation_config_xml(mct_cfg_path)
     mct_light_path = os.path.join(output_path, 'light.xml')
     mctracer_bridge.write_star_light_xml(reflector=dish, path=mct_light_path)
-    mct_scenery_path = os.path.join(output_path, 'scenery.xml')
+    mct_scenery_path = os.path.join(output_path, 'scenery.json')
     mctracer_bridge.write_reflector_xml(reflector=dish, alignment=alignment, path=mct_scenery_path)
 
     mct.put(mct_cfg_path, mct_run_path+'/'+'config.xml')
     mct.put(mct_light_path, mct_run_path+'/'+'light.xml')
-    mct.put(mct_scenery_path, mct_run_path+'/'+'scenery.xml')
+    mct.put(mct_scenery_path, mct_run_path+'/'+'scenery.json')
     mct.execute(
         command=mctracer_propagate_path+
-            ' -s '+mct_run_path+'/'+'scenery.xml'+
+            ' -s '+mct_run_path+'/'+'scenery.json'+
             ' -c '+mct_run_path+'/'+'config.xml'+
             ' -i '+mct_run_path+'/'+'light.xml'+
             ' -o '+mct_run_path+'/'+'out'+

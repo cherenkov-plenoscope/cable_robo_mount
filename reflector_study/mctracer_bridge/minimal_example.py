@@ -19,11 +19,11 @@ deformed_reflector['nodes'][:,2] += z_noise
 
 rs.mctracer_bridge.write_propagation_config_xml('config.xml')
 rs.mctracer_bridge.write_star_light_xml(reflector=reflector, path='light.xml')
-rs.mctracer_bridge.write_reflector_xml(reflector=deformed_reflector, alignment=alignment, path='scenery.xml')
+rs.mctracer_bridge.write_reflector_xml(reflector=deformed_reflector, alignment=alignment, path='scenery.json')
 
 subprocess.call(
     args=[ '/home/sebastian/raytracing/build/mctPropagate',
-        '-s', 'scenery.xml',
+        '-s', 'scenery.json',
         '-c', 'config.xml',
         '-i', 'light.xml',
         '-o', 'out',

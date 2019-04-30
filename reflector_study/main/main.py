@@ -86,15 +86,15 @@ do what it takes for the ray tracing
 """
 rs.mctracer_bridge.write_propagation_config_xml('config.xml')
 rs.mctracer_bridge.write_star_light_xml(reflector=reflector_deformed, path='light.xml')
-rs.mctracer_bridge.write_reflector_xml(reflector=reflector_deformed, alignment=alignment, path='scenery.xml')
+rs.mctracer_bridge.write_reflector_xml(reflector=reflector_deformed, alignment=alignment, path='scenery.json')
 
 mctracer_server.put('config.xml', run_path+'/'+'config.xml')
 mctracer_server.put('light.xml', run_path+'/'+'light.xml')
-mctracer_server.put('scenery.xml', run_path+'/'+'scenery.xml')
+mctracer_server.put('scenery.json', run_path+'/'+'scenery.json')
 
 mctracer_server.execute(
     command=mctracer_propagate_path+
-        ' -s '+run_path+'/'+'scenery.xml'+
+        ' -s '+run_path+'/'+'scenery.json'+
         ' -c '+run_path+'/'+'config.xml'+
         ' -i '+run_path+'/'+'light.xml'+
         ' -o '+run_path+'/'+'out'+
