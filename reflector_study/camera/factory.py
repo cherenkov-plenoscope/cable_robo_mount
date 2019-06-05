@@ -3,7 +3,7 @@ import numpy as np
 
 def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
     """
-    Adopted from 
+    Adopted from
     http://robohub.org/cable-driven-parallel-robots-motion-simulation-in-a-new-dimension/
     """
     number_of_edges = 5
@@ -14,19 +14,19 @@ def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
     r = outer_radius
     nodes = np.array([
         # lower layer
-        [ r*np.cos(2*np.pi*0.0+off), r*np.sin(2*np.pi*0.0+off), 0], # 0
-        [ r*np.cos(2*np.pi*0.2+off), r*np.sin(2*np.pi*0.2+off), 0], # 1
-        [ r*np.cos(2*np.pi*0.4+off), r*np.sin(2*np.pi*0.4+off), 0], # 2
-        [ r*np.cos(2*np.pi*0.6+off), r*np.sin(2*np.pi*0.6+off), 0], # 3
-        [ r*np.cos(2*np.pi*0.8+off), r*np.sin(2*np.pi*0.8+off), 0], # 4
+        [ r*np.cos(2*np.pi*0.0+off), r*np.sin(2*np.pi*0.0+off), 0],  # 0
+        [ r*np.cos(2*np.pi*0.2+off), r*np.sin(2*np.pi*0.2+off), 0],  # 1
+        [ r*np.cos(2*np.pi*0.4+off), r*np.sin(2*np.pi*0.4+off), 0],  # 2
+        [ r*np.cos(2*np.pi*0.6+off), r*np.sin(2*np.pi*0.6+off), 0],  # 3
+        [ r*np.cos(2*np.pi*0.8+off), r*np.sin(2*np.pi*0.8+off), 0],  # 4
         # upper layer
-        [ r*np.cos(2*np.pi*0.1+off), r*np.sin(2*np.pi*0.1+off), r], # 5
-        [ r*np.cos(2*np.pi*0.3+off), r*np.sin(2*np.pi*0.3+off), r], # 6
-        [ r*np.cos(2*np.pi*0.5+off), r*np.sin(2*np.pi*0.5+off), r], # 7
-        [ r*np.cos(2*np.pi*0.7+off), r*np.sin(2*np.pi*0.7+off), r], # 8
-        [ r*np.cos(2*np.pi*0.9+off), r*np.sin(2*np.pi*0.9+off), r], # 9
+        [ r*np.cos(2*np.pi*0.1+off), r*np.sin(2*np.pi*0.1+off), r],  # 5
+        [ r*np.cos(2*np.pi*0.3+off), r*np.sin(2*np.pi*0.3+off), r],  # 6
+        [ r*np.cos(2*np.pi*0.5+off), r*np.sin(2*np.pi*0.5+off), r],  # 7
+        [ r*np.cos(2*np.pi*0.7+off), r*np.sin(2*np.pi*0.7+off), r],  # 8
+        [ r*np.cos(2*np.pi*0.9+off), r*np.sin(2*np.pi*0.9+off), r],  # 9
         # central node
-        [                     0,                     0, 1.5*r], # 10
+        [                     0,                     0, 1.5*r],  # 10
     ])
 
     bars = np.array([
@@ -47,7 +47,7 @@ def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
         [6,10],
         [7,10],
         [8,10],
-        [9,10],  
+        [9,10],
         # between layer 1
         [0,5],
         [1,6],
@@ -72,12 +72,15 @@ def generate_camera_space_frame_quint(light_field_sensor_radius=5.0):
     }
 
 
-def generate_camera_space_frame(light_field_sensor_radius=5.0, camera_housing_hight=1.0):
+def generate_camera_space_frame(
+    light_field_sensor_radius=5.0,
+    camera_housing_hight=1.0
+):
     """
     The space frame of the camera to be hang in the Cable-Robo-Mount.
 
     According to:
-    'Design of a light weight supporting structure for next generation 
+    'Design of a light weight supporting structure for next generation
     telescopes, Semester Project Report Spring 2016'
     Figure 104.
     """
@@ -88,23 +91,23 @@ def generate_camera_space_frame(light_field_sensor_radius=5.0, camera_housing_hi
 
     nodes = np.array([
         # lower layer
-        [ psr,   0, chh], # 0
-        [   0, psr, chh], # 1
-        [-psr,   0, chh], # 2
-        [   0,-psr, chh], # 3
+        [ psr,   0, chh],  # 0
+        [   0, psr, chh],  # 1
+        [-psr,   0, chh],  # 2
+        [   0,-psr, chh],  # 3
         # upper layer
-        [ psr,   0, chh + cube_hight], # 4
-        [   0, psr, chh + cube_hight], # 5
-        [-psr,   0, chh + cube_hight], # 6
-        [   0,-psr, chh + cube_hight], # 7
+        [ psr,   0, chh + cube_hight],  # 4
+        [   0, psr, chh + cube_hight],  # 5
+        [-psr,   0, chh + cube_hight],  # 6
+        [   0,-psr, chh + cube_hight],  # 7
         # center nodes
-        [ psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2], # 8
-        [-psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2], # 9
-        [-psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2], # 10
-        [ psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2], # 11
-        [              0,              0, chh + cube_hight + psr/(2*np.sqrt(2))], # 12
+        [ psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2],  # 8
+        [-psr/np.sqrt(2), psr/np.sqrt(2), chh + cube_hight/2],  # 9
+        [-psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2],  # 10
+        [ psr/np.sqrt(2),-psr/np.sqrt(2), chh + cube_hight/2],  # 11
+        [              0,              0, chh + cube_hight + psr/(2*np.sqrt(2))],  # 12
         # central node
-        [              0,              0, chh + cube_hight/2], # 13
+        [              0,              0, chh + cube_hight/2],  # 13
     ])
 
     bars = np.array([
@@ -172,9 +175,9 @@ def generate_camera_space_frame(light_field_sensor_radius=5.0, camera_housing_hi
     cable_supports = np.array([])
 
     return {
-    'nodes': nodes,
-    'bars': bars,
-    'cable_supports': cable_supports,
+        'nodes': nodes,
+        'bars': bars,
+        'cable_supports': cable_supports,
     }
 
 
@@ -202,16 +205,15 @@ def apply_shrinkink(nodes, hight_of_section, top_width, base_width):
     return nodes
 
 
-
 def generate_tower_section_type_A(hight, base_width, top_width):
     """
     The camera tower space frame section according to:
     Figure 109,
-    'Design of a light weight supporting structure for next generation 
+    'Design of a light weight supporting structure for next generation
     telescopes, Semester Project Report Spring 2016'
 
-    The space frame of nodes and bars contains the entire structure, so it can 
-    not be concatenated without removing the duplicate nodes which are shared 
+    The space frame of nodes and bars contains the entire structure, so it can
+    not be concatenated without removing the duplicate nodes which are shared
     between the sections.
 
     Paramter
@@ -237,132 +239,130 @@ def generate_tower_section_type_A(hight, base_width, top_width):
     r3 = r*3/4
     r4 = r
     #        |-----r-----|
-    #       
+    #
     #   --   o-----o-----o  h4
-    #    |   |   /  \   / 
-    #    |   | /     \ /  
-    #    |   o--------o     h3          
-    #    |   | \     /    
-    #    |   |    \ /     
+    #    |   |   /  \   /
+    #    |   | /     \ /
+    #    |   o--------o     h3
+    #    |   | \     /
+    #    |   |    \ /
     #    h   o-----o        h2
-    #    |   |\   /       
-    #    |   | \ /        
+    #    |   |\   /
+    #    |   | \ /
     #    |   o--o           h1
-    #    |   | /          
-    #    |   |/ 
+    #    |   | /
+    #    |   |/
     #   --   0              h0
-
-
 
     nodes = np.array([
 
-        # h0 layer 
+        # h0 layer
         #        1                       0
-        #                               
-        #                               
-        #                               
         #
-        #                               
-        #                               
-        #                               
-        #                                
-        #                               
-        #                              
-        #                               
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
         #        2                       3
-        [ r4, r4, h0], # 0
-        [-r4, r4, h0], # 1 
-        [-r4,-r4, h0], # 2
-        [ r4,-r4, h0], # 3
+        [ r4, r4, h0],  # 0
+        [-r4, r4, h0],  # 1
+        [-r4,-r4, h0],  # 2
+        [ r4,-r4, h0],  # 3
 
-        # h1 layer 
+        # h1 layer
         #        5---13              8---4
         #        |                       |
         #        9                       12
-        #                               
         #
-        #                               
-        #                               
-        #                               
-        #                                
-        #                               
+        #
+        #
+        #
+        #
+        #
+        #
         #        14                      11
         #        |                       |
         #        6---10             15---7
-        [ r4, r4, h1], # 4
-        [-r4, r4, h1], # 5 
-        [-r4,-r4, h1], # 6
-        [ r4,-r4, h1], # 7
+        [ r4, r4, h1],  # 4
+        [-r4, r4, h1],  # 5
+        [-r4,-r4, h1],  # 6
+        [ r4,-r4, h1],  # 7
 
-        [ r3, r4, h1], # 8
-        [-r4, r3, h1], # 9 
-        [-r3,-r4, h1], # 10
-        [ r4,-r3, h1], # 11
+        [ r3, r4, h1],  # 8
+        [-r4, r3, h1],  # 9
+        [-r3,-r4, h1],  # 10
+        [ r4,-r3, h1],  # 11
 
-        [ r4, r3, h1], # 12
-        [-r3, r4, h1], # 13
-        [-r4,-r3, h1], # 14
-        [ r3,-r4, h1], # 15
+        [ r4, r3, h1],  # 12
+        [-r3, r4, h1],  # 13
+        [-r4,-r3, h1],  # 14
+        [ r3,-r4, h1],  # 15
 
-        # h2 layer 
+        # h2 layer
         #        17--25             20---16
         #        |                       |
         #        21                      24
-        #                               
         #
-        #                               
-        #                               
-        #                               
-        #                                
-        #                               
+        #
+        #
+        #
+        #
+        #
+        #
         #        26                      23
         #        |                       |
         #        18--22             27---19
-        [ r4, r4, h2], # 16
-        [-r4, r4, h2], # 17 
-        [-r4,-r4, h2], # 18
-        [ r4,-r4, h2], # 19
+        [ r4, r4, h2],  # 16
+        [-r4, r4, h2],  # 17
+        [-r4,-r4, h2],  # 18
+        [ r4,-r4, h2],  # 19
 
-        [ r2, r4, h2], # 20
-        [-r4, r2, h2], # 21
-        [-r2,-r4, h2], # 22
-        [ r4,-r2, h2], # 23
+        [ r2, r4, h2],  # 20
+        [-r4, r2, h2],  # 21
+        [-r2,-r4, h2],  # 22
+        [ r4,-r2, h2],  # 23
 
-        [ r4, r2, h2], # 24
-        [-r2, r4, h2], # 25
-        [-r4,-r2, h2], # 26
-        [ r2,-r4, h2], # 27
+        [ r4, r2, h2],  # 24
+        [-r2, r4, h2],  # 25
+        [-r4,-r2, h2],  # 26
+        [ r2,-r4, h2],  # 27
 
-        # h3 layer 
+        # h3 layer
         #        29--37             32---28
         #        |                       |
         #        33                      36
-        #                               
         #
-        #                               
-        #                               
-        #                               
-        #                                
-        #                               
+        #
+        #
+        #
+        #
+        #
+        #
         #        38                      35
         #        |                       |
         #        30--34             39---31
-        [ r4, r4, h3], # 28
-        [-r4, r4, h3], # 29 
-        [-r4,-r4, h3], # 30
-        [ r4,-r4, h3], # 31
+        [ r4, r4, h3],  # 28
+        [-r4, r4, h3],  # 29
+        [-r4,-r4, h3],  # 30
+        [ r4,-r4, h3],  # 31
 
-        [ r1, r4, h3], # 32
-        [-r4, r1, h3], # 33
-        [-r1,-r4, h3], # 34
-        [ r4,-r1, h3], # 35
+        [ r1, r4, h3],  # 32
+        [-r4, r1, h3],  # 33
+        [-r1,-r4, h3],  # 34
+        [ r4,-r1, h3],  # 35
 
-        [ r4, r1, h3], # 36
-        [-r1, r4, h3], # 37
-        [-r4,-r1, h3], # 38
-        [ r1,-r4, h3], # 39
+        [ r4, r1, h3],  # 36
+        [-r1, r4, h3],  # 37
+        [-r4,-r1, h3],  # 38
+        [ r1,-r4, h3],  # 39
 
-        # h4 layer 
+        # h4 layer
         #        41----49----53----44----40
         #        |        65    60       |
         #        45    57          56    48
@@ -376,40 +376,40 @@ def generate_tower_section_type_A(hight, base_width, top_width):
         #        50    58          59    47
         #        |        62    67       |
         #        42----46----55----51----43
-        [ r4, r4, h4], # 40
-        [-r4, r4, h4], # 41 
-        [-r4,-r4, h4], # 42
-        [ r4,-r4, h4], # 43
+        [ r4, r4, h4],  # 40
+        [-r4, r4, h4],  # 41
+        [-r4,-r4, h4],  # 42
+        [ r4,-r4, h4],  # 43
 
-        [ r2, r4, h4], # 44
-        [-r4, r2, h4], # 45
-        [-r2,-r4, h4], # 46
-        [ r4,-r2, h4], # 47
+        [ r2, r4, h4],  # 44
+        [-r4, r2, h4],  # 45
+        [-r2,-r4, h4],  # 46
+        [ r4,-r2, h4],  # 47
 
-        [ r4, r2, h4], # 48
-        [-r2, r4, h4], # 49
-        [-r4,-r2, h4], # 50
-        [ r2,-r4, h4], # 51
+        [ r4, r2, h4],  # 48
+        [-r2, r4, h4],  # 49
+        [-r4,-r2, h4],  # 50
+        [ r2,-r4, h4],  # 51
 
-        [ r4, r0, h4], # 52
-        [-r0, r4, h4], # 53
-        [-r4,-r0, h4], # 54
-        [ r0,-r4, h4], # 55
+        [ r4, r0, h4],  # 52
+        [-r0, r4, h4],  # 53
+        [-r4,-r0, h4],  # 54
+        [ r0,-r4, h4],  # 55
 
-        [ r2, r2, h4], # 56
-        [-r2, r2, h4], # 57
-        [-r2,-r2, h4], # 58
-        [ r2,-r2, h4], # 59
+        [ r2, r2, h4],  # 56
+        [-r2, r2, h4],  # 57
+        [-r2,-r2, h4],  # 58
+        [ r2,-r2, h4],  # 59
 
-        [ r1, r3, h4], # 60
-        [-r3, r1, h4], # 61
-        [-r1,-r3, h4], # 62
-        [ r3,-r1, h4], # 63
+        [ r1, r3, h4],  # 60
+        [-r3, r1, h4],  # 61
+        [-r1,-r3, h4],  # 62
+        [ r3,-r1, h4],  # 63
 
-        [ r3, r1, h4], # 64
-        [-r1, r3, h4], # 65
-        [-r3,-r1, h4], # 66
-        [ r1,-r3, h4], # 67
+        [ r3, r1, h4],  # 64
+        [-r1, r3, h4],  # 65
+        [-r3,-r1, h4],  # 66
+        [ r1,-r3, h4],  # 67
     ])
 
     bars = np.array([
@@ -604,8 +604,8 @@ def generate_tower_section_type_A(hight, base_width, top_width):
         [50,66],
 
         [47,63],
-        [51,67],   
-        # outer parallels             
+        [51,67],
+        # outer parallels
         [44,56],
         [48,56],
 
@@ -626,8 +626,8 @@ def generate_tower_section_type_A(hight, base_width, top_width):
     ], dtype=np.uint64)
 
     nodes = apply_shrinkink(
-        nodes=nodes, 
-        hight_of_section=hight, 
+        nodes=nodes,
+        hight_of_section=hight,
         top_width=top_width,
         base_width=base_width)
 
@@ -641,11 +641,11 @@ def generate_tower_section_type_B(hight, base_width, top_width):
     """
     The camera tower space frame section according to:
     Figure 110,
-    'Design of a light weight supporting structure for next generation 
+    'Design of a light weight supporting structure for next generation
     telescopes, Semester Project Report Spring 2016'
 
-    The space frame of nodes and bars contains the entire structure, so it can 
-    not be concatenated without removing the duplicate nodes which are shared 
+    The space frame of nodes and bars contains the entire structure, so it can
+    not be concatenated without removing the duplicate nodes which are shared
     between the sections.
 
     Paramter
@@ -667,7 +667,6 @@ def generate_tower_section_type_B(hight, base_width, top_width):
     r0 = 0
     r1 = r
 
-
     nodes = np.array([
         # layer 0
         #
@@ -678,15 +677,15 @@ def generate_tower_section_type_B(hight, base_width, top_width):
         #   |           |
         #   |           |
         #   2-----6-----3
-        [ r1, r1, h0], # 0
-        [-r1, r1, h0], # 1
-        [-r1,-r1, h0], # 2
-        [ r1,-r1, h0], # 3
+        [ r1, r1, h0],  # 0
+        [-r1, r1, h0],  # 1
+        [-r1,-r1, h0],  # 2
+        [ r1,-r1, h0],  # 3
 
-        [ r0, r1, h0], # 4
-        [-r1, r0, h0], # 5
-        [-r0,-r1, h0], # 6
-        [ r1,-r0, h0], # 7
+        [ r0, r1, h0],  # 4
+        [-r1, r0, h0],  # 5
+        [-r0,-r1, h0],  # 6
+        [ r1,-r0, h0],  # 7
 
         # layer 1
         #
@@ -697,10 +696,10 @@ def generate_tower_section_type_B(hight, base_width, top_width):
         #   |           |
         #   |           |
         #   10----------11
-        [ r1, r1, h1], # 8
-        [-r1, r1, h1], # 9
-        [-r1,-r1, h1], # 10
-        [ r1,-r1, h1], # 11
+        [ r1, r1, h1],  # 8
+        [-r1, r1, h1],  # 9
+        [-r1,-r1, h1],  # 10
+        [ r1,-r1, h1],  # 11
         # layer 2
         #
         #   13----16----12
@@ -710,76 +709,75 @@ def generate_tower_section_type_B(hight, base_width, top_width):
         #   |           |
         #   |           |
         #   14----18----15
-        [ r1, r1, h2], # 12
-        [-r1, r1, h2], # 13
-        [-r1,-r1, h2], # 14
-        [ r1,-r1, h2], # 15
+        [ r1, r1, h2],  # 12
+        [-r1, r1, h2],  # 13
+        [-r1,-r1, h2],  # 14
+        [ r1,-r1, h2],  # 15
 
-        [ r0, r1, h2], # 16
-        [-r1, r0, h2], # 17
-        [-r0,-r1, h2], # 18
-        [ r1,-r0, h2], # 19
+        [ r0, r1, h2],  # 16
+        [-r1, r0, h2],  # 17
+        [-r0,-r1, h2],  # 18
+        [ r1,-r0, h2],  # 19
     ])
-
 
     bars = np.array([
         # layer 0
-        #[0,4],
-        #[4,1],
+        # [0, 4],
+        # [4, 1],
 
-        #[1,5],
-        #[5,2],
+        # [1, 5],
+        # [5, 2],
 
-        #[2,6],
-        #[6,3],
+        # [2, 6],
+        # [6, 3],
 
-        #[3,7],
-        #[7,0],
+        # [3, 7],
+        # [7, 0],
         # diagonals
-        #[4,5],
-        #[5,6],
-        #[6,7],
-        #[7,4],
-        #layer 0 - 1
+        # [4, 5],
+        # [5, 6],
+        # [6, 7],
+        # [7, 4],
+        # layer 0 - 1
         # vertical
-        [0,8],
-        [1,9],
-        [2,10],
-        [3,11],
+        [0, 8],
+        [1, 9],
+        [2, 10],
+        [3, 11],
         # diagonal
-        [8,4],
-        [4,9], 
+        [8, 4],
+        [4, 9],
 
-        [9,5],
-        [5,10],
+        [9, 5],
+        [5, 10],
 
-        [10,6],
-        [6,11],
+        [10, 6],
+        [6, 11],
 
-        [11,7],
-        [7,8],
+        [11, 7],
+        [7, 8],
         # layer 1
         # none
 
         # layer 1 - 2
         # verticals
-        [ 8,12],
-        [ 9,13],
-        [10,14],
-        [11,15],
+        [8, 12],
+        [9, 13],
+        [10, 14],
+        [11, 15],
 
         # diagonals
-        [ 8,16],
-        [ 9,16],
+        [8, 16],
+        [9, 16],
 
-        [ 9,17],
-        [10,17],
+        [9, 17],
+        [10, 17],
 
-        [10,18],
-        [11,18],
+        [10, 18],
+        [11, 18],
 
-        [11,19],
-        [ 8,19],
+        [11, 19],
+        [8, 19],
         # layer 2
         #   13----16----12
         #   |           |
@@ -788,27 +786,27 @@ def generate_tower_section_type_B(hight, base_width, top_width):
         #   |           |
         #   |           |
         #   14----18----15
-        [12,16],
-        [16,13],
+        [12, 16],
+        [16, 13],
 
-        [13,17],
-        [17,14],
+        [13, 17],
+        [17, 14],
 
-        [14,18],
-        [18,15],
+        [14, 18],
+        [18, 15],
 
-        [15,19],
-        [19,12],
+        [15, 19],
+        [19, 12],
         # diagonals
-        [16,17],
-        [17,18],
-        [18,19],
-        [19,16],
+        [16, 17],
+        [17, 18],
+        [18, 19],
+        [19, 16],
     ], dtype=np.uint64)
 
     nodes = apply_shrinkink(
-        nodes=nodes, 
-        hight_of_section=hight, 
+        nodes=nodes,
+        hight_of_section=hight,
         top_width=top_width,
         base_width=base_width)
 
@@ -818,32 +816,37 @@ def generate_tower_section_type_B(hight, base_width, top_width):
     }
 
 
-def generate_camera_tower(hight=161, top_width=4.2 ,base_width=19.6, bar_radius=None):
+def generate_camera_tower(
+    hight=161,
+    top_width=4.2,
+    base_width=19.6,
+    bar_radius=None
+):
     """
-    Returns a dict describing the nodes and bars of one entire camera support 
+    Returns a dict describing the nodes and bars of one entire camera support
     tower according to Figure 111.
 
     relative hight
     |
-    1.0  --------------- top 
+    1.0  --------------- top
     |    type B without thinning (diamind like)
     0.85
     |    type B with thinning (diamind like)
     0.7
     |
     |    type A with thinning (triangle like)
-    |      
+    |
     |
     |
     0.0  --------------- ground
-    
-    Thinning=0.0464 taken from Spyridon and Gerogios report, meassured in 
+
+    Thinning=0.0464 taken from Spyridon and Gerogios report, meassured in
     Figure 111.
 
     Parameter
     ---------
-    hight           The overall desired hight of the tower. The resulting tower 
-                    will be at least this high, but can be higher to fit all 
+    hight           The overall desired hight of the tower. The resulting tower
+                    will be at least this high, but can be higher to fit all
                     sections as a whole.
 
     top_width       The width of the tower at its top.
@@ -857,10 +860,10 @@ def generate_camera_tower(hight=161, top_width=4.2 ,base_width=19.6, bar_radius=
     """
 
     if bar_radius is None:
-        bar_radius = top_width/33 # no reason here, just looks good.
+        bar_radius = top_width/33  # no reason here, just looks good.
 
-    nodes = np.zeros(shape=(0,3))
-    bars = np.zeros(shape=(0,2), dtype=np.uint64)
+    nodes = np.zeros(shape=(0, 3))
+    bars = np.zeros(shape=(0, 2), dtype=np.uint64)
 
     section_base_width = base_width
     section_base_hight = 0
@@ -871,32 +874,32 @@ def generate_camera_tower(hight=161, top_width=4.2 ,base_width=19.6, bar_radius=
 
         if section_base_hight < 0.7*hight:
             section = generate_tower_section_type_A(
-                hight=section_base_width, 
+                hight=section_base_width,
                 base_width=section_base_width,
                 top_width=section_base_width*(1-thinning)**2)
         elif section_base_hight < 0.85*hight:
             section = generate_tower_section_type_B(
-                hight=section_base_width, 
+                hight=section_base_width,
                 base_width=section_base_width,
                 top_width=section_base_width*(1-thinning)**2)
         else:
             section = generate_tower_section_type_B(
-                hight=section_base_width, 
+                hight=section_base_width,
                 base_width=section_base_width,
                 top_width=section_base_width)
             use_thinning = False
 
         for j in range(section['nodes'].shape[0]):
-            section['nodes'][j,2] += section_base_hight
+            section['nodes'][j, 2] += section_base_hight
 
         for k in range(section['bars'].shape[0]):
             section['bars'][k] += nodes.shape[0]
 
-        nodes = np.concatenate((nodes, section['nodes']), axis= 0)
-        bars = np.concatenate((bars, section['bars']), axis= 0)
+        nodes = np.concatenate((nodes, section['nodes']), axis=0)
+        bars = np.concatenate((bars, section['bars']), axis=0)
 
         section_base_hight += section_base_width
-        
+
         if use_thinning:
             section_base_width *= (1-thinning)**2
 
