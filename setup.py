@@ -1,6 +1,6 @@
-from distutils.core import setup
+import setuptools
 
-setup(name='reflector_study',
+setuptools.setup(name='reflector_study',
       version='0.0',
       description='Simulating a segmented imaging reflector',
       author='Spyridon Daglas, Sebastian Achim Mueller',
