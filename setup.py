@@ -13,4 +13,5 @@ setuptools.setup(name='reflector_study',
     url='https://github.com/cherenkov-plenoscope/cable_robo_mount',
     license='GPL v3',
     packages=['reflector_study'],
+    python_requires='>=3',
 )
