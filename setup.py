@@ -10,7 +10,7 @@ setuptools.setup(name='reflector_study',
     long_description_content_type='text/markdown',
     author='Spyridon Daglas, Sebastian Achim Mueller',
     author_email='spirosdag@gmail.com',
-    url='',
+    url='https://github.com/cherenkov-plenoscope/cable_robo_mount',
     license='GPL v3',
     packages=['reflector_study'],
 )
