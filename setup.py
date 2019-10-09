@@ -13,6 +13,4 @@ setuptools.setup(name='reflector_study',
     url='',
     license='GPL v3',
     packages=['reflector_study'],
-    install_requires=[],
-    zip_safe=False,
 )
