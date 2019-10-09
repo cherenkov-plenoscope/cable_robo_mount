@@ -4,7 +4,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='reflector_study',
+    name='cable_robo_mount',
     version='0.0.1',
     description='Simulating a segmented imaging reflector',
     long_description=long_description,
@@ -13,7 +13,7 @@ setuptools.setup(
     author_email='spirosdag@gmail.com',
     url='https://github.com/cherenkov-plenoscope/cable_robo_mount',
     license='GPL v3',
-    packages=['reflector_study'],
+    packages=['cable_robo_mount'],
     python_requires='>=3',
     classifiers=[
         "Programming Language :: Python :: 3",
