@@ -1,13 +1,13 @@
 import setuptools
 
 setuptools.setup(name='reflector_study',
-      version='0.0',
-      description='Simulating a segmented imaging reflector',
-      author='Spyridon Daglas, Sebastian Achim Mueller',
-      author_email='spirosdag@gmail.com',
-      url='',
-      license='GPL v3',
-      packages=['reflector_study'],
-      install_requires=[],
-      zip_safe=False
-     )
+    version='0.0',
+    description='Simulating a segmented imaging reflector',
+    author='Spyridon Daglas, Sebastian Achim Mueller',
+    author_email='spirosdag@gmail.com',
+    url='',
+    license='GPL v3',
+    packages=['reflector_study'],
+    install_requires=[],
+    zip_safe=False,
+)
