@@ -14,4 +14,13 @@ setuptools.setup(name='reflector_study',
     license='GPL v3',
     packages=['reflector_study'],
     python_requires='>=3',
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+        "Natural Language :: English",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Astronomy",
+    ],
 )
