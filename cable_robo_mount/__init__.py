@@ -16,3 +16,4 @@ if platform == "win32":
 from .HomTra import HomTra
 from . import tension_ring
 from . import camera
+from . import hexagon_mesh
