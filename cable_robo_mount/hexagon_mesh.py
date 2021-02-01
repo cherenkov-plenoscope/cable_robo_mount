@@ -1,4 +1,6 @@
 import numpy as np
+import scipy
+from scipy import spatial
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon as plt_Polygon
 from . import optical_geometry
@@ -8,7 +10,7 @@ HEXB = np.array([0.5, np.sqrt(3.0)/2.0, 0.0])
 
 
 def init_mesh():
-    return {"vertices": {}, "bars": {}, "faces": {}, "vertex_normals":{}}
+    return {"vertices": {}, "faces": {}, "vertex_normals":{}}
 
 
 def make_hexagonal_mesh_in_xy_plane(radial_steps):
@@ -91,6 +93,76 @@ def make_spherical_hex_cap(outer_hex_radius, curvature_radius, num_steps=10):
 
     return m
 
+
+def make_vertices_ring(ref="ring", n=16, phi_off=0.0):
+    vertices = {}
+    for nphi, phi in enumerate(np.linspace(0.0, 2.0*np.pi, n, endpoint=False)):
+        vertices[(ref, nphi)] = np.array(
+            [np.cos(phi_off + phi), np.sin(phi_off + phi), 0.0]
+        )
+    return vertices
+
+
+def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
+    inner_radius = radius * inner_radius_of_regular_polygon(n=n)
+
+    mesh = init_mesh()
+    mesh["vertices"] = make_vertices_ring(
+        ref=ref + "/" + "ring",
+        n=n,
+        phi_off=phi_off)
+
+    for vkey in mesh["vertices"]:
+        mesh["vertices"][vkey] = radius * mesh["vertices"][vkey]
+
+    next_n = int(np.round(n/3))
+    next_radius = 0.8 * inner_radius
+    v_inner_idx = 0
+    while next_n >= 6:
+        print(next_n, next_radius)
+        inner_vertices = make_vertices_ring(
+            ref=ref + "/" + "inner",
+            n=next_n,
+            phi_off=phi_off)
+
+        for inner_vkey in inner_vertices:
+            _vkey = ("inner", v_inner_idx)
+            mesh["vertices"][_vkey] = next_radius * inner_vertices[inner_vkey]
+            v_inner_idx += 1
+
+        next_radius = 0.8 * next_radius
+        next_n = int(np.round(next_n/3))
+
+
+    vnkey = (ref, 0)
+    mesh["vertex_normals"][vnkey] = np.array([0.0, 0.0, 1.0])
+
+    vs = []
+    vkeys = []
+    for vkey in mesh["vertices"]:
+        vkeys.append(vkey)
+        vs.append(mesh["vertices"][vkey][0:2])
+    vs = np.array(vs)
+
+    del_tri = spatial.Delaunay(points=vs)
+    del_faces = del_tri.simplices
+
+    for fidx, del_face in enumerate(del_faces):
+        fkey = (ref, fidx)
+        mesh["faces"][fkey] = {
+            "vertices": [
+                vkeys[del_face[0]],
+                vkeys[del_face[1]],
+                vkeys[del_face[2]],
+            ],
+            "vertex_normals": [vnkey, vnkey, vnkey]
+        }
+
+    return mesh
+
+
+def inner_radius_of_regular_polygon(n):
+    return 1.0 * np.cos(np.pi/n)
 
 
 def _add_face(ax, vertices, alpha=None, color="blue"):
