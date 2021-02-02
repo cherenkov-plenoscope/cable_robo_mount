@@ -340,7 +340,7 @@ def mesh_to_wavefront(obj):
                 1 + f["vn"][2],
             )
         )
-    return "\n".join(s)
+    return "\n".join(s) + "\n"
 
 
 def write_obj(path, obj):
