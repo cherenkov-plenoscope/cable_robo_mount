@@ -239,7 +239,7 @@ def mesh_to_wavefront(obj):
                 1 + f["v"][1],
                 1 + f["vn"][1],
                 1 + f["v"][2],
-                1 + f["vn"][1],
+                1 + f["vn"][2],
             )
         )
     return "\n".join(s)
