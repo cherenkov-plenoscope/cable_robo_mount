@@ -6,11 +6,11 @@ from matplotlib.patches import Polygon as plt_Polygon
 from . import optical_geometry
 
 HEXA = np.array([1.0, 0.0, 0.0])
-HEXB = np.array([0.5, np.sqrt(3.0)/2.0, 0.0])
+HEXB = np.array([0.5, np.sqrt(3.0) / 2.0, 0.0])
 
 
 def init_mesh():
-    return {"vertices": {}, "faces": {}, "vertex_normals":{}}
+    return {"vertices": {}, "faces": {}, "vertex_normals": {}}
 
 
 def make_hexagonal_mesh_in_xy_plane(radial_steps):
@@ -18,8 +18,8 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
     # ========
     n = radial_steps
     mesh = init_mesh()
-    for dA in np.arange(-n, n+1, 1):
-        for dB in np.arange(-n, n+1, 1):
+    for dA in np.arange(-n, n + 1, 1):
+        for dB in np.arange(-n, n + 1, 1):
 
             bound_upper = -dA + n
             bound_lower = -dA - n
@@ -28,12 +28,12 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
 
     # faces
     # =====
-    for dA in np.arange(-n, n+1, 1):
-        for dB in np.arange(-n, n+1, 1):
+    for dA in np.arange(-n, n + 1, 1):
+        for dB in np.arange(-n, n + 1, 1):
 
             # top face
             # --------
-            top_face_verts = [(dA, dB), (dA+1, dB), (dA, dB+1)]
+            top_face_verts = [(dA, dB), (dA + 1, dB), (dA, dB + 1)]
 
             all_faces_in_mesh = True
             for top_face_vert in top_face_verts:
@@ -44,7 +44,7 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
                 mesh["faces"][(dA, dB, 1)] = {"vertices": list(top_face_verts)}
             # bottom face
             # -----------
-            bottom_face_verts = [(dA, dB), (dA+1, dB), (dA+1, dB-1)]
+            bottom_face_verts = [(dA, dB), (dA + 1, dB), (dA + 1, dB - 1)]
 
             all_faces_in_mesh = True
             for bottom_face_vert in bottom_face_verts:
@@ -52,7 +52,9 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
                     all_faces_in_mesh = False
 
             if all_faces_in_mesh:
-                mesh["faces"][(dA, dB, -1)] = {"vertices": list(bottom_face_verts)}
+                mesh["faces"][(dA, dB, -1)] = {
+                    "vertices": list(bottom_face_verts)
+                }
 
     return mesh
 
@@ -63,7 +65,7 @@ def make_spherical_hex_cap(outer_hex_radius, curvature_radius, num_steps=10):
 
     # scale
     for vkey in m["vertices"]:
-        m["vertices"][vkey] *= 2.0 * outer_hex_radius * 1.0/num_steps
+        m["vertices"][vkey] *= 2.0 * outer_hex_radius * 1.0 / num_steps
 
     # elevate z-axis
     for vkey in m["vertices"]:
@@ -72,7 +74,7 @@ def make_spherical_hex_cap(outer_hex_radius, curvature_radius, num_steps=10):
         )
         m["vertices"][vkey][2] = optical_geometry.z_sphere(
             distance_to_z_axis=distance_to_z_axis,
-            curvature_radius=curvature_radius
+            curvature_radius=curvature_radius,
         )
 
     # vertex-normals
@@ -96,7 +98,9 @@ def make_spherical_hex_cap(outer_hex_radius, curvature_radius, num_steps=10):
 
 def make_vertices_ring(ref="ring", n=16, phi_off=0.0):
     vertices = {}
-    for nphi, phi in enumerate(np.linspace(0.0, 2.0*np.pi, n, endpoint=False)):
+    for nphi, phi in enumerate(
+        np.linspace(0.0, 2.0 * np.pi, n, endpoint=False)
+    ):
         vertices[(ref, nphi)] = np.array(
             [np.cos(phi_off + phi), np.sin(phi_off + phi), 0.0]
         )
@@ -108,22 +112,20 @@ def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
 
     mesh = init_mesh()
     mesh["vertices"] = make_vertices_ring(
-        ref=ref + "/" + "ring",
-        n=n,
-        phi_off=phi_off)
+        ref=ref + "/" + "ring", n=n, phi_off=phi_off
+    )
 
     for vkey in mesh["vertices"]:
         mesh["vertices"][vkey] = radius * mesh["vertices"][vkey]
 
-    next_n = int(np.round(n/3))
+    next_n = int(np.round(n / 3))
     next_radius = 0.8 * inner_radius
     v_inner_idx = 0
     while next_n >= 6:
         print(next_n, next_radius)
         inner_vertices = make_vertices_ring(
-            ref=ref + "/" + "inner",
-            n=next_n,
-            phi_off=phi_off)
+            ref=ref + "/" + "inner", n=next_n, phi_off=phi_off
+        )
 
         for inner_vkey in inner_vertices:
             _vkey = ("inner", v_inner_idx)
@@ -131,8 +133,7 @@ def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
             v_inner_idx += 1
 
         next_radius = 0.8 * next_radius
-        next_n = int(np.round(next_n/3))
-
+        next_n = int(np.round(next_n / 3))
 
     vnkey = (ref, 0)
     mesh["vertex_normals"][vnkey] = np.array([0.0, 0.0, 1.0])
@@ -155,18 +156,20 @@ def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
                 vkeys[del_face[1]],
                 vkeys[del_face[2]],
             ],
-            "vertex_normals": [vnkey, vnkey, vnkey]
+            "vertex_normals": [vnkey, vnkey, vnkey],
         }
 
     return mesh
 
 
 def inner_radius_of_regular_polygon(n):
-    return 1.0 * np.cos(np.pi/n)
+    return 1.0 * np.cos(np.pi / n)
 
 
 def _add_face(ax, vertices, alpha=None, color="blue"):
-    p = plt_Polygon(vertices, closed=False, facecolor=color, alpha=alpha)
+    p = plt_Polygon(
+        vertices, closed=False, facecolor=color, alpha=alpha, edgecolor="k"
+    )
     ax.add_patch(p)
 
 
@@ -185,7 +188,6 @@ def plot_mesh(mesh):
         vs = np.array(vs)
         _add_face(ax=ax, vertices=vs, alpha=0.5, color="green")
     plt.show()
-
 
 
 def flatten_mesh(construction_mesh):
@@ -230,10 +232,14 @@ def mesh_to_wavefront(obj):
         s.append("vn {:f} {:f} {:f}".format(vn[0], vn[1], vn[2]))
     s.append("# faces")
     for f in obj["f"]:
-        s.append("f {:d}//{:d} {:d}//{:d} {:d}//{:d}".format(
-                1 + f["v"][0], 1 + f["vn"][0],
-                1 + f["v"][1], 1 + f["vn"][1],
-                1 + f["v"][2], 1 + f["vn"][1],
+        s.append(
+            "f {:d}//{:d} {:d}//{:d} {:d}//{:d}".format(
+                1 + f["v"][0],
+                1 + f["vn"][0],
+                1 + f["v"][1],
+                1 + f["vn"][1],
+                1 + f["v"][2],
+                1 + f["vn"][1],
             )
         )
     return "\n".join(s)
