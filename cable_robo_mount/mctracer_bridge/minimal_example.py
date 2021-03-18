@@ -2,15 +2,18 @@ import reflector_study as rs
 import numpy as np
 import subprocess
 
+prng = np.random.Generator(np.random.MT19937(seed=0))
+
+
 geometry = rs.Geometry([0.04,0], rs.config.example)
 reflector = rs.factory.generate_reflector(geometry)
 alignment = rs.mirror_alignment.ideal_alignment(reflector)
 
 stddev_of_node_position_noise = 0.0001
 number_of_nodes = reflector['nodes'].shape[0]
-x_noise = np.random.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
-y_noise = np.random.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
-z_noise = np.random.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
+x_noise = prng.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
+y_noise = prng.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
+z_noise = prng.normal(loc=0.0, scale=stddev_of_node_position_noise, size=number_of_nodes)
 
 deformed_reflector = reflector.copy()
 deformed_reflector['nodes'][:,0] += x_noise
