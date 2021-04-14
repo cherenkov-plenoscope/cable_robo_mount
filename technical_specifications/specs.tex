@@ -92,22 +92,26 @@
 %
 \thispagestyle{empty}
 \begin{center}
-    \begin{huge}
-        \textbf{Technical Specifications\\The Big LebowSky}
-    \end{huge}
     \begin{figure}[H]
-        \includegraphics[width=1.0\textwidth]{figures/lebowsky_drawing.png}
+        \includegraphics[width=1.0\textwidth]{figures/portal.jpg}
     \end{figure}
+    \begin{huge}
+        Technical Specifications
+    \end{huge}
     \vfill
-    by\\
     \begin{Large}
-        Sebastian Achim Mueller\\Dominik Neise\\Max Ludwig Ahnen\\
+        Sebastian Achim Mueller
     \end{Large}
-    sebmuell@phys.ethz.ch\\
+    \\
+    sebastian-achim.mueller@mpi-hd.mpg.de\\
+    Division: Werner Hofmann\\
     \vspace{20pt}
-    Institute for Particle Physics
     \par\smallskip\noindent
-    ETH Zurich\\ \today \\ \currenttime
+    Max-Planck-Institute for Nuclear Physics\\
+    Saupfercheckweg 1\\
+    69117 Heidelberg\\
+    Germany\\
+    \today
 \end{center}
 \newpage
 %-------------------------------------------------------------
@@ -138,93 +142,107 @@
 \newcommand{\zPa}{{z_\text{Pa}}}
 \newcommand{\zDC}{{z_\text{DC}}}
 %-------------------------------------------------------------------------------
-\section{Site Selection}
+\section{Abstract}
 %
-The Telescope shall be located at high altitude e.g. 5000\,m a.s.l. on the ALMA telescope site in Chile.
+The Plenoscope is a novel class of optical instrument which overcomes inherent limitations of the telescope.
 %
-First this is because at high altitudes less Cherenkov light from the air showers is absorbed in the atmosphere, which allows to have the lowest cosmic ray energy threshold possible.
+Unlike the telescope, the plenoscope can accept misalignments and even deformations of its imaging-reflector as long as these are known.
 %
-Second, the 3D reconstruction power of the Telescope vanishes for features which are far above the aperture.
+Also the plenoscope turns the telescope's narrow depth-of-field into stereo observation-power.
 %
-So we bring the Telescope as close as possible up to the air showers and the Cherenkov light production altitudes.
+Both these advantages might allow gamma-ray-astronomy to observe gamma-rays with energies at $1$ to $25\,$GeV from ground.
 %
-Also the site shall have dark night skies without arificial light polution.
+Today, this energy range is not well known to astronomy.
 %
-Since most cosmic objects we want to observe are in the Milky Way's plane or center, we want a site on the southern hemisphere to have low zenith distances during observation.
+Sattelites only effectively detect gamma-rays up to energies of $1\,$GeV and Cherenkov-telescopes on ground only reach down to about $25\,$GeV.
+%
+The Cherenkov-Plenoscope might have the potential to close this gap.
+%
+Currently, we estimate the observation-power for gamma-rays of a specific Cherenkov-plenoscope named Portal with an aperture-diameter of $71\,$m.
+%
+\section{Possible Sites}
+%
+The Plenoscope shall be located at above 2,000\,m a.s.l. e.g. on the ALMA site in Chile or on Gamsberg in Namibia.
+%
+The site shall have dark night skies without arificial light polution.
+%
+We prefer the southern hemisphere.
 %-------------------------------------------------------------------------------
-\section{Target Geometry}
+\section{Target-Geometry}
 %
-Here we define the most desireable target geometry of the telescope. 
+All actuators, moving the dish and the sensor-plane, try to reach the target-geometry during operation.
 %
-All active actuators, which are moving the dish and the image sensor, should try to reach the target geometry during operation. 
+We describe optics with respect to the imaging-reflector's frame.
 %
-We define all components relevant for the optics in the reflector frame. The $x$-$y$ plane in the origin of the reflector frame is called principal aperture plane. 
+The $z$-axis is the optical axis of the imaging-refelctor.
 %
-Along the $z$ axis is the optical axis of the refelctor.
+Table \ref{TabBasicDimensions} shows relative dimensions in arbitrary units.
 %
-Table \ref{TabBasicDimensions} shows the basic relative dimensions of the telescope.
+The absolute dimensions range from aperture-diameters $\ApertureDiameter = 50\,$m to $100\,$m.
 %
-Fix design keys of the telescope are its focal ratio of $\FocalLength/\ApertureDiameter = 1.5$ and its field of view of $6.5^\circ\,$.  
+The size of the plenoscope is only limited by its cost and ultimatively the square-cube-law.
+%
+All optical properties only become better with larger sizes.
+%
+Fix design-keys of the plenoscope are its focal-ratio of $\FocalLength/\ApertureDiameter = 1.5$ and its field-of-view of $6.5^\circ\,$.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
             \toprule
-            aperture diameter $\ApertureDiameter$ & $100\,$a.u.\\
-            focal length $\FocalLength$ & $150\,$a.u.\\
-            F-number or foacal ratio, $\FocalLength/\ApertureDiameter$ & $1.5$\\
-            image sensor distance $\ImageSensorDistance$ & $159.7\,$a.u.\\
-            image sensor diameter & $17\,$a.u.\\
-            image sensor housing diameter & $20.4\,$a.u.\\
-            image sensor field of view $\FieldOfView$ & $6.5^\circ\,$\\
+            aperture-diameter $\ApertureDiameter$ & $100\,$a.u.\\
+            focal-length $\FocalLength$ & $150\,$a.u.\\
+            F-number or foacal-ratio, $\FocalLength/\ApertureDiameter$ & $1.5$\\
+            sensor-plane-distance $\ImageSensorDistance$ & $150$ to $\approx 160\,$a.u.\\
+            sensor-plane's diameter & $17\,$a.u.\\
+            sensor-plane-housing's diameter & $20.4\,$a.u.\\
+            sensor-plane's field-of-view $\FieldOfView$ & $6.5^\circ\,$\\
             \bottomrule
         \end{tabular}
-        \caption[]{Basic telescope dimensions in arbitrary units (a.u.)}
+        \caption[]{Plenoscope's dimensions in arbitrary units (a.u.)}
         \label{TabBasicDimensions}
     \end{center}
 \end{table}
 %
-The image sensor distance
+The sensor-plane-distance
 %
 \begin{eqnarray}
 \ImageSensorDistance &=& \frac{1}{\frac{1}{\FocalLength} - \frac{1}{\ObjectDistance}}
 \end{eqnarray}
 %
-depends on the absolute target object distance of about $g \approx 2500\,$m.
+depends on the targeted object-distance which about $g \approx 10,000\,$m.
 %
-So a telescope of $\ApertureDiameter = 50\,$m will have $\ImageSensorDistance = 77.3\,$m and a $\ApertureDiameter = 100\,$m telescope will have $\ImageSensorDistance = 159.7\,$m
+\subsection{Imaging-Reflector}
 %
-\subsection{Imaging Reflector}
+We use a segmented imaging-reflector with identical mirror-facets.
 %
-We use a segmented imaging reflector with identical facets.
-%
-All mirror facets have the same hexagonel aperture and focal lenght $f$.
+All mirror-facets have the same hexagonel aperture and focal-lenght $f$.
 %
 The $x$ and $y$ position of a mirror facet are defined by the hexagonal grid of the facets.
 \CenFig{figures/2D_mirror_facets.png}{0.4}
 %
-The relative $z$ components of the mirror facets are defined by a parabolic component
+The relative $z$-components of the mirror-facets are defined by a parabolic component
 %
 \begin{eqnarray}
     \zPa(r) &=& \frac{1}{4 \FocalLength} r^2,
 \end{eqnarray}
 %
-which depends on the facet's distance to the optical axis $r$.
+which depends on the facet's distance $r$ to the optical-axis.
 %
-A global offset $q$ is added so that the position of the $i$-th facet is 
+A global offset $q$ is added so that the position of the $i$-th facet is
 %
 \begin{eqnarray}
 \label{eq_mirror_position}
-\vec{m}_{i} &=& \begin{pmatrix}   
+\vec{m}_{i} &=& \begin{pmatrix}
                             r_i \cos(\varphi_{i})\\
                             r_i \sin(\varphi_{i})\\
-                            \zPa_{i}(r_i) + q 
+                            \zPa_{i}(r_i) + q
                         \end{pmatrix}.
 \end{eqnarray}
 %
 \FigCapLabSca{figures/mirror_facet_position_z.png}{$z$ positions of the facets}{FigFacetZ}{0.8}
 %
-The common offset $q$ is chosen so that the average distance between all the $N$ facet centers $\vec{m}$ and the focal point $\vec{\FocalLength} = (0,0, \FocalLength)^T$ becomes the focal lenght
+The common offset $q$ is chosen so that the average distance between all the $N$ facet centers $\vec{m}$ and the focal-point $\vec{\FocalLength} = (0,0, \FocalLength)^T$ becomes the focal-lenght
 %
 \begin{eqnarray}
     \label{eq_correct_focus}
@@ -238,132 +256,126 @@ The common offset $q$ is chosen so that the average distance between all the $N$
     %
 \end{eqnarray}
 %
-The facet orientations along the $z$ axis is defined by the hexagonal grid of the facets.
-%
-The $x$ and $y$ orientations are chosen so that the $i$-th mirror facet surface normal
+The $x$ and $y$ orientations are chosen so that the $i$-th mirror-facet's surface-normal
 %
 \begin{eqnarray}
 \label{eq_facet_normal}
 \vec{n}_{i} &=& \frac{2\vec{\FocalLength} - \vec{m_i}}{\vert 2\vec{\FocalLength} - \vec{m_i} \vert}
 \end{eqnarray}
 %
-is pointing towards the $2 \vec{\FocalLength}$ point.
+is pointing towards the $2$-$\vec{\FocalLength}$-point.
 %
 \CenFig{figures/mirror_facet_orientation.png}{0.8}
 %
-\subsection{Restricted volumes}
+\subsection{Restricted Volumes}
 %
-To not reduce the effective aperture area of the telescope, some volumes should be kept free of obstacles.
+To not block light, certain volumes should be kept free of obstacles.
 %
-Figure \ref{FigRestrictedArea} shows the restricted volumes on the telescope in yellow.
+Figure \ref{FigRestrictedArea} shows the restricted volumes on the plenoscope in yellow.
 %
-There is a blind cone in the center of the reflector which can be blocked to have additional support structures, see also Figure \ref{FigBlindApertureCenter}.
+There is a blind cone in the center of the reflector which can be blocked to have additional support structures.
 %
-Support structres, that have to be in the restricted volumes, should be shaped so that the shadowing is minimal, e.g. using steel cables or flat structures which are elongated along the optical axis.
+Support structres, that have to be in the restricted volumes, should be shaped so that the shadowing is minimal, e.g. using thin cables or flat structures which are elongated along the optical-axis.
 %
 \FigCapLabSca{figures/lebowsky_restricted_areas.png}{
-    Objects in the yellow area will reduce the effective aperture area. The more intense the yellow is, the more important it is to keep this region free. Figure is to scale, aperture diameter is 100\,a.u.
+    Objects in the yellow volume will block light. The more saturated the yellow, the more important it is to keep this volume free. Figure is to scale.
 }{FigRestrictedArea}{0.68}
 %
-\subsection{Mirror Facets}
+\subsection{Mirror-Facets}
 %
-All mirror facets are the same and are interchangeable with each other.
+All mirror-facets are interchangeable with each other.
 %
-The imaging mirror facets have a focal lenght $\FocalLength$ and a hexagonal shaped aperture.
+The mirror-facets have all the same focal-lenght $\FocalLength$ and a hexagonal shape.
 %
-Table \ref{TabFacets} shows mirror facets and their properties of some telescopes. 
+Table \ref{TabFacets} shows the properties of typical mirror-facets.
 %
-We will adopt the hexagonal CTA LST mirror facets since they are the biggest facets which have proven to be mass producible today.
+We will opt for the biggest facet which has proven to be mass producible, i.e. $2\,$m$^2$.
 %
-The weight of a two axis actuator for the facets is $\approx 5\,$kg/facet regardless of the size of the facet.
+The weight of a two-axis-actuator for the facets is $\approx 5\,$kg/facet (almost) regardless of the size of the facet.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lccrrrrr}
-            type designation & shape & $A$[m$^2$] & $s$[m] & $m$[kg] & $\rho_A$[kg/m$^2$] & $\rho_A$[kg/m$^2$]\\
+            type designation & shape & $A$/m$^2$ & $s$/m & $m$/kg & $\rho_A$/kg\,m$^{-2}$ & $\rho_A$/kg\,m$^{-2}$\\
              & & & & & raw & with actuators\\
             \toprule
             MAGIC 1st gen. & square & 0.25 & 0.50  & 4.0 & 16.0 & 21.0\\
-            MAGIC 2nd gen. & hex    & 0.96 & 0.96 & 13.4 & 14.0 & 19.2\\
+            MAGIC 2nd gen. & square & 0.96 & 1.00 & 13.4 & 14.0 & 19.2\\
             VERITAS        & hex    & 0.32 & 0.61 & 10.4 & 32.4 & 48.0\\
             FACT/HEGRA     & hex    & 0.32 & 0.61 & 5.5 & 17.6 & 33.7\\
             CTA MST INAF   & hex    & 1.25 & 1.20 & 25.0 & 20.0 & 24.0\\
             CTA LST INAF   & hex    & 1.97 & 1.50 & 45.0 & 22.8 & 25.3\\
             \bottomrule
         \end{tabular}
-        \caption[]{Typical mirror facets on IACTs. $s$ is the spacing of the facets, i.e. the flat to flat diameter of the hexagonal facets.}
+        \caption[]{Typical mirror-facets in Cherenkov-telescopes. $s$ is the spacing of the facets, i.e. the flat-to-flat-diameter of the hexagonal facets.}
         \label{TabFacets}
     \end{center}
 \end{table}
 %
-\subsection{Imaging Sensor}
+\subsection{Sensor-Plane}
 %
-The shape of the image sensor is circular. It has pixel apertures of \mbox{$\Delta \alpha \approx 0.067^\circ$}.
+The sensor-plane has the shape of a disc.
 %
-The image sensor diameter 
+We opt for \mbox{$\Delta \alpha \approx 0.067^\circ$} angular resolution.
+%
+The sensor-plane's diameter
 %
 \begin{eqnarray}
 D_\text{sensor} &=& 2 \FocalLength \tan \left( \frac{\FieldOfView} {2}\right)
 \end{eqnarray}
 %
-is defined by the desired field of view $\FieldOfView$ and the focal length $\FocalLength$. 
+is defined by the targeted field-of-view $\FieldOfView$ and the focal-length $\FocalLength$.
 %
-We expect the image sensor housing to have an size overhead of $120\%$. 
+We expect the sensor-plane's housing to have an overhead of $120\%$.
 %
 For $\ApertureDiameter=100\,$a.u. this yields to \mbox{$D_\text{sensor} = 17.04\,$a.u.} and a housing diameter of \mbox{$D_\text{sensor housing} = 20.45\,$a.u.}
 %
-We expect the electric compartment of the image sensor to be rather flat, maybe $2\,$a.u. to $4\,$a.u. in height.
+We expect the electric compartment of the sensor-plane to be rather flat, maybe $2\,$a.u. to $4\,$a.u. in height.
 %
-The cylindrical image sensor housing is only as tall as it is width, because of the robo-crane mount in order to tilt the image sensor.
+Table \ref{TabFullImageSensors} shows typical dimensions of sensor-planes in Cherenkov-telescopes.
 %
-The sensor part itself is more like a flat disc.
-%
-Table \ref{TabFullImageSensors} shows typical image sensor dimensions of IACTs.
-%
-For the sensor electronic part, we expect our image sensor to be as lightweight as the lightest IACT image sensor units, which is about $\rho_A = 550\,$kg/m$^2$.
-%
-However, because of the height of the image sensor housing for the robo-crane mount we better be conservative and expect it to be heavy as $\rho_A = 1000\,$kg/m$^2$. 
+We expect the sensor-plane to be as lightweight as the lightest Cherenkov-Telescope sensor-planes, which is about $\rho_A = 600\,$kg/m$^2$.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lccrrrrr}
-            type designation & $A$[m$^2$] & $m$[kg] & $\rho_A$[kg/m$^2$]\\
+            type designation & $A$/m$^2$ & $m$/kg & $\rho_A$/kg\,m$^{-2}$\\
             \toprule
             CAT France & 0.19 & 110 & 560\\
-            MAGIC      & 0.85 & 450 & 530\\ 
-            VERITAS    & 0.42 & -- & -- \\ 
+            MAGIC      & 0.85 & 450 & 530\\
+            VERITAS    & 0.42 & -- & -- \\
             FACT       & 0.12 & 175 & 1458\\
-            HESS 1     & 1.35 & 800 & 593\\ 
-            HESS 2     & 3.14 & 2800 & 891\\ 
+            HESS 1     & 1.35 & 800 & 593\\
+            HESS 2     & 3.14 & 2800 & 891\\
             \bottomrule
         \end{tabular}
-        \caption[]{Typical image sensor dimensions of IACTs including all housing components.}
+        \caption[]{Typical sensor-plane in Cherenkov-telescopes. Mass includes the housing.}
         \label{TabFullImageSensors}
     \end{center}
 \end{table}
 %-------------------------------------------------------------------------------
-\section{Geometry Margins}
+\section{Geometry-Margins}
 %
-The novel image sensor of this telescope will allow some misalignments and displacements between the image sensor and the imaging reflector.
+The novel sensor-plane of the plenoscope can tollerate misalignments and displacements between the sensor-plane and the imaging-reflector.
 %-----------
-\subsection{Image Sensor relative to Reflector}
+\subsection{Sensor-Plane relative to Imaging-Reflector}
 %-----------
-\subsubsection{$z$ displacement}
+\subsubsection{$z$ Translation}
 %
-The deviation in $z$ direction of the image sensor distance to its target distance
+The translation in $z$ of the sensor-plane-distance with respect to its targeted position
 %
 \begin{eqnarray}
 \Delta \ImageSensorDistance & = & \ImageSensorDistance_\text{actual} -\ImageSensorDistance_\text{target}
 \end{eqnarray}
 %
-may vary since our novel image sensor is able to reconstruct the effect when $\ImageSensorDistance_\text{actual}$ is known.
+can be tolerated as long as it is known.
 %
 \CenFig{figures/image_sensor_displacement_z.png}{0.6}
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            image sensor displacement $z$ & $\Delta \ImageSensorDistance$ [a.u.]\\
+            sensor-plane's translation $z$ & $\Delta \ImageSensorDistance$ /a.u.\\
             \toprule
             Mandatory & -4.6 $<$ $\Delta \ImageSensorDistance$ $<$ 7.9\\
             Good      & -2.3 $<$ $\Delta \ImageSensorDistance$ $<$ 3.8\\
@@ -373,16 +385,16 @@ may vary since our novel image sensor is able to reconstruct the effect when $\I
     \end{center}
 \end{table}
 %-----------
-\subsubsection{$x$, $y$ displacement}
+\subsubsection{$x$, $y$ Translation}
 %
-An image sensor offset $\Delta xy$ to the optical axis can be accepted, when the $x$ and $y$ position of the image sensor with respect to the imaging reflector are known.
+A translation $\Delta x$, $\Delta y$ can be tollerated, as long as the actual $x$ and $y$ positions are known.
 %
 \CenFig{figures/image_sensor_displacement_xy.png}{0.6}
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            image sensor displacement $x$, $y$ & $\Delta xy$ [a.u.]\\
+            sensor-plane's translation in $x$, $y$ & $\Delta xy$ /a.u.\\
             \toprule
             Mandatory & $< 0.72$\\
             Good      & $< 0.36$\\
@@ -392,20 +404,18 @@ An image sensor offset $\Delta xy$ to the optical axis can be accepted, when the
     \end{center}
 \end{table}
 %-----------
-\subsubsection{misalignment $x$, $y$}
+\subsubsection{Orientation $x$, $y$}
 %
-A misalignment $\beta$ of the imaging reflector optical axis against the image sensor optical axis can be accepted, when $\beta$ is known.
+A misalignment $\beta$ of the optical-axis against the sensor-plane can be tollerated, when $\beta$ is known.
 %
-Our novel image sensor is still able to reconstruct the image as recorded by well aligned image sensor.
-%
-However, we lose effective aperture area $A_\text{eff}$, since our image sensor has a view cone restriction of which is just enough to fit the aperture once.
+Our sensor-plane is able to reconstruct this misalignment, but it loses aperture-area $A_\text{eff}$.
 %
 \CenFig{figures/image_sensor_misalignment_xy_view_cone.png}{0.6}
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lrr}
-            image sensor misalignment $x$, $y$ & $\beta$ [deg] & $A_\text{eff}$ [\%]\\
+            sensor-plane misalignment $x$, $y$ & $\beta$/1$^\circ$ & $A_\text{eff}$/\%\\
             \toprule
             Mandatory & $< 3.0$ & 90.0\\
             Good      & $< 1.5$ & 95.0\\
@@ -415,88 +425,82 @@ However, we lose effective aperture area $A_\text{eff}$, since our image sensor 
     \end{center}
 \end{table}
 %-----------
-\subsubsection{misalignment in $z$}
+\subsubsection{Orientation in $z$}
 %
-The image sensor may be arbitrarily rotated along the $z$ axis, as long as the rotations is known.
+Any rotation in $z$ can be tolerated, as long as the rotations is known.
 %-----------
-\subsection{Image Sensor}
+\subsection{Deformation of Sensor-Plane}
 %
-The image sensor itself is assumed to be stiff, i.e. the image sensor plane does not bend or deform more than $0.05\,$a.u. across its diameter.
+The sensor-plane itself is assumed to be stiff, i.e. the sensor-plane plane does not bend or deform more than $0.05\,$a.u. across its diameter.
 %-----------
-\subsection{Reflector Deformation}
+\subsection{Deformation of Imaging-Reflector}
 %
 As a rule of thumb:
-The actual tilt of a mirror facet against its target tilt, caused by deformations of the dish, shall not exceed \mbox{$\frac{\Delta \alpha}{2} \approx 0.034^\circ$}, i.e. half the image sensor pixel size.
+The miss orientation of a mirror facet against its target orientation, caused by deformations of the dish, shall not exceed \mbox{$\frac{\Delta \alpha}{2} \approx 0.034^\circ$}, i.e. half the sensor-plane's angular resolution.
 %
 \begin{eqnarray}
 \arccos \left( \vec{n}_\text{target} \cdot \vec{n}_\text{actual} \right) &<& \frac{\Delta \alpha}{2}
 \end{eqnarray}
 %-----------
-\subsubsection{Slow and predictable Deformations}
+\subsubsection{Slow and Elastic Deformations}
 %
-When using mirror facet actuators, we can accept slow and predictable deformations of the dish support structure which even exceed $\frac{\Delta \alpha}{2}$, as they might be caused by gravitational slump.
+When we use mirror-facets with individual actuators, we can accept slow, and elastic deformations of the dish even in excess of $\frac{\Delta \alpha}{2}$.
 %
-Here slow means, that the mirror actuators can easily keep up with the deformations of the dish while the telescope is slowly tracking a source.
+For example gravitational slump is often slow and elastic.
 %
-(The MAGIC actuators can tilt a facet with $0.5^\circ/$s).
+Slow means, that the mirror-facet's actuators can keep up with the deformations of the dish while the plenoscope is slowly tracking a source in the sky.
 %
-Predictable means, that the deformation will always be the same for a given telescope orientation, so that they can be learned once and then be applied later. (This is what is successfully done on the MAGIC telescope).
+(The MAGIC actuators can tilt a mirror-facet with $0.5^\circ/$s).
 %
-In case there are no deformations above $\frac{\Delta \alpha}{2}$ anyhow, we might drop the mirror facet actuators, which would simplify the maintenance of the telescope a lot and also reduce its initial cost.
-%-----------
-\subsubsection{Unforeseen Deformations}
+Elastic means, that the deformation will be the same for a given pointing of the plenoscope.
 %
-Deformations of the reflector dish by e.g. wind can not be foreseen. In general, the relative additional tilts of the facets shall not exceed \mbox{$\frac{\Delta \alpha}{2} \approx 0.034^\circ$}.
+The MAGIC Cherenkov-telescope successfully counteracts slow and elastic deformations.
 %
-We can perform ray tracing simulations of the deformed dishes to see the effect on the imaging performance.
-%
-We might set up a feedback loop of mechanical deformation simulations and optical simulations. 
+In case there are no deformations $> \frac{\Delta \alpha}{2}$, we can drop the mirror-facet's individual actuators.
 %-------------------------------------------------------------------------------
 \section{Movements}
 %<
-The telescope has two different modes of movements during operation.
+The plenoscope has two different modes of operation.
 %
 A slow mode to observe sources on the sky dome, and a fast mode to switch between the sources.
 %
-We want to avoid singularities in the inverse kinematics near the zenith.
+We want to avoid singularities in the inverse kinematics, especially near the zenith.
 %
-For example ,the zenith singularity on the classic Altitude-Azimuth mount hinders fast repositioning.
+For example, the zenith's singularity on the altitude-azimuth-mounts limits all Cherenkov-telescopes in the hunt for gamma-ray-bursts.
 %-----------
-\subsection{Fast Repositioning}
+\subsection{Fast Repositioning in any Geometry}
 %
-When the telescope is pointing to a different source on the sky dome, the image sensor is not recording.
+When the plenoscope is pointing to a different source on the sky dome, the sensor-plane is not recording and the target-geometry is not required.
 %
-During the fast repositioning, the target geometry does not need to be fulfilled.
-%
-A high speed repositioning of $90^\circ/$min will enable gamma ray burst hunting, which would be a nice to have but is not mandatory.
+A high speed repositioning of $90^\circ/$min would allow us to hunt gamma-ray-bursts.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            Fast Repositioning velocity & $\dot{\Theta}$[deg/min]\\
+            Fast repositioning velocity & $\dot{\Theta}$/$1^\circ$\,min$^{-1}$\\
             \toprule
-            Mandatory & 9\\
-            Good      & 30\\
+            Mandatory & 23\\
+            Good      & 45\\
             Perfect   & 90\\
             \bottomrule
         \end{tabular}
     \end{center}
 \end{table}
 %-------------------------------------------------------------------------------
-\subsection{Slow Tracking}
+\subsection{Slow Tracking in Target-Geometry}
 %
-When the telescope is slowly tracking a source on the sky dome, it is only counteracting the rotation of the earth \mbox{$\dot{\Theta}_\text{Earth} = 0.25^\circ/$min}.
+When the plenoscope is slowly tracking a source on the sky dome, it is only counteracting the rotation of the earth \mbox{$\dot{\Theta}_\text{Earth} = 0.25^\circ/$min}.
 %
-During slow tracking, the telescope has to try to reach its target geometry.
+During slow tracking, the plenoscope has be in its target-geometry.
 %
-The telescope image sensor is only recording air showers in the slow tracking mode.
+The plenoscope sensor-plane is only recording during this slow tracking mode.
 %
-For some observations, it is useful to move around a source in a spiral movement, which demands for telescope tracking velocities $\dot{\Theta}$ which are three times higher than $\dot{\Theta}_\text{Earth}$.
+For some observations, it is useful to move around a source in a spiral movement, which demands for tracking-velocities $\dot{\Theta}$ three times higher than $\dot{\Theta}_\text{Earth}$.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            Tracking velocity & $\dot{\Theta}$[deg/min]\\
+            Tracking velocity in target-geometry & $\dot{\Theta}/1^\circ$\,min$^{-1}$\\
             \toprule
             Mandatory & 0.25\\
             Good      & 0.5\\
@@ -506,14 +510,14 @@ For some observations, it is useful to move around a source in a spiral movement
     \end{center}
 \end{table}
 %-----------
-\subsection{Range}
+\subsection{Maximum Zenith-Distance}
 %
-For the full azimuth range, the telescope should reach zenith distances $\Theta$ as high as $45\,^\circ$. 
+The plenoscope should reach a zenith-distances $\Theta$ of $45\,^\circ$ in order to cover a large solid angle in the sky.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            Zenith distance & $\Theta$ [deg]\\
+            Zenith-distance & $\Theta$/1$^\circ$\\
             \toprule
             Mandatory & 30\\
             Good      & 45\\
@@ -523,18 +527,20 @@ For the full azimuth range, the telescope should reach zenith distances $\Theta$
     \end{center}
 \end{table}
 %-------------------------------------------------------------------------------
-\section{Geometry Tracking}
+\section{Tracking of the Actual Geometry}
 %
-All displacements and misalignments of the image sensor with respect to the imaging reflector can only be accepted when we can track the actual position and orientation of the image sensor relative to the reflector.
+All translations and misalignments of the sensor-plane with respect to the imaging-reflector can only be tollerated when they are tracked and known.
 %
-We need a sampling rate to track these displacements and misalignments, one order of magnitude higher than the dominant eigenfrequencies of the structure. 
+We need a sampling-rate one order-of-magnitude higher than the dominant Eigenfrequencies of the structure.
 %
-The MAGIC telescope arch has a eigenfrequency of $\approx 1\,$Hz. Assuming that the dominant eigenfrequencies on our big telescope will not be higher, a sampling rate $f_\text{sample}$ of $10\,$Hz might be sufficient.
+The MAGIC-telescope's arch has an Eigenfrequency of $\approx 1\,$Hz.
+%
+Assuming that the dominant Eigenfrequencies on a big plenoscope will not be higher, a sampling rate $f_\text{sample}$ of $10\,$Hz might be sufficient.
 %
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            Sampling rate & $f_\text{sample}$ [Hz]\\
+            Sampling rate & $f_\text{sample}$/Hz\\
             \toprule
             Mandatory & 10\\
             Good      & 25\\
@@ -547,11 +553,11 @@ The MAGIC telescope arch has a eigenfrequency of $\approx 1\,$Hz. Assuming that 
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            image sensor $x$, $y$ and $z$ tracking accuracy & [a.u.]\\
+            sensor-plane $x$, $y$ and $z$ tracking accuracy &/a.u.\\
             \toprule
-            Mandatory & $\pm$ $7.2 \cdot 10^{-3}$\\
-            Good      & $\pm$ $3.6 \cdot 10^{-3}$\\
-            Perfect   & $\pm$ $1.8 \cdot 10^{-3}$\\
+            Mandatory & $\pm$ $7.2 \cdot 10^{-2}$\\
+            Good      & $\pm$ $3.6 \cdot 10^{-2}$\\
+            Perfect   & $\pm$ $1.8 \cdot 10^{-2}$\\
             \bottomrule
         \end{tabular}
     \end{center}
@@ -560,73 +566,58 @@ The MAGIC telescope arch has a eigenfrequency of $\approx 1\,$Hz. Assuming that 
 \begin{table}[H]
     \begin{center}
         \begin{tabular}{lr}
-            image sensor tilt in $x$, $y$ ($\beta$), and $z$ tracking accuracy & [deg]\\
+            sensor-plane tilt in $x$, $y$ ($\beta$), and $z$ tracking accuracy & /1$^\circ$\\
             \toprule
             Mandatory & $\pm$ 0.03\\
-            Good      & $\pm$ 0.015\\
-            Perfect   & $\pm$ 0.0075\\
+            Good      & $\pm$ 0.02\\
+            Perfect   & $\pm$ 0.015\\
             \bottomrule
         \end{tabular}
     \end{center}
 \end{table}
 %
-A tracking implementation must be able to work at night without artificial illumination.
+The tracking's implementation shall be able to work in the dark night without artificial illumination.
 %
-No light in the wavelength range of $200\,$nm to $1200\,$nm shall be emitted to track the positions, otherwise the image sensor will be blinded.
+When artificial light is mandatory, it must not occupie the wavelength range from $200\,$nm to $\approx 800\,$nm.
 %
-If artificial illumination is mandatory for the tracking, the duty cycle of the illumination system shall be as small as possible, best below $1\%$. 
+The duty cycle of the illumination shall be below $1\cdot10^{-3}$.
 %-------------------------------------------------------------------------------
 \section{Maintanace}
 %
-Since the surfaces of the mirror facets degrade over time and the actuators of the facet will break over time, the mirror facets shall be reachable from below for maintenance.
+The surfaces of the mirror-facets degrade over time, and the actuators of the facets will break over time.
+%
+Therefore the mirror-facets and their individual actuators shall be reachable from below for maintenance.
 %-------------------------------------------------------------------------------
-\section{Threat due to sunlight}
+\section{Threat due to Sunlight}
 %
-The main imaging reflector dish of the telescope can be a threat when it projects the image of the sun on near by objects.
+The imaging-reflector of the plenoscope can be a threat when it projects the image of the sun onto near by objects.
 %
-For a focal ratio of 1.5, the imaging reflector can project an image of the sun with up to $6\,$MW/m$^2$.
+For a focal-ratio of 1.5, the imaging-reflector can project an image of the sun with up to $6\,$MW/m$^2$.
 %
 \begin{eqnarray}
 \frac{I_\text{sun image}}{I_\text{solar constant}} = \frac{_\text{aperture area}}{_\text{image area}} = \frac{(D^2/4) \pi}{(D F \tan(0.25^\circ))^2 \pi} 
 \end{eqnarray}
 %
-When we go for a telescope mount where the image sensor is mounted independent of the imaging reflector, we can profit from separating the image sensor from the dish to park it in a save position.
+When we go for a mount where the sensor-plane is mounted independent of the imaging-reflector, we can profit from separating the sensor-plane from the imaging-reflector to park it in a save position.
 %
-As long as the imaging reflector lies flat on the ground, it can not incinerate objects on the ground.
+As long as the imaging-reflector lies flat on the ground, it can not incinerate objects on the ground.
 %
-However, it might still heat up the nearby support structures.
+However, it might still heat up the nearby support-structures.
 %
 We favor solutions which do not need additional mechanics, like e.g. domes or lids.
 %-------------------------------------------------------------------------------
-\section{Price Estimates}
+\section*{Acknowledgement}
 %
-The CTA mirror facets cost about 3000\,EUR/m$^2$ including the actuators.
+This work profited from discussions with:
 %
-The raw silicon photo electric converters for the image sensor costs about $\approx 640$k\,EUR.
-%  
-For a $\ApertureDiameter = 50\,$m telescope, the silicon for the image sensor costs $\approx 32$M\,EUR.
-%-------------------------------------------------------------------------------
-\section{Initial Cable Robot Design}
-\CenFig{figures/drawing/zD_0Deg.png}{1.0}
-%\vspace{-1.2cm}
-%\CenFig{figures/drawing/zD_10Deg.png}{1.0}
-\vspace{-1.2cm}
-\CenFig{figures/drawing/zD_22Deg.png}{1.0}
-%\vspace{-1.2cm}
-%\CenFig{figures/drawing/zD_33Deg.png}{1.0}
-\vspace{-1.2cm}
-\CenFig{figures/drawing/zD_45Deg.png}{1.0}
-\vspace{-1.2cm}
-\CenFig{figures/drawing/parking.png}{1.0}
-%-------------------------------------------------------------------------------
-\section{Appendix}
+Adrian Biland, Werner Hofmann, Max Ludwig Ahnen, Dominik Neise, Spyridon Daglas, Eleni Chatzi, Axel Arbet Engels, and Felicitas Pauss.
 %
-\FigCapLabSca{figures/blind_spot_aperture.png}{Blind center region on principal aperture plane found in ray tracing simulations. The brighter the aperture, the more it contributes to the image. Here the aperture diameter is $50\,$m. The blind center region is at least $10$\% of the overall diameter, about $5\,$m in this figure.}{FigBlindApertureCenter}{0.8}
+The Cherenkov-plenoscope would not be possible without the current support by: Werner Hofmann and the Max Planck Institute for Nuclear Physics, and the crucial early support by Adrian Biland and the ETH-Zurich's Institute for Particle Physics and Astronomy.
 %
 %--references--
 %\renewcommand{\bibname}{References}
 %\bibliography{mct}
-%\bibliographystyle{plain}  
+%\bibliographystyle{plain}
 %\addcontentsline{toc}{chapter}{\bibname}
 %
 %--Appendix--
