@@ -19,17 +19,73 @@ def bar_is_part_of_reflector_dish(bar, nodes, geometry):
     return radii.max() <= geometry.max_outer_radius + geometry.facet_outer_hex_radius
 
 
-def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry):
+def point_in_hexagon(x, y, inner_radius, phi=0):
+    ir = inner_radius
+    THIRD = (2./3.) * np.pi
+    U = np.array([
+        np.cos(phi),
+        np.sin(phi),
+    ])
+    V = np.array([
+        np.cos(phi + THIRD),
+        np.sin(phi + THIRD),
+    ])
+    W = np.array([
+        np.cos(phi + 2 * THIRD),
+        np.sin(phi + 2 * THIRD),
+    ])
+
+    projU = U[0] * x + U[1] * y
+    projV = V[0] * x + V[1] * y
+    projW = W[0] * x + W[1] * y
+    return (
+        projU < ir
+        and
+        projU > -ir
+        and
+        projV < ir
+        and
+        projV > -ir
+        and
+        projW < ir
+        and
+        projW > -ir
+    )
+
+def mirror_tripod_is_part_of_reflector_dish(mirror_tripod, nodes, geometry, outer_shape="hexagon"):
     A_in_range = node_in_range(nodes, mirror_tripod[0])
     B_in_range = node_in_range(nodes, mirror_tripod[1])
     C_in_range = node_in_range(nodes, mirror_tripod[2])
 
     if A_in_range and B_in_range and C_in_range:
+        # outer shape of mirror
+        # ---------------------
         center = mirror_tripod_center(nodes, mirror_tripod)
-        radius = np.hypot(center[0], center[1])
-        inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius
-        outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius
-        return inside_outer_limit and outside_inner_limit
+        if outer_shape == "round":
+            radius = np.hypot(center[0], center[1])
+            inside_outer_limit = radius + geometry.facet_outer_hex_radius <= geometry.max_outer_radius
+            outside_inner_limit = radius - geometry.facet_outer_hex_radius > geometry.min_inner_radius
+            return inside_outer_limit and outside_inner_limit
+        elif outer_shape == "hexagon":
+            inside_inner = point_in_hexagon(
+                x=center[0],
+                y=center[1],
+                inner_radius=(
+                    geometry.min_inner_radius
+                    + geometry.facet_outer_hex_radius),
+                phi=0
+            )
+            inside_outer = point_in_hexagon(
+                x=center[0],
+                y=center[1],
+                inner_radius=(np.sqrt(3)/2) * (
+                    geometry.max_outer_radius
+                    - geometry.facet_outer_hex_radius),
+                phi=0
+            )
+            return inside_outer and not inside_inner
+        else:
+            raise KeyError("Outer shape is not known: ", str(outer_shape))
     else:
         return False
 
