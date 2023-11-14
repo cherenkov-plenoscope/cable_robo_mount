@@ -1,3 +1,4 @@
+from .version import __version__
 from . import optical_geometry
 from . import space_frame_geometry
 from .Geometry import Geometry

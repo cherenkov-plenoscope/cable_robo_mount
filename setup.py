@@ -1,11 +1,20 @@
 import setuptools
+import os
 
-with open("README.md", "r") as f:
+with open("README.rst", "r", encoding="utf-8") as f:
     long_description = f.read()
+
+
+with open(os.path.join("cable_robo_mount", "version.py")) as f:
+    txt = f.read()
+    last_line = txt.splitlines()[-1]
+    version_string = last_line.split()[-1]
+    version = version_string.strip("\"'")
+
 
 setuptools.setup(
     name="cable_robo_mount",
-    version="0.0.1",
+    version=version,
     description="Simulating a segmented imaging reflector",
     long_description=long_description,
     long_description_content_type="text/markdown",
