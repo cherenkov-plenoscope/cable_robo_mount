@@ -17,7 +17,7 @@ setuptools.setup(
     version=version,
     description="Simulating a segmented imaging reflector",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     author="Spyridon Daglas, Sebastian Achim Mueller",
     author_email="spirosdag@gmail.com",
     url="https://github.com/cherenkov-plenoscope/cable_robo_mount",
