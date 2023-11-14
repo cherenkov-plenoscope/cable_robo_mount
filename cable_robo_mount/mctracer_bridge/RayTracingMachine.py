@@ -1,6 +1,7 @@
 import paramiko
 import os
 
+
 class RayTracingMachine(object):
     """
     Connects to a remote machine via SSH.
@@ -17,10 +18,11 @@ class RayTracingMachine(object):
 
         key_path    The path to the private SSH RSA key of the client
     """
+
     def __init__(self, config_dict):
-        self._hostname = config_dict['system']['merlict']['hostname']
-        self._username = config_dict['system']['merlict']['username']
-        self._key_path = config_dict['system']['merlict']['key_path']
+        self._hostname = config_dict["system"]["merlict"]["hostname"]
+        self._username = config_dict["system"]["merlict"]["username"]
+        self._key_path = config_dict["system"]["merlict"]["key_path"]
         self._ssh = self._make_ssh_client()
         self._sftp = self._ssh.open_sftp()
 
@@ -30,7 +32,8 @@ class RayTracingMachine(object):
         ssh.connect(
             hostname=self._hostname,
             username=self._username,
-            key_filename=self._key_path)
+            key_filename=self._key_path,
+        )
         return ssh
 
     def put(self, localpath, remotepath):
@@ -66,24 +69,24 @@ class RayTracingMachine(object):
         channel = transport.open_session()
         channel.exec_command(command)
         if out_path is not None:
-            stdout = channel.makefile('r')
-            stderr = channel.makefile_stderr('r')
+            stdout = channel.makefile("r")
+            stderr = channel.makefile_stderr("r")
         exit_status = channel.recv_exit_status()
         if out_path is not None:
-            self._write_out_stream_to_file(stdout, out_path+'.stdout')
-            self._write_out_stream_to_file(stderr, out_path+'.stderr')
+            self._write_out_stream_to_file(stdout, out_path + ".stdout")
+            self._write_out_stream_to_file(stderr, out_path + ".stderr")
         return exit_status
 
     def _write_out_stream_to_file(self, stream, path):
-        f = open(path, 'w')
+        f = open(path, "w")
         for line in stream.readlines():
             f.write(line)
         f.close()
 
     def __repr__(self):
-        out = 'RayTracingMachine('
-        out+= self._hostname
-        out+= ')'
+        out = "RayTracingMachine("
+        out += self._hostname
+        out += ")"
         return out
 
     def __enter__(self):

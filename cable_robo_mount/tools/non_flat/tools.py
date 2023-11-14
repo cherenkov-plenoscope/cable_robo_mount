@@ -34,7 +34,7 @@ def mirror_tripod_center(nodes, mirror_tripod):
     A = node_position(nodes, mirror_tripod[0])
     B = node_position(nodes, mirror_tripod[1])
     C = node_position(nodes, mirror_tripod[2])
-    return (A + B + C)/3.0
+    return (A + B + C) / 3.0
 
 
 def mirror_tripod_surface_normal(nodes, mirror_tripod):
@@ -50,12 +50,12 @@ def mirror_tripod_x(nodes, mirror_tripod):
     A = node_position(nodes, mirror_tripod[0])
     B = node_position(nodes, mirror_tripod[1])
     AB = B - A
-    return AB/np.linalg.norm(AB)
+    return AB / np.linalg.norm(AB)
 
 
 def mirror_tripod_z(nodes, mirror_tripod):
     surface_normal = mirror_tripod_surface_normal(nodes, mirror_tripod)
-    return surface_normal/np.linalg.norm(surface_normal)
+    return surface_normal / np.linalg.norm(surface_normal)
 
 
 def mirror_tripod_y(nodes, mirror_tripod):

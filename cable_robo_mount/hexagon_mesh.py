@@ -20,7 +20,6 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
     mesh = init_mesh()
     for dA in np.arange(-n, n + 1, 1):
         for dB in np.arange(-n, n + 1, 1):
-
             bound_upper = -dA + n
             bound_lower = -dA - n
             if dB <= bound_upper and dB >= bound_lower:
@@ -30,7 +29,6 @@ def make_hexagonal_mesh_in_xy_plane(radial_steps):
     # =====
     for dA in np.arange(-n, n + 1, 1):
         for dB in np.arange(-n, n + 1, 1):
-
             # top face
             # --------
             top_face_verts = [(dA, dB), (dA + 1, dB), (dA, dB + 1)]
@@ -93,7 +91,7 @@ def make_spherical_hex_cap(outer_hex_radius, curvature_radius, num_steps=10):
         m["faces"][fkey]["vertex_normals"] = [
             (v0_key[0], v0_key[1], "c"),
             (v1_key[0], v1_key[1], "c"),
-            (v2_key[0], v2_key[1], "c")
+            (v2_key[0], v2_key[1], "c"),
         ]
     return m
 
@@ -129,7 +127,7 @@ def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
         )
 
         for inner_vkey in inner_vertices:
-            _vkey = (ref +"/inner", v_inner_idx)
+            _vkey = (ref + "/inner", v_inner_idx)
             mesh["vertices"][_vkey] = next_radius * inner_vertices[inner_vkey]
             v_inner_idx += 1
 
@@ -163,9 +161,18 @@ def make_disc_mesh(ref="disc", radius=1.0, n=6, phi_off=0.0):
     return mesh
 
 
-def make_cylinder_mesh(ref="cylinder", radius=1.0, length=1.0, n=6, phi_off=0.0):
-    top = make_disc_mesh(ref="cylinder/top", radius=radius, n=n, phi_off=phi_off)
-    bot = make_disc_mesh(ref="cylinder/bot", radius=radius, n=n, phi_off=(2*np.pi)/(2*n) + phi_off)
+def make_cylinder_mesh(
+    ref="cylinder", radius=1.0, length=1.0, n=6, phi_off=0.0
+):
+    top = make_disc_mesh(
+        ref="cylinder/top", radius=radius, n=n, phi_off=phi_off
+    )
+    bot = make_disc_mesh(
+        ref="cylinder/bot",
+        radius=radius,
+        n=n,
+        phi_off=(2 * np.pi) / (2 * n) + phi_off,
+    )
 
     mesh = init_mesh()
 
@@ -176,14 +183,14 @@ def make_cylinder_mesh(ref="cylinder", radius=1.0, length=1.0, n=6, phi_off=0.0)
     for fkey in top["faces"]:
         mesh["faces"][fkey] = top["faces"][fkey]
     for vnkey in top["vertex_normals"]:
-        mesh["vertex_normals"][vnkey] = [0,0,1]
+        mesh["vertex_normals"][vnkey] = [0, 0, 1]
 
     for vkey in bot["vertices"]:
         mesh["vertices"][vkey] = bot["vertices"][vkey]
     for fkey in bot["faces"]:
         mesh["faces"][fkey] = bot["faces"][fkey]
     for vnkey in bot["vertex_normals"]:
-        mesh["vertex_normals"][vnkey] = [0,0,-1]
+        mesh["vertex_normals"][vnkey] = [0, 0, -1]
 
     for ni in range(n):
         side_fkey = ("cylinder/side_ttb", ni)
@@ -199,25 +206,31 @@ def make_cylinder_mesh(ref="cylinder", radius=1.0, length=1.0, n=6, phi_off=0.0)
         vb[2] = 0.0
         vc[2] = 0.0
         if ("cylinder/side/top", n_a) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/top", n_a)] = va / np.linalg.norm(va)
+            mesh["vertex_normals"][
+                ("cylinder/side/top", n_a)
+            ] = va / np.linalg.norm(va)
 
         if ("cylinder/side/top", n_b) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/top", n_b)] = vb / np.linalg.norm(vb)
+            mesh["vertex_normals"][
+                ("cylinder/side/top", n_b)
+            ] = vb / np.linalg.norm(vb)
 
         if ("cylinder/side/bot", n_c) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/bot", n_c)] = vc / np.linalg.norm(vc)
+            mesh["vertex_normals"][
+                ("cylinder/side/bot", n_c)
+            ] = vc / np.linalg.norm(vc)
 
         mesh["faces"][side_fkey] = {
             "vertices": [
                 ("cylinder/top/ring", n_a),
                 ("cylinder/top/ring", n_b),
-                ("cylinder/bot/ring", n_c)
+                ("cylinder/bot/ring", n_c),
             ],
             "vertex_normals": [
                 ("cylinder/side/top", n_a),
                 ("cylinder/side/top", n_b),
-                ("cylinder/side/bot", n_c)
-            ]
+                ("cylinder/side/bot", n_c),
+            ],
         }
 
     for ni in range(n):
@@ -236,25 +249,31 @@ def make_cylinder_mesh(ref="cylinder", radius=1.0, length=1.0, n=6, phi_off=0.0)
         vb[2] = 0.0
         vc[2] = 0.0
         if ("cylinder/side/bot", n_a) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/bot", n_a)] = va / np.linalg.norm(va)
+            mesh["vertex_normals"][
+                ("cylinder/side/bot", n_a)
+            ] = va / np.linalg.norm(va)
 
         if ("cylinder/side/bot", n_b) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/bot", n_b)] = vb / np.linalg.norm(vb)
+            mesh["vertex_normals"][
+                ("cylinder/side/bot", n_b)
+            ] = vb / np.linalg.norm(vb)
 
         if ("cylinder/side/top", n_c) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][("cylinder/side/top", n_c)] = vc / np.linalg.norm(vc)
+            mesh["vertex_normals"][
+                ("cylinder/side/top", n_c)
+            ] = vc / np.linalg.norm(vc)
 
         mesh["faces"][side_fkey] = {
             "vertices": [
                 ("cylinder/bot/ring", n_a),
                 ("cylinder/bot/ring", n_b),
-                ("cylinder/top/ring", n_c)
+                ("cylinder/top/ring", n_c),
             ],
             "vertex_normals": [
                 ("cylinder/side/bot", n_a),
                 ("cylinder/side/bot", n_b),
-                ("cylinder/side/top", n_c)
-            ]
+                ("cylinder/side/top", n_c),
+            ],
         }
 
     return mesh

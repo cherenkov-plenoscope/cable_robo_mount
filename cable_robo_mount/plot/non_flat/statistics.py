@@ -12,7 +12,7 @@ def histogram_bar_length(nodes, bars):
     plt.figure()
     plt.xlabel("length of bar /m")
     plt.ylabel("#/1")
-    plt.title('Bar length distribution')
+    plt.title("Bar length distribution")
     number_of_bins = int(np.sqrt(bar_lengths.shape[0]))
     plt.hist(bar_lengths, bins=number_of_bins)
     plt.grid(True)

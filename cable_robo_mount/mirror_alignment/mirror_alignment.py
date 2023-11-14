@@ -18,14 +18,12 @@ def mean_distance_between(focal_point, facet_centers):
     for facet_center in facet_centers:
         sum_of_distances += np.linalg.norm(focal_point - facet_center)
     number_of_facets = facet_centers.shape[0]
-    return sum_of_distances/number_of_facets
+    return sum_of_distances / number_of_facets
 
 
 def PAP_offset_in_z(
-    focal_length,
-    facet_centers,
-    max_iterations=10000,
-    precision=1e-4):
+    focal_length, facet_centers, max_iterations=10000, precision=1e-4
+):
     """
     Returns the position offset in z direction of the factory's frame to the
     Principal Aperture Plane (PAP) of the reflector.
@@ -56,11 +54,12 @@ def PAP_offset_in_z(
 
         if iteration > max_iterations:
             raise RuntimeError(
-                'Unable to converge principal plane offset after '+
-                str(max_iterations)+
-                ' iterations.')
+                "Unable to converge principal plane offset after "
+                + str(max_iterations)
+                + " iterations."
+            )
 
-        focal_piont[2] = focal_piont[2] - 0.5*delta_z
+        focal_piont[2] = focal_piont[2] - 0.5 * delta_z
     return focal_piont[2] - focal_length
 
 
@@ -80,7 +79,7 @@ def ideal_reflector2facet(focal_piont, facet_center):
     connection /= np.linalg.norm(connection)
     rotation_axis = np.cross(unit_z, connection)
     angle_to_unit_z = np.arccos(np.dot(unit_z, connection))
-    ideal_angle = angle_to_unit_z/2.0
+    ideal_angle = angle_to_unit_z / 2.0
     reflector2facet = HomTra()
     reflector2facet.set_translation(facet_center)
     reflector2facet.set_rotation_axis_and_angle(rotation_axis, ideal_angle)
@@ -104,9 +103,8 @@ def ideal_reflector2facets(focal_length, facet_centers, PAP_offset):
     reflector2facets = []
     for facet_center in facet_centers:
         reflector2facets.append(
-            ideal_reflector2facet(
-                focal_piont_Rframe,
-                facet_center))
+            ideal_reflector2facet(focal_piont_Rframe, facet_center)
+        )
     return reflector2facets
 
 
@@ -119,11 +117,11 @@ def mirror_facet_centers(reflector):
     ---------
     reflector       The reflector dictionary
     """
-    nodes = reflector['nodes']
-    tripods = reflector['mirror_tripods']
+    nodes = reflector["nodes"]
+    tripods = reflector["mirror_tripods"]
     tripod_centers = tools.mirror_tripod_centers(nodes, tripods)
     facet_centers = tripod_centers.copy()
-    facet_centers[:,2] += reflector['geometry'].bar_outer_diameter
+    facet_centers[:, 2] += reflector["geometry"].bar_outer_diameter
     return facet_centers
 
 
@@ -136,8 +134,8 @@ def make_reflector2tripods(reflector):
     ---------
     reflector       The reflector dictionary
     """
-    nodes = reflector['nodes']
-    tripods = reflector['mirror_tripods']
+    nodes = reflector["nodes"]
+    tripods = reflector["mirror_tripods"]
     reflector2tripods = []
     for tripod in tripods:
         center = tools.mirror_tripod_center(nodes, tripod)
@@ -145,10 +143,10 @@ def make_reflector2tripods(reflector):
         Ry = tools.mirror_tripod_y(nodes, tripod)
         Rz = tools.mirror_tripod_z(nodes, tripod)
         t = HomTra()
-        t.T[:,0] = Rx
-        t.T[:,1] = Ry
-        t.T[:,2] = Rz
-        t.T[:,3] = center
+        t.T[:, 0] = Rx
+        t.T[:, 1] = Ry
+        t.T[:, 2] = Rz
+        t.T[:, 3] = center
         reflector2tripods.append(t)
     return reflector2tripods
 
@@ -172,14 +170,15 @@ def ideal_alignment(reflector):
     reflector       The reflector dictionary
     """
     facet_centers = mirror_facet_centers(reflector)
-    focal_length = reflector['geometry'].focal_length
+    focal_length = reflector["geometry"].focal_length
     PAP_offset = PAP_offset_in_z(
-        focal_length=focal_length,
-        facet_centers=facet_centers)
+        focal_length=focal_length, facet_centers=facet_centers
+    )
     reflector2facets = ideal_reflector2facets(
         focal_length=focal_length,
         facet_centers=facet_centers,
-        PAP_offset=PAP_offset)
+        PAP_offset=PAP_offset,
+    )
     reflector2tripods = make_reflector2tripods(reflector)
     tripods2facets = []
     for i in range(len(reflector2facets)):
@@ -188,8 +187,8 @@ def ideal_alignment(reflector):
         tripod2facet = reflector2tripod.inverse().multiply(reflector2facet)
         tripods2facets.append(tripod2facet)
     return {
-        'tripods2facets': tripods2facets,
-        'principal_aperture_plane_offset': PAP_offset
+        "tripods2facets": tripods2facets,
+        "principal_aperture_plane_offset": PAP_offset,
     }
 
 
@@ -207,7 +206,7 @@ def reflector2facets(reflector, alignment):
     reflector2tripods = make_reflector2tripods(reflector)
     reflector2facets = []
     for i in range(len(reflector2tripods)):
-        tripod2facet = alignment['tripods2facets'][i]
+        tripod2facet = alignment["tripods2facets"][i]
         reflector2tripod = reflector2tripods[i]
         reflector2facet = reflector2tripod.multiply(tripod2facet)
         reflector2facets.append(reflector2facet)

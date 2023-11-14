@@ -9,6 +9,7 @@ from . import mctracer_bridge
 from . import flatten
 from . import tools
 from sys import platform
+
 if platform == "win32":
     from . import SAP2000_bridge
     from . import run
