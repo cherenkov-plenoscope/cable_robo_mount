@@ -206,19 +206,19 @@ def make_cylinder_mesh(
         vb[2] = 0.0
         vc[2] = 0.0
         if ("cylinder/side/top", n_a) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/top", n_a)
-            ] = va / np.linalg.norm(va)
+            mesh["vertex_normals"][("cylinder/side/top", n_a)] = (
+                va / np.linalg.norm(va)
+            )
 
         if ("cylinder/side/top", n_b) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/top", n_b)
-            ] = vb / np.linalg.norm(vb)
+            mesh["vertex_normals"][("cylinder/side/top", n_b)] = (
+                vb / np.linalg.norm(vb)
+            )
 
         if ("cylinder/side/bot", n_c) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/bot", n_c)
-            ] = vc / np.linalg.norm(vc)
+            mesh["vertex_normals"][("cylinder/side/bot", n_c)] = (
+                vc / np.linalg.norm(vc)
+            )
 
         mesh["faces"][side_fkey] = {
             "vertices": [
@@ -249,19 +249,19 @@ def make_cylinder_mesh(
         vb[2] = 0.0
         vc[2] = 0.0
         if ("cylinder/side/bot", n_a) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/bot", n_a)
-            ] = va / np.linalg.norm(va)
+            mesh["vertex_normals"][("cylinder/side/bot", n_a)] = (
+                va / np.linalg.norm(va)
+            )
 
         if ("cylinder/side/bot", n_b) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/bot", n_b)
-            ] = vb / np.linalg.norm(vb)
+            mesh["vertex_normals"][("cylinder/side/bot", n_b)] = (
+                vb / np.linalg.norm(vb)
+            )
 
         if ("cylinder/side/top", n_c) not in mesh["vertex_normals"]:
-            mesh["vertex_normals"][
-                ("cylinder/side/top", n_c)
-            ] = vc / np.linalg.norm(vc)
+            mesh["vertex_normals"][("cylinder/side/top", n_c)] = (
+                vc / np.linalg.norm(vc)
+            )
 
         mesh["faces"][side_fkey] = {
             "vertices": [

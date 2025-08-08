@@ -238,22 +238,22 @@ def bars_inbetween(
             tension_ring_inner_nodes_categorized[i + 1],
             tension_ring_outter_nodes_categorized[i + 3],
         )
-    bars_diagonal_3[
-        tension_ring_inner_nodes_categorized.shape[0] - 1, 0
-    ] = tension_ring_inner_nodes_categorized[
-        tension_ring_inner_nodes_categorized.shape[0] - 2
-    ]
-    bars_diagonal_3[
-        tension_ring_inner_nodes_categorized.shape[0] - 1, 1
-    ] = tension_ring_outter_nodes_categorized[0]
-    bars_diagonal_3[
-        tension_ring_inner_nodes_categorized.shape[0], 0
-    ] = tension_ring_inner_nodes_categorized[
-        tension_ring_inner_nodes_categorized.shape[0] - 1
-    ]
-    bars_diagonal_3[
-        tension_ring_inner_nodes_categorized.shape[0], 1
-    ] = tension_ring_outter_nodes_categorized[1]
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0] - 1, 0] = (
+        tension_ring_inner_nodes_categorized[
+            tension_ring_inner_nodes_categorized.shape[0] - 2
+        ]
+    )
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0] - 1, 1] = (
+        tension_ring_outter_nodes_categorized[0]
+    )
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0], 0] = (
+        tension_ring_inner_nodes_categorized[
+            tension_ring_inner_nodes_categorized.shape[0] - 1
+        ]
+    )
+    bars_diagonal_3[tension_ring_inner_nodes_categorized.shape[0], 1] = (
+        tension_ring_outter_nodes_categorized[1]
+    )
     mask = np.all(np.isnan(bars_diagonal_3), axis=1) | np.all(
         bars_diagonal_3 == 0, axis=1
     )
@@ -271,22 +271,22 @@ def bars_inbetween(
             tension_ring_outter_nodes_categorized[i + 1],
             tension_ring_inner_nodes_categorized[i + 3],
         )
-    bars_diagonal_4[
-        tension_ring_inner_nodes_categorized.shape[0] - 1, 0
-    ] = tension_ring_outter_nodes_categorized[
-        tension_ring_inner_nodes_categorized.shape[0] - 2
-    ]
-    bars_diagonal_4[
-        tension_ring_inner_nodes_categorized.shape[0] - 1, 1
-    ] = tension_ring_inner_nodes_categorized[0]
-    bars_diagonal_4[
-        tension_ring_inner_nodes_categorized.shape[0], 0
-    ] = tension_ring_outter_nodes_categorized[
-        tension_ring_inner_nodes_categorized.shape[0] - 1
-    ]
-    bars_diagonal_4[
-        tension_ring_inner_nodes_categorized.shape[0], 1
-    ] = tension_ring_inner_nodes_categorized[1]
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0] - 1, 0] = (
+        tension_ring_outter_nodes_categorized[
+            tension_ring_inner_nodes_categorized.shape[0] - 2
+        ]
+    )
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0] - 1, 1] = (
+        tension_ring_inner_nodes_categorized[0]
+    )
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0], 0] = (
+        tension_ring_outter_nodes_categorized[
+            tension_ring_inner_nodes_categorized.shape[0] - 1
+        ]
+    )
+    bars_diagonal_4[tension_ring_inner_nodes_categorized.shape[0], 1] = (
+        tension_ring_inner_nodes_categorized[1]
+    )
     mask = np.all(np.isnan(bars_diagonal_4), axis=1) | np.all(
         bars_diagonal_4 == 0, axis=1
     )
